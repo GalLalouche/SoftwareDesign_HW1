@@ -1,5 +1,6 @@
 package il.ac.technion.cs.softwaredesign
 
+import com.google.inject.Inject
 import java.lang.IllegalArgumentException
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -13,11 +14,11 @@ import java.security.MessageDigest
  * Currently specified:
  * + User authentication.
  */
-class CourseAppImpl : CourseApp {
+class CourseAppImpl @Inject constructor(private val storage: IStorageLayer) : CourseApp {
     companion object {
         private const val HASH_ALGORITHM = "MD5"
     }
-    private val storage=StorageLayer()
+//    private val storage=StorageLayer()
     private var tokenManager = TokenManager(storage)
     private var userManager = UserManager(storage)
 

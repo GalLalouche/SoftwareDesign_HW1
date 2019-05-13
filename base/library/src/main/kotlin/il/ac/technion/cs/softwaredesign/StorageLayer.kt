@@ -1,5 +1,7 @@
 package il.ac.technion.cs.softwaredesign
 
+import com.google.inject.Inject
+import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageModule
 
 interface IStorageLayer {
@@ -40,12 +42,13 @@ interface IStorageLayer {
 /**
  * The StorageLayer singleton is implementing a Storage Layer
  */
-class StorageLayer : IStorageLayer{
+class StorageLayer @Inject constructor(private val secureStorage: SecureStorage) : IStorageLayer{
     companion object {
         //const that separates between password and status in the storage
         private const val delimiter=','
         private const val capacity=10000
     }
+
     //usernameToPasswordStatusPair and tokenToUsername are write through caches
     private val usernameToPasswordStatusPair= LRUCache<String,Pair<String, IStorageLayer.LoginStatus>>(capacity)
     private val tokenToUserName= LRUCache<String,String>(capacity)
@@ -53,25 +56,25 @@ class StorageLayer : IStorageLayer{
     override fun writeUsernameToPasswordStatus(username: String, password: String, status: IStorageLayer.LoginStatus) {
         val pwdStatus = password + delimiter + status.ordinal //we separate the password and token as a standard with '_'
 
-        write(username.toByteArray(Charsets.UTF_8), pwdStatus.toByteArray(Charsets.UTF_8))
+        secureStorage.write(username.toByteArray(Charsets.UTF_8), pwdStatus.toByteArray(Charsets.UTF_8))
         usernameToPasswordStatusPair[username] = Pair(password,status)
     }
 
     override fun writeTokenToUsername(token: String, username: String) {
-        write(token.toByteArray(Charsets.UTF_8), username.toByteArray(Charsets.UTF_8))
+        secureStorage.write(token.toByteArray(Charsets.UTF_8), username.toByteArray(Charsets.UTF_8))
         tokenToUserName[token]=username
     }
 
     override fun readUsernameOfToken(token: String) : String? {
         val cachedValue=tokenToUserName[token]
         if(cachedValue!=null) return cachedValue
-        return convertByteArrayToString(read(token.toByteArray(Charsets.UTF_8)))
+        return convertByteArrayToString(secureStorage.read(token.toByteArray(Charsets.UTF_8)))
     }
 
     override fun readPasswordStatusOfUsername(username: String) : Pair<String, IStorageLayer.LoginStatus>? {
         val cachedValue=usernameToPasswordStatusPair[username]
         if(cachedValue!=null) return cachedValue
-        val output = convertByteArrayToString(read(username.toByteArray(Charsets.UTF_8)))
+        val output = convertByteArrayToString(secureStorage.read(username.toByteArray(Charsets.UTF_8)))
         val pwdToken = output?.split(delimiter, limit = 2) //we splits according to the first '_' in the string
         return extractPasswordAndStatusToPair(pwdToken)
     }
