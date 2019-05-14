@@ -1,4 +1,4 @@
-package il.ac.technion.cs.softwaredesign
+package il.ac.technion.cs.softwaredesign.storage.statistics
 
 interface IStatisticsStorage {
     fun getPropertyLongValue(property : String) : Long

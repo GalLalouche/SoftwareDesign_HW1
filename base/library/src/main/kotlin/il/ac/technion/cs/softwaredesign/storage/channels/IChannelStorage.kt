@@ -1,4 +1,4 @@
-package il.ac.technion.cs.softwaredesign
+package il.ac.technion.cs.softwaredesign.storage.channels
 
 interface IChannelStorage {
     fun getChannelIdByChannelName(channelName : String) : Long
