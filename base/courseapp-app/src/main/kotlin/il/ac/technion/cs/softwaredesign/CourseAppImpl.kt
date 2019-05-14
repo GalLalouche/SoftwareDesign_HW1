@@ -45,11 +45,9 @@ class CourseAppImpl @Inject constructor(private val storage: IStorageLayer) : Co
 
     override fun isUserLoggedIn(token: String, username: String): Boolean? {
         validateToken(token)
-        try {
-            return userManager.getUserStatus(username) == IStorageLayer.LoginStatus.IN
-        } catch (e : Exception) {
-            return null
-        }
+        if(!userManager.isUsernameExists(username)) return null
+        return userManager.getUserStatus(username) == IStorageLayer.LoginStatus.IN
+
     }
 
     override fun makeAdministrator(token: String, username: String) {
