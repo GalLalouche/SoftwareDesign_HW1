@@ -117,7 +117,7 @@ class SecureAVLTree<Key : Comparable<Key>, Value> {
      * height of an empty tree is -1 and the height of a tree with just one node
      * is 0.
      *
-     * @return the height of the internal AVL tree
+     * @return the height of the internal AVL tree (-1 is returned if tree is empty)
      */
     fun height(): Int {
         return height(root)
@@ -128,7 +128,7 @@ class SecureAVLTree<Key : Comparable<Key>, Value> {
      *
      * @param x the subtree
      *
-     * @return the height of the subtree.
+     * @return the height of the subtree -1 is returned if x subtree is empty
      */
     private fun height(x: Node?): Int {
         return x?.height ?: -1
@@ -500,7 +500,7 @@ class SecureAVLTree<Key : Comparable<Key>, Value> {
      * `size() -1 `
      */
     fun select(k: Int): Key {
-        if (k < 0 || k >= size()) throw IllegalArgumentException("k is not in range 0-" + (size() - 1))
+        if (k < 0 || k >= size()) throw IllegalArgumentException("key is out of range. should be between [0,${size()-1}]}")
         val x = select(root, k)
         return x!!.key
     }
