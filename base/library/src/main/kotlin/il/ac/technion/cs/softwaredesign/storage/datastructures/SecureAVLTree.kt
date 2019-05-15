@@ -1,7 +1,8 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageKey
+import il.ac.technion.cs.softwaredesign.storage.ISecureStorageKey
+import il.ac.technion.cs.softwaredesign.storage.IStorageConverter
 import java.util.*
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ import javax.inject.Inject
  *
  *
  * This implementation requires that the key type implements the
- * `SecureStorageKey` interface and calls the `compareTo()` and
+ * `ISecureStorageKey` interface and calls the `compareTo()` and
  * method to compare two keys and 'toByteArray' 'fromByteArray' to permit a way for serialization of the key without conflicts(this is client responsibility). It does not call either `equals()` or
  * `hashCode()`. The *put*, *get*, *contains*,
  * *delete*, *minimum*, *maximum*, *ceiling*, and
@@ -44,7 +45,7 @@ import javax.inject.Inject
 /**
  * Initializes an empty symbol table.
  */
-class SecureAVLTree<Key : SecureStorageKey<Key>, Value> @Inject constructor(secureStorage : SecureStorage) {
+class SecureAVLTree<Key : ISecureStorageKey<Key>, Value :IStorageConverter<Value>> @Inject constructor(secureStorage : SecureStorage) {
 
     /**
      * The root node.
