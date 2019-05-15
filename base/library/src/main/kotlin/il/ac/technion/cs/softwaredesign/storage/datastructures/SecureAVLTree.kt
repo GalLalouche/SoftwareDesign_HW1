@@ -740,7 +740,6 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>, Value :IStorageConverter<Value
         }
         fun getNodeValue(x:Node):Value?{
             TODO("get node value")
-            //return fromByteArray(secureStorage.read())?.value
         }
 
 
