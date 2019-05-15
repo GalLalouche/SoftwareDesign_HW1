@@ -1,6 +1,7 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
+import il.ac.technion.cs.softwaredesign.storage.SecureStorageKey
 import java.util.*
 import javax.inject.Inject
 
@@ -28,25 +29,22 @@ import javax.inject.Inject
  *
  *
  * This implementation requires that the key type implements the
- * `Comparable` interface and calls the `compareTo()` and
- * method to compare two keys. It does not call either `equals()` or
+ * `SecureStorageKey` interface and calls the `compareTo()` and
+ * method to compare two keys and 'toByteArray' 'fromByteArray' to permit a way for serialization of the key without conflicts(this is client responsibility). It does not call either `equals()` or
  * `hashCode()`. The *put*, *get*, *contains*,
  * *delete*, *minimum*, *maximum*, *ceiling*, and
  * *floor* operations each take logarithmic time in the worst case. The
  * *size*, and *is-empty* operations take constant time.
  * Construction also takes constant time.
  *
- * For other implementations of the same API, see [ST], [BinarySearchST],
- * [SequentialSearchST], [BST], [RedBlackBST],
- * [SeparateChainingHashST], and [LinearProbingHashST].
  *
- * @author Marcelo Silva
+ * @author Aviad Shiber, Ron Yithak, Marcelo Silva
  */
 
 /**
  * Initializes an empty symbol table.
  */
-class SecureAVLTree<Key : Comparable<Key>, Value> @Inject constructor(secureStorage : SecureStorage) {
+class SecureAVLTree<Key : SecureStorageKey<Key>, Value> @Inject constructor(secureStorage : SecureStorage) {
 
     /**
      * The root node.
