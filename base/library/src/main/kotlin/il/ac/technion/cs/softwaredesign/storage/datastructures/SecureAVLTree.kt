@@ -3,6 +3,7 @@ package il.ac.technion.cs.softwaredesign.storage.datastructures
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.ISecureStorageKey
 import il.ac.technion.cs.softwaredesign.storage.IStorageConverter
+import il.ac.technion.cs.softwaredesign.storage.LEFT_KEY
 import java.util.*
 import javax.inject.Inject
 
@@ -45,12 +46,16 @@ import javax.inject.Inject
 /**
  * Initializes an empty symbol table.
  */
-class SecureAVLTree<Key : ISecureStorageKey<Key>, Value :IStorageConverter<Value>> @Inject constructor(secureStorage : SecureStorage) {
+class SecureAVLTree<Key : ISecureStorageKey<Key>, Value :IStorageConverter<Value>>
+@Inject constructor(private val secureStorage : SecureStorage) {
 
     /**
      * The root node.
      */
     private var root: Node? = null
+
+
+
     /**
      * Checks if rank is consistent.
      *
@@ -147,6 +152,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>, Value :IStorageConverter<Value
         val x = get(root, key) ?: return null
         return x.value
     }
+
 
     /**
      * Returns value associated with the given key in the subtree or
@@ -711,10 +717,33 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>, Value :IStorageConverter<Value
      * This class represents an inner node of the AVL tree.
      */
     private inner class Node(var key: Key   // the key
-                             , var value: Value       // the associated value
+                             , var value: Value?       // the associated value
                              , var height: Int      // height of the subtree
                              , var size: Int        // number of nodes in subtree
-    ) {
+    )  :IStorageConverter<Node>{
+        override fun toByteArray(): ByteArray {
+            TODO("convert this node to ByteArray") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun fromByteArray(value: ByteArray?): Node? {
+            TODO("convert byte array to this node") //To change body of created functions use File | Settings | File Templates.
+            return this
+        }
+
+        fun getLeftNode(x: Node):Node?{
+            /*val keyToLook=String(x.key.toByteArray())+ LEFT_KEY
+           return secureStorage.read(keyToLook.toByteArray()*/
+            TODO("get left node from Storage")
+        }
+        fun getRightNode(x:Node):Node?{
+            TODO("get right node from Storage")
+        }
+        fun getNodeValue(x:Node):Value?{
+            return fromByteArray(secureStorage.read())?.value
+        }
+
+
+
         var left: Node? = null       // left subtree
         var right: Node? = null      // right subtree
     }
