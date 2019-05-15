@@ -1,7 +1,9 @@
+package il.ac.technion.cs.softwaredesign.storage.datastructures
+
 import java.util.*
 
 /**
- * The `AVLTreeST` class represents an ordered symbol table of
+ * The `SecureAVLTree` class represents an ordered symbol table of
  * generic key-value pairs. It supports the usual *put*, *get*,
  * *contains*, *delete*, *size*, and *is-empty*
  * methods. It also provides ordered methods for finding the *minimum*,
@@ -42,41 +44,12 @@ import java.util.*
 /**
  * Initializes an empty symbol table.
  */
-class AVLTreeST<Key : Comparable<Key>, Value> {
+class SecureAVLTree<Key : Comparable<Key>, Value> {
 
     /**
      * The root node.
      */
     private var root: Node? = null
-
-    /**
-     * Checks if the symbol table is empty.
-     *
-     * @return `true` if the symbol table is empty.
-     */
-    fun isEmpty() : Boolean = root == null
-
-    /**
-         * Checks if AVL property is consistent.
-     *
-     * @return `true` if AVL property is consistent.
-     */
-    fun isAVL(): Boolean = isAVL(root)
-
-    /**
-     * Checks if the symmetric order is consistent.
-     *
-     * @return `true` if the symmetric order is consistent
-     */
-    fun isBST(): Boolean = isBST(root, null, null)
-
-    /**
-     * Checks if size is consistent.
-     *
-     * @return `true` if size is consistent
-     */
-    fun isSizeConsistent(): Boolean = isSizeConsistent(root)
-
     /**
      * Checks if rank is consistent.
      *
@@ -92,16 +65,32 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
         }
 
     /**
-     * This class represents an inner node of the AVL tree.
+     * Checks if the symbol table is empty.
+     *
+     * @return `true` if the symbol table is empty.
      */
-    private inner class Node(var key: Key   // the key
-                             , var `val`: Value       // the associated value
-                             , var height: Int      // height of the subtree
-                             , var size: Int        // number of nodes in subtree
-    ) {
-        var left: Node? = null       // left subtree
-        var right: Node? = null      // right subtree
-    }
+    fun isEmpty(): Boolean = root == null
+
+    /**
+     * Checks if AVL property is consistent.
+     *
+     * @return `true` if AVL property is consistent.
+     */
+    private fun isAVL(): Boolean = isAVL(root)
+
+    /**
+     * Checks if the symmetric order is consistent.
+     *
+     * @return `true` if the symmetric order is consistent
+     */
+    private fun isBST(): Boolean = isBST(root, null, null)
+
+    /**
+     * Checks if size is consistent.
+     *
+     * @return `true` if size is consistent
+     */
+    private fun isSizeConsistent(): Boolean = isSizeConsistent(root)
 
     /**
      * Returns the number key-value pairs in the symbol table.
@@ -152,12 +141,10 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return the value associated with the given key if the key is in the
      * symbol table and `null` if the key is not in the
      * symbol table
-     * @throws IllegalArgumentException if `key` is `null`
      */
-    operator fun get(key: Key?): Value? {
-        if (key == null) throw IllegalArgumentException("argument to get() is null")
+    operator fun get(key: Key): Value? {
         val x = get(root, key) ?: return null
-        return x.`val`
+        return x.value
     }
 
     /**
@@ -172,12 +159,11 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
     private operator fun get(x: Node?, key: Key): Node? {
         if (x == null) return null
         val cmp = key.compareTo(x.key)
-        return if (cmp < 0)
-            get(x.left, key)
-        else if (cmp > 0)
-            get(x.right, key)
-        else
-            x
+        return when {
+            cmp < 0 -> get(x.left, key)
+            cmp > 0 -> get(x.right, key)
+            else -> x
+        }
     }
 
     /**
@@ -186,7 +172,6 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @param key the key
      * @return `true` if the symbol table contains `key`
      * and `false` otherwise
-     * @throws IllegalArgumentException if `key` is `null`
      */
     operator fun contains(key: Key): Boolean {
         return get(key) != null
@@ -199,16 +184,14 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * this symbol table if the specified value is `null`.
      *
      * @param key the key
-     * @param val the value
-     * @throws IllegalArgumentException if `key` is `null`
+     * @param `value` the value
      */
-    fun put(key: Key?, `val`: Value?) {
-        if (key == null) throw IllegalArgumentException("first argument to put() is null")
-        if (`val` == null) {
+    fun put(key: Key, value: Value?) {
+        if (value == null) {
             delete(key)
             return
         }
-        root = put(root, key, `val`)
+        root = put(root, key, value)
         assert(check())
     }
 
@@ -220,19 +203,19 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      *
      * @param x the subtree
      * @param key the key
-     * @param val the value
+     * @param `value` the value
      * @return the subtree
      */
-    private fun put(x: Node?, key: Key, `val`: Value): Node {
-        if (x == null) return Node(key, `val`, 0, 1)
+    private fun put(x: Node?, key: Key, value: Value): Node {
+        if (x == null) return Node(key, value, 0, 1)
         val cmp = key.compareTo(x.key)
-        if (cmp < 0) {
-            x.left = put(x.left, key, `val`)
-        } else if (cmp > 0) {
-            x.right = put(x.right, key, `val`)
-        } else {
-            x.`val` = `val`
-            return x
+        when {
+            cmp < 0 -> x.left = put(x.left, key, value)
+            cmp > 0 -> x.right = put(x.right, key, value)
+            else -> {
+                x.value = value
+                return x
+            }
         }
         x.size = 1 + size(x.left) + size(x.right)
         x.height = 1 + Math.max(height(x.left), height(x.right))
@@ -246,19 +229,19 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return the subtree with restored AVL property
      */
     private fun balance(x: Node): Node {
-        var x = x
-        if (balanceFactor(x) < -1) {
-            if (balanceFactor(x.right!!) > 0) {
-                x.right = rotateRight(x.right!!)
+        var traversalX = x
+        if (balanceFactor(traversalX) < -1) {
+            if (balanceFactor(traversalX.right!!) > 0) {
+                traversalX.right = rotateRight(traversalX.right!!)
             }
-            x = rotateLeft(x)
-        } else if (balanceFactor(x) > 1) {
-            if (balanceFactor(x.left!!) < 0) {
-                x.left = rotateLeft(x.left!!)
+            traversalX = rotateLeft(traversalX)
+        } else if (balanceFactor(traversalX) > 1) {
+            if (balanceFactor(traversalX.left!!) < 0) {
+                traversalX.left = rotateLeft(traversalX.left!!)
             }
-            x = rotateRight(x)
+            traversalX = rotateRight(traversalX)
         }
-        return x
+        return traversalX
     }
 
     /**
@@ -312,12 +295,9 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
     /**
      * Removes the specified key and its associated value from the symbol table
      * (if the key is in the symbol table).
-     *
      * @param key the key
-     * @throws IllegalArgumentException if `key` is `null`
      */
-    fun delete(key: Key?) {
-        if (key == null) throw IllegalArgumentException("argument to delete() is null")
+    fun delete(key: Key) {
         if (!contains(key)) return
         root = delete(root!!, key)
         assert(check())
@@ -334,20 +314,18 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
     private fun delete(x: Node, key: Key): Node? {
         var node = x
         val cmp = key.compareTo(node.key)
-        if (cmp < 0) {
-            node.left = delete(node.left!!, key)
-        } else if (cmp > 0) {
-            node.right = delete(node.right!!, key)
-        } else {
-            if (node.left == null) {
-                return node.right
-            } else if (node.right == null) {
-                return node.left
-            } else {
-                val y = node
-                node = min(y.right!!)
-                node.right = deleteMin(y.right!!)
-                node.left = y.left
+        when {
+            cmp < 0 -> node.left = delete(node.left!!, key)
+            cmp > 0 -> node.right = delete(node.right!!, key)
+            else -> when {
+                node.left == null -> return node.right
+                node.right == null -> return node.left
+                else -> {
+                    val y = node
+                    node = min(y.right!!)
+                    node.right = deleteMin(y.right!!)
+                    node.left = y.left
+                }
             }
         }
         node.size = 1 + size(node.left) + size(node.right)
@@ -455,10 +433,8 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return the largest key in the symbol table less than or equal to
      * `key`
      * @throws NoSuchElementException if the symbol table is empty
-     * @throws IllegalArgumentException if `key` is `null`
      */
-    fun floor(key: Key?): Key? {
-        if (key == null) throw IllegalArgumentException("argument to floor() is null")
+    fun floor(key: Key): Key? {
         if (isEmpty()) throw NoSuchElementException("called floor() with empty symbol table")
         val x = floor(root, key)
         return x?.key
@@ -490,10 +466,8 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return the smallest key in the symbol table greater than or equal to
      * `key`
      * @throws NoSuchElementException if the symbol table is empty
-     * @throws IllegalArgumentException if `key` is `null`
      */
-    fun ceiling(key: Key?): Key? {
-        if (key == null) throw IllegalArgumentException("argument to ceiling() is null")
+    fun ceiling(key: Key): Key? {
         if (isEmpty()) throw NoSuchElementException("called ceiling() with empty symbol table")
         val x = ceiling(root, key)
         return x?.key
@@ -541,12 +515,11 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
     private fun select(x: Node?, k: Int): Node? {
         if (x == null) return null
         val t = size(x.left)
-        return if (t > k)
-            select(x.left, k)
-        else if (t < k)
-            select(x.right, k - t - 1)
-        else
-            x
+        return when {
+            t > k -> select(x.left, k)
+            t < k -> select(x.right, k - t - 1)
+            else -> x
+        }
     }
 
     /**
@@ -556,10 +529,8 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @param key the key
      * @return the number of keys in the symbol table strictly less than
      * `key`
-     * @throws IllegalArgumentException if `key` is `null`
      */
-    fun rank(key: Key?): Int {
-        if (key == null) throw IllegalArgumentException("argument to rank() is null")
+    fun rank(key: Key): Int {
         return rank(key, root)
     }
 
@@ -573,12 +544,11 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
     private fun rank(key: Key, x: Node?): Int {
         if (x == null) return 0
         val cmp = key.compareTo(x.key)
-        return if (cmp < 0)
-            rank(key, x.left)
-        else if (cmp > 0)
-            1 + size(x.left) + rank(key, x.right)
-        else
-            size(x.left)
+        return when {
+            cmp < 0 -> rank(key, x.left)
+            cmp > 0 -> 1 + size(x.left) + rank(key, x.right)
+            else -> size(x.left)
+        }
     }
 
     /**
@@ -596,7 +566,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return all keys in the symbol table following an in-order traversal
      */
     fun keysInOrder(): Iterable<Key> {
-        val queue = PriorityQueue<Key>()
+        val queue = mutableListOf<Key>()
         keysInOrder(root, queue)
         return queue
     }
@@ -607,7 +577,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @param x the subtree
      * @param queue the queue
      */
-    private fun keysInOrder(x: Node?, queue: PriorityQueue<Key>) {
+    private fun keysInOrder(x: Node?, queue: MutableList<Key>) {
         if (x == null) return
         keysInOrder(x.left, queue)
         queue.add(x.key)
@@ -620,18 +590,18 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return all keys in the symbol table following a level-order traversal.
      */
     fun keysLevelOrder(): Iterable<Key> {
-        val queue = PriorityQueue<Key>()
+        val queue = mutableListOf<Key>()
         if (!isEmpty()) {
-            val queue2 = PriorityQueue<Node>()
-            queue2.add(root)
-            while (!queue2.isEmpty()) {
-                val x = queue2.remove()
+            val queue2=mutableListOf<Node>()
+            queue2.add(root!!)
+            while (queue2.isNotEmpty()) {
+                val x = queue2.removeAt(0)
                 queue.add(x.key)
                 if (x.left != null) {
-                    queue2.add(x.left)
+                    queue2.add(x.left!!)
                 }
                 if (x.right != null) {
-                    queue2.add(x.right)
+                    queue2.add(x.right!!)
                 }
             }
         }
@@ -645,13 +615,9 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @param hi the highest key
      * @return all keys in the symbol table between `lo` (inclusive)
      * and `hi` (exclusive)
-     * @throws IllegalArgumentException if either `lo` or `hi`
-     * is `null`
      */
-    fun keys(lo: Key?, hi: Key?): Iterable<Key> {
-        if (lo == null) throw IllegalArgumentException("first argument to keys() is null")
-        if (hi == null) throw IllegalArgumentException("second argument to keys() is null")
-        val queue = PriorityQueue<Key>()
+    fun keys(lo: Key, hi: Key): Iterable<Key> {
+        val queue = mutableListOf<Key>()
         keys(root, queue, lo, hi)
         return queue
     }
@@ -665,7 +631,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @param lo the lowest key
      * @param hi the highest key
      */
-    private fun keys(x: Node?, queue: Queue<Key>, lo: Key, hi: Key) {
+    private fun keys(x: Node?, queue: MutableList<Key>, lo: Key, hi: Key) {
         if (x == null) return
         val cmplo = lo.compareTo(x.key)
         val cmphi = hi.compareTo(x.key)
@@ -681,13 +647,9 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @param hi maximum endpoint
      * @return the number of keys in the symbol table between `lo`
      * (inclusive) and `hi` (exclusive)
-     * @throws IllegalArgumentException if either `lo` or `hi`
-     * is `null`
      */
-    fun size(lo: Key?, hi: Key?): Int {
-        if (lo == null) throw IllegalArgumentException("first argument to size() is null")
-        if (hi == null) throw IllegalArgumentException("second argument to size() is null")
-        if (lo.compareTo(hi) > 0) return 0
+    fun size(lo: Key, hi: Key): Int {
+        if (lo > hi) return 0
         return if (contains(hi))
             rank(hi) - rank(lo) + 1
         else
@@ -721,8 +683,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
 
     /**
      * Checks if the tree rooted at x is a BST with all keys strictly between
-     * min and max (if min or max is null, treat as empty constraint) Credit:
-     * Bob Dondero's elegant solution
+     * min and max (if min or max is null, treat as empty constraint)
      *
      * @param x the subtree
      * @param min the minimum key in subtree
@@ -731,8 +692,8 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      */
     private fun isBST(x: Node?, min: Key?, max: Key?): Boolean {
         if (x == null) return true
-        if (min != null && x.key.compareTo(min) <= 0) return false
-        return if (max != null && x.key.compareTo(max) >= 0) false else isBST(x.left, min, x.key) && isBST(x.right, x.key, max)
+        if (min != null && x.key <= min) return false
+        return if (max != null && x.key >= max) false else isBST(x.left, min, x.key) && isBST(x.right, x.key, max)
     }
 
     /**
@@ -743,5 +704,17 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
     private fun isSizeConsistent(x: Node?): Boolean {
         if (x == null) return true
         return if (x.size != size(x.left) + size(x.right) + 1) false else isSizeConsistent(x.left) && isSizeConsistent(x.right)
+    }
+
+    /**
+     * This class represents an inner node of the AVL tree.
+     */
+    private inner class Node(var key: Key   // the key
+                             , var value: Value       // the associated value
+                             , var height: Int      // height of the subtree
+                             , var size: Int        // number of nodes in subtree
+    ) {
+        var left: Node? = null       // left subtree
+        var right: Node? = null      // right subtree
     }
 }
