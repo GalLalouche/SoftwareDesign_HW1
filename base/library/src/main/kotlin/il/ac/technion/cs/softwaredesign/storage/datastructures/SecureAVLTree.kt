@@ -1,6 +1,8 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
+import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import java.util.*
+import javax.inject.Inject
 
 /**
  * The `SecureAVLTree` class represents an ordered symbol table of
@@ -44,7 +46,7 @@ import java.util.*
 /**
  * Initializes an empty symbol table.
  */
-class SecureAVLTree<Key : Comparable<Key>, Value> {
+class SecureAVLTree<Key : Comparable<Key>, Value> @Inject constructor(secureStorage : SecureStorage) {
 
     /**
      * The root node.
