@@ -54,32 +54,28 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      *
      * @return `true` if the symbol table is empty.
      */
-    val isEmpty: Boolean
-        get() = root == null
+    fun isEmpty() : Boolean = root == null
 
     /**
-     * Checks if AVL property is consistent.
+         * Checks if AVL property is consistent.
      *
      * @return `true` if AVL property is consistent.
      */
-    private val isAVL: Boolean
-        get() = isAVL(root)
+    fun isAVL(): Boolean = isAVL(root)
 
     /**
      * Checks if the symmetric order is consistent.
      *
      * @return `true` if the symmetric order is consistent
      */
-    private val isBST: Boolean
-        get() = isBST(root, null, null)
+    fun isBST(): Boolean = isBST(root, null, null)
 
     /**
      * Checks if size is consistent.
      *
      * @return `true` if size is consistent
      */
-    private val isSizeConsistent: Boolean
-        get() = isSizeConsistent(root)
+    fun isSizeConsistent(): Boolean = isSizeConsistent(root)
 
     /**
      * Checks if rank is consistent.
@@ -365,7 +361,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @throws NoSuchElementException if the symbol table is empty
      */
     fun deleteMin() {
-        if (isEmpty) throw NoSuchElementException("called deleteMin() with empty symbol table")
+        if (isEmpty()) throw NoSuchElementException("called deleteMin() with empty symbol table")
         root = deleteMin(root!!)
         assert(check())
     }
@@ -390,7 +386,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @throws NoSuchElementException if the symbol table is empty
      */
     fun deleteMax() {
-        if (isEmpty) throw NoSuchElementException("called deleteMax() with empty symbol table")
+        if (isEmpty()) throw NoSuchElementException("called deleteMax() with empty symbol table")
         root = deleteMax(root!!)
         assert(check())
     }
@@ -416,7 +412,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @throws NoSuchElementException if the symbol table is empty
      */
     fun min(): Key {
-        if (isEmpty) throw NoSuchElementException("called min() with empty symbol table")
+        if (isEmpty()) throw NoSuchElementException("called min() with empty symbol table")
         return min(root!!).key
     }
 
@@ -437,7 +433,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @throws NoSuchElementException if the symbol table is empty
      */
     fun max(): Key {
-        if (isEmpty) throw NoSuchElementException("called max() with empty symbol table")
+        if (isEmpty()) throw NoSuchElementException("called max() with empty symbol table")
         return max(root!!).key
     }
 
@@ -463,7 +459,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      */
     fun floor(key: Key?): Key? {
         if (key == null) throw IllegalArgumentException("argument to floor() is null")
-        if (isEmpty) throw NoSuchElementException("called floor() with empty symbol table")
+        if (isEmpty()) throw NoSuchElementException("called floor() with empty symbol table")
         val x = floor(root, key)
         return x?.key
     }
@@ -498,7 +494,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      */
     fun ceiling(key: Key?): Key? {
         if (key == null) throw IllegalArgumentException("argument to ceiling() is null")
-        if (isEmpty) throw NoSuchElementException("called ceiling() with empty symbol table")
+        if (isEmpty()) throw NoSuchElementException("called ceiling() with empty symbol table")
         val x = ceiling(root, key)
         return x?.key
     }
@@ -625,7 +621,7 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      */
     fun keysLevelOrder(): Iterable<Key> {
         val queue = PriorityQueue<Key>()
-        if (!isEmpty) {
+        if (!isEmpty()) {
             val queue2 = PriorityQueue<Node>()
             queue2.add(root)
             while (!queue2.isEmpty()) {
@@ -704,11 +700,11 @@ class AVLTreeST<Key : Comparable<Key>, Value> {
      * @return `true` if the AVL tree invariants are fine
      */
     private fun check(): Boolean {
-        if (!isBST) println("Symmetric order not consistent")
-        if (!isAVL) println("AVL property not consistent")
-        if (!isSizeConsistent) println("Subtree counts not consistent")
+        if (!isBST()) println("Symmetric order not consistent")
+        if (!isAVL()) println("AVL property not consistent")
+        if (!isSizeConsistent()) println("Subtree counts not consistent")
         if (!isRankConsistent) println("Ranks not consistent")
-        return isBST && isAVL && isSizeConsistent && isRankConsistent
+        return isBST() && isAVL() && isSizeConsistent() && isRankConsistent
     }
 
     /**
