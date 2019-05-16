@@ -1,8 +1,13 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
+import com.google.inject.Guice
+import il.ac.technion.cs.softwaredesign.LibraryMoudle
 import il.ac.technion.cs.softwaredesign.storage.*
-import il.ac.technion.cs.softwaredesign.storage.utils.DELIMITER
-import il.ac.technion.cs.softwaredesign.storage.utils.SECURE_AVL_STORAGE_NUM_PROPERTIES
+import il.ac.technion.cs.softwaredesign.storage.utils.ByteUtils
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.DELIMITER
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_INIT_INDEX
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_KEY
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.SECURE_AVL_STORAGE_NUM_PROPERTIES
 import java.lang.NullPointerException
 import java.util.*
 import javax.inject.Inject
@@ -53,7 +58,28 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
      * The root node.
      */
     private var root: Node? = null
-
+        get() {
+            val rootIndexByteArray = secureStorage.read(ROOT_KEY.toByteArray())
+                    ?: throw NullPointerException("root Index cannot be null")
+            val rootIndex = ByteUtils.bytesToLong(rootIndexByteArray)
+            if (rootIndex <= ROOT_INIT_INDEX)
+                return null
+            else {
+                val rootByteArray = secureStorage.read(rootIndexByteArray)
+                        ?: throw NullPointerException("root cannot be null")
+                return Node(rootByteArray)
+            }
+        }
+        set(value) {
+            if (value == null) {
+                secureStorage.write(ROOT_KEY.toByteArray(),
+                        ByteUtils.longToBytes(ROOT_INIT_INDEX))
+                field=null
+            } else {
+                secureStorage.write(ROOT_KEY.toByteArray(), value.pointer.toByteArray())
+                field = value
+            }
+        }
 
 
     /**
@@ -62,7 +88,6 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
      * @return `true` if the symbol table is empty.
      */
     fun isEmpty(): Boolean = root == null
-
 
 
     /**
@@ -198,7 +223,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
      * @return the subtree with restored AVL property
      */
     private fun balance(x: Node): Node {
-        var traversalX = x
+        var traversalX = x // x is immutable so we put it in a var :)
         if (balanceFactor(traversalX) < -1) {
             if (balanceFactor(traversalX.right!!) > 0) {
                 traversalX.right = rotateRight(traversalX.right!!)
@@ -606,6 +631,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
         else
             rank(hi) - rank(lo)
     }
+
     /**
      * Adds the keys between `lo` and `hi` in the subtree
      * to the `queue`.
@@ -636,6 +662,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
         private var leftPointer: IPointer? = null
         private var rightPointer: IPointer? = null
         private lateinit var nodeKey: Key
+        //private val injector = Guice.createInjector(LibraryMoudle)
 
         constructor(key: Key, height: Int, size: Int) {
             this.nodeKey = key
@@ -657,7 +684,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             this.nodeKey = value.nodeKey
         }
 
-        private constructor(nodeByteArray: ByteArray) {
+        constructor(nodeByteArray: ByteArray) {
             this.fromByteArray(nodeByteArray)
         }
 

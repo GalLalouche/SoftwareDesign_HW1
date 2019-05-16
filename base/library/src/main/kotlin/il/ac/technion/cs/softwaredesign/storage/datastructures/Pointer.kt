@@ -22,8 +22,4 @@ class Pointer() : IPointer {
         if (value == null) throw IllegalArgumentException("Pointer can not be null")
         pointer = ByteUtils.bytesToLong(value)
     }
-
-//    fun getValue() : String? {
-//        secureStorage.read(pointer.toByteArray())
-//    }
 }
