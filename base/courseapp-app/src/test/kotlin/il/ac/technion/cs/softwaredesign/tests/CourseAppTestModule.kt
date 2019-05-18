@@ -9,8 +9,6 @@ class CourseAppTestModule : KotlinModule() {
         bind<SecureStorageFactory>().toInstance(SecureHashMapStorageFactoryImpl())
         install(LibraryModule())
         bind<CourseAppInitializer>().to<CourseAppInitializerImpl>()
-//        bind<ITokenManager>().to<TokenManager>()
-//        bind<IUserManager>().to<UserManager>()
         bind<CourseApp>().to<CourseAppImpl>()
     }
 
