@@ -6,6 +6,7 @@ import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_INIT_INDEX
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_KEY
 import il.ac.technion.cs.softwaredesign.tests.assertWithTimeout
+import il.ac.technion.cs.softwaredesign.tests.isFalse
 import il.ac.technion.cs.softwaredesign.tests.isTrue
 import io.mockk.every
 import io.mockk.mockk
@@ -89,10 +90,18 @@ class SecureAVLTreeTest {
 
     @Test
     fun get() {
+        val values = (1..20).map { SimpleKey(it.toLong()) }
+        values.forEach({tree.put(it); blackRedTree[it]=it})
+        values.forEach({assertWithTimeout({tree[it] == blackRedTree[it]}, isTrue)})
     }
 
     @Test
     fun contains() {
+        val values = (1..20).map { SimpleKey(it.toLong()) }
+        values.forEach({tree.put(it); blackRedTree[it]=it})
+        values.forEach({assertWithTimeout({tree.contains(it)}, isTrue)})
+        val notInsertedValues = (25..40).map { SimpleKey(it.toLong()) }
+        notInsertedValues.forEach({assertWithTimeout({tree.contains(it)}, isFalse)})
     }
 
     @Test
@@ -120,10 +129,40 @@ class SecureAVLTreeTest {
 
     @Test
     fun delete() {
+        tree.delete(SimpleKey(50))
+
+        val values = (1..3).map { SimpleKey(it.toLong()) }
+        values.forEach({tree.put(it)})
+        assertWithTimeout({ tree.contains(values[1]) }, isTrue)
+        tree.delete(values[1])
+        assertWithTimeout({ tree.contains(values[1]) }, isFalse)
+        val moreValues = (1..20).map { SimpleKey(it.toLong()) }
+        moreValues.forEach({tree.put(it)})
+
+        assertWithTimeout({ tree.contains(moreValues[8]) }, isTrue)
+        tree.delete(moreValues[8])
+        assertWithTimeout({ tree.contains(moreValues[8]) }, isFalse)
+
+        assertWithTimeout({ tree.contains(moreValues[11]) }, isTrue)
+        tree.delete(moreValues[11])
+        assertWithTimeout({ tree.contains(moreValues[11]) }, isFalse)
+
+        assertWithTimeout({ tree.contains(moreValues[1]) }, isTrue)
+        tree.delete(moreValues[1])
+        assertWithTimeout({ tree.contains(moreValues[1]) }, isFalse)
+
+        assertWithTimeout({ tree.contains(SimpleKey(50)) }, isFalse)
+        tree.delete(SimpleKey(50))
+        assertWithTimeout({ tree.contains(SimpleKey(50)) }, isFalse)
     }
 
     @Test
     fun deleteMin() {
+//        val random : Random = Random()
+//        (1..20).forEach({val v = SimpleKey(random.nextLong()); tree.put(v); blackRedTree[v]=v})
+//        val min = blackRedTree.entries.first()
+//        tree.deleteMin()
+
     }
 
     @Test
@@ -132,6 +171,15 @@ class SecureAVLTreeTest {
 
     @Test
     fun min() {
+        val values = (1..20).map { SimpleKey(it.toLong()) }
+        values.forEach({tree.put(it); blackRedTree[it]=it})
+        assertWithTimeout({tree.min() == values[0]}, isTrue)
+
+        val random : Random = Random()
+        (1..3).forEach({val v = SimpleKey(random.nextLong()); tree.put(v); blackRedTree[v]=v})
+//        val min = blackRedTree.entries.first().key
+//        val treeMin = tree.min()
+//        assertWithTimeout({treeMin == min}, isTrue)
     }
 
     @Test
