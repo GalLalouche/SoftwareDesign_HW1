@@ -20,7 +20,7 @@ import javax.inject.Provider
  * *keys* method for iterating over all of the keys. A symbol table
  * implements the *associative array* abstraction: when associating a
  * value with a key that is already in the symbol table, the convention is to
- * replace the old value with the new value. Unlike [java.util.Map], this
+ * replace the old value with the new value. Unlike, this
  * class uses the convention that values cannot be `null`
  * —setting the value associated with a key to `null` is
  * equivalent to deleting the key from the symbol table.
@@ -60,11 +60,11 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
             val rootIndexByteArray = secureStorage.read(ROOT_KEY.toByteArray())
                     ?: throw NullPointerException("root Index cannot be null")
             val rootIndex = ConversionUtils.bytesToLong(rootIndexByteArray)
-            return if (rootIndex <= ROOT_INIT_INDEX) null
+            if (rootIndex <= ROOT_INIT_INDEX) return null
             else {
                 val rootByteArray = secureStorage.read(rootIndexByteArray)
                         ?: throw NullPointerException("root cannot be null")
-                Node(rootByteArray)
+                return Node(rootByteArray, Pointer(rootIndex))
             }
         }
         set(value) {
@@ -654,7 +654,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
     private inner class Node : IStorageConvertable<Node> {
         val addressGenerator : ISequenceGenerator = SecureSequenceGenerator(secureStorage)
 
-        var pointer: IPointer = Pointer(addressGenerator.next())//TODO REPLACE WITH injection, but how? do we even need to?
+        var pointer: IPointer//TODO REPLACE WITH injection, but how? do we even need to?
 
         private var nodeHeight: Int = 0
         private var nodeSize: Int = 0
@@ -666,7 +666,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
             this.nodeKey = key
             this.nodeHeight = height
             this.nodeSize = size
-            //this.pointer = Pointer(addressGenerator.next())
+            this.pointer = Pointer(addressGenerator.next())
             val pointerByteArray = pointer.toByteArray()
             val nodeByteArray = this.toByteArray()
             secureStorage.write(pointerByteArray, nodeByteArray)
@@ -682,8 +682,9 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
             this.nodeKey = value.nodeKey
         }
 
-        constructor(nodeByteArray: ByteArray) {
+        constructor(nodeByteArray: ByteArray, pointer: IPointer) {
             this.fromByteArray(nodeByteArray)
+            this.pointer=pointer
         }
 
 
@@ -713,7 +714,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
                 if (leftPointer == null) return null
                 val leftNodeByteArray = secureStorage.read(leftPointer!!.toByteArray())
                         ?: throw NullPointerException("left pointer does not exist in the storage")
-                return Node(leftNodeByteArray)
+                return Node(leftNodeByteArray, leftPointer!!)
             }
             set(value) {
                 this.leftPointer = value?.pointer
@@ -726,10 +727,10 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
                 if (rightPointer == null) return null
                 val rightNodeByteArray = secureStorage.read(rightPointer!!.toByteArray())
                         ?: throw NullPointerException("right pointer does not exist in the storage")
-                return Node(rightNodeByteArray)
+                return Node(rightNodeByteArray, rightPointer!!)
             }
             set(value) {
-                this.rightPointer = value?.rightPointer
+                this.rightPointer = value?.pointer
                 storeNodeInStorage()
             }
 
@@ -762,7 +763,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
         override fun toByteArray(): ByteArray {
             // <height>_<size>_<left>_<right>_<key> , key is last because it can contains delimiters
             // if number of properties is changed dont forget to update SECURE_AVL_STORAGE_NUM_PROPERTIES
-            val nodeDetails = "$nodeHeight$DELIMITER$nodeSize$DELIMITER$leftPointer$DELIMITER$rightPointer$DELIMITER"
+            val nodeDetails = "$nodeHeight$DELIMITER$nodeSize$DELIMITER${leftPointer?.getValue()}$DELIMITER${rightPointer?.getValue()}$DELIMITER"
             val byteArrayStr = nodeDetails.toByteArray()
             return byteArrayStr + nodeKey.toByteArray()
         }
@@ -790,8 +791,6 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
             }
             nodeKey.fromByteArray(values[4].toByteArray())
         }
-
-
     }
 
     /**

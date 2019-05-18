@@ -5,6 +5,9 @@ import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import javax.inject.Inject
 
 class Pointer : IPointer {
+    override fun getValue(): Long {
+        return pointer
+    }
 //    @Inject
 //    private lateinit var generator: ISequenceGenerator
 //    init {

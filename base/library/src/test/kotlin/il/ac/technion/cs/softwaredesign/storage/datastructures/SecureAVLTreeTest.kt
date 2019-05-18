@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class SecureAVLTreeTest {
@@ -26,7 +27,8 @@ class SecureAVLTreeTest {
         }
 
         override fun fromByteArray(value: ByteArray?) {
-           this.i=Longs.fromByteArray(value)
+            if (value==null) throw IllegalArgumentException("byte array value cannot be null")
+            this.i=Longs.fromByteArray(value)
         }
 
     }
@@ -101,6 +103,11 @@ class SecureAVLTreeTest {
         tree.put(value)
         blackRedTree[value] = value
         assertWithTimeout({ tree[value] == blackRedTree[value] }, isTrue)
+
+        val value2=SimpleKey(8)
+        tree.put(value2)
+        blackRedTree[value2] = value2
+        assertWithTimeout({ tree[value2] == blackRedTree[value2] }, isTrue)
     }
 
     @Test

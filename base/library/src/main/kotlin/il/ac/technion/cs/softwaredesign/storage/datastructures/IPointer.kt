@@ -2,4 +2,6 @@ package il.ac.technion.cs.softwaredesign.storage.datastructures
 
 import il.ac.technion.cs.softwaredesign.storage.IStorageConvertable
 
-interface IPointer : IStorageConvertable<IPointer>
+interface IPointer : IStorageConvertable<IPointer> {
+    fun getValue() : Long
+}
