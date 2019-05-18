@@ -52,8 +52,6 @@ import javax.inject.Provider
  */
 class SecureAVLTree<Key : ISecureStorageKey<Key>>
 constructor(private val secureStorage: SecureStorage) {
-
-
     /**
      * The root node.
      */
@@ -654,6 +652,8 @@ constructor(private val secureStorage: SecureStorage) {
      * This class represents an inner node of the AVL tree.
      */
     private inner class Node : IStorageConvertable<Node> {
+        val addressGenerator : ISequenceGenerator = SecureSequenceGenerator(secureStorage)
+
         lateinit var pointer: IPointer
 
         private var nodeHeight: Int = 0
@@ -666,7 +666,7 @@ constructor(private val secureStorage: SecureStorage) {
             this.nodeKey = key
             this.nodeHeight = height
             this.nodeSize = size
-            this.pointer = Pointer() //TODO REPLACE WITH injection, but how? do we even need to?
+            this.pointer = Pointer(addressGenerator.next()) //TODO REPLACE WITH injection, but how? do we even need to?
             val pointerByteArray = pointer.toByteArray()
             val nodeByteArray = this.toByteArray()
             secureStorage.write(pointerByteArray, nodeByteArray)

@@ -5,10 +5,7 @@ import com.google.inject.Guice
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
-import il.ac.technion.cs.softwaredesign.CourseApp
-import il.ac.technion.cs.softwaredesign.CourseAppInitializer
-import il.ac.technion.cs.softwaredesign.CourseAppModule
-import il.ac.technion.cs.softwaredesign.CourseAppStatistics
+import il.ac.technion.cs.softwaredesign.*
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageModule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -20,7 +17,7 @@ import javax.inject.Inject
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class CourseAppTest{
-    private val injector = Guice.createInjector(CourseAppModule(), SecureStorageModule())
+    private val injector = Guice.createInjector(CourseAppTestModule())
     private val courseApp = injector.getInstance<CourseApp>()
 
    // private val courseAppStatistics = injector.getInstance<CourseAppStatistics>()
@@ -96,7 +93,6 @@ class CourseAppTest{
         }
     }
 
-
     @Test
     fun `throws IllegalArgumentException after checking user login status with invalid token`(){
         assertThrows<IllegalArgumentException> {
@@ -114,8 +110,6 @@ class CourseAppTest{
         assertThrows<IllegalArgumentException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.isUserLoggedIn(ronToken,username)}
         }
-
-
     }
 
     @Test
@@ -140,5 +134,4 @@ class CourseAppTest{
         val actual =courseApp.isUserLoggedIn(token,"notExsitingUser")
         assertEquals(null, actual,"when user does not exist null expected to be returned")
     }
-
 }

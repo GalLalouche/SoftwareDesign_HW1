@@ -9,11 +9,13 @@ import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.impl.SecureStorageFactoryImpl
 import il.ac.technion.cs.softwaredesign.storage.impl.SecureStorageImpl
+import il.ac.technion.cs.softwaredesign.tests.SecureHashMapStorageFactoryImpl
 
-class CourseAppModule : KotlinModule() {
+class CourseAppTestModule : KotlinModule() {
     override fun configure() {
-        bind<CourseAppInitializer>().to<CourseAppInitializerImpl>()
+        bind<SecureStorageFactory>().to<SecureHashMapStorageFactoryImpl>()
         install(LibraryModule())
+        bind<CourseAppInitializer>().to<CourseAppInitializerImpl>()
         bind<ITokenManager>().to<TokenManager>()
         bind<IUserManager>().to<UserManager>()
         bind<CourseApp>().to<CourseAppImpl>()

@@ -4,16 +4,17 @@ import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import javax.inject.Inject
 
+class Pointer : IPointer {
+//    @Inject
+//    private lateinit var generator: ISequenceGenerator
+//    init {
+//        pointer=generator.next()
+//    }
 
-class Pointer() : IPointer {
-    @Inject
-    private lateinit var generator: ISequenceGenerator
-    private var pointer : Long
-    init {
-        pointer=generator.next()
-    }
+    private var pointer : Long = 0
+
     //copy ctor
-    constructor(p : Long) : this() {
+    constructor(p : Long) {
         this.pointer=p
     }
 

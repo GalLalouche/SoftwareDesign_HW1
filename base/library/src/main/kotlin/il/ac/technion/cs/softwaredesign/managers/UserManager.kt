@@ -1,5 +1,6 @@
 package il.ac.technion.cs.softwaredesign.managers
 
+import com.google.inject.BindingAnnotation
 import il.ac.technion.cs.softwaredesign.managers.IUserManager.*
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
@@ -10,8 +11,13 @@ import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.PASSWORD_P
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class UserIdSeqGenerator
 
-class UserManager @Inject constructor(private val userStorage: IUserStorage, private val userIdGenerator: ISequenceGenerator) : IUserManager {
+class UserManager @Inject constructor(private val userStorage: IUserStorage,
+                                      @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator) : IUserManager {
 
     override fun getUserId(username: String): Long? {
         return userStorage.getUserIdByUsername(username)
