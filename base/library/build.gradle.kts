@@ -6,7 +6,11 @@ dependencies {
     compile("il.ac.technion.cs.softwaredesign", "primitive-storage-layer", "1.1")
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    // include JUnit 5 assertions
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testCompile("com.natpryce:hamkrest:$hamkrestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     compile( "com.google.guava:guava: version=$guavaVersion")
+
+
 }

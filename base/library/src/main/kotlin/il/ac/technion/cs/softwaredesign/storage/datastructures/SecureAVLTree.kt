@@ -51,7 +51,7 @@ import javax.inject.Provider
  * Initializes an empty symbol table.
  */
 class SecureAVLTree<Key : ISecureStorageKey<Key>>
-constructor(private val secureStorage: SecureStorage) {
+constructor(private val secureStorage: SecureStorage,private val keyDefault:()->Key) {
     /**
      * The root node.
      */
@@ -654,19 +654,19 @@ constructor(private val secureStorage: SecureStorage) {
     private inner class Node : IStorageConvertable<Node> {
         val addressGenerator : ISequenceGenerator = SecureSequenceGenerator(secureStorage)
 
-        lateinit var pointer: IPointer
+        var pointer: IPointer = Pointer(addressGenerator.next())//TODO REPLACE WITH injection, but how? do we even need to?
 
         private var nodeHeight: Int = 0
         private var nodeSize: Int = 0
         private var leftPointer: IPointer? = null
         private var rightPointer: IPointer? = null
-        private lateinit var nodeKey: Key
+        private var nodeKey: Key = keyDefault()
 
         constructor(key: Key, height: Int, size: Int) {
             this.nodeKey = key
             this.nodeHeight = height
             this.nodeSize = size
-            this.pointer = Pointer(addressGenerator.next()) //TODO REPLACE WITH injection, but how? do we even need to?
+            //this.pointer = Pointer(addressGenerator.next())
             val pointerByteArray = pointer.toByteArray()
             val nodeByteArray = this.toByteArray()
             secureStorage.write(pointerByteArray, nodeByteArray)
