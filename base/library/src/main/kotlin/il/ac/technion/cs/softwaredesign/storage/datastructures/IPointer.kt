@@ -1,5 +1,5 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
-import il.ac.technion.cs.softwaredesign.storage.IStorageConverter
+import il.ac.technion.cs.softwaredesign.storage.IStorageConvertable
 
-interface IPointer : IStorageConverter<IPointer>
+interface IPointer : IStorageConvertable<IPointer>

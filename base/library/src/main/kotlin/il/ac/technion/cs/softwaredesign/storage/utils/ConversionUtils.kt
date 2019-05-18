@@ -2,7 +2,7 @@ package il.ac.technion.cs.softwaredesign.storage.utils
 
 import java.nio.ByteBuffer
 
-object ByteUtils {
+object ConversionUtils {
     private val buffer = ByteBuffer.allocate(java.lang.Long.BYTES)
 
     fun longToBytes(x: Long): ByteArray {

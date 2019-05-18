@@ -16,22 +16,8 @@ import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import java.nio.ByteBuffer
 import javax.inject.Inject
 
-class CourseAppInitializerImpl @Inject constructor(private val storageFactory: SecureStorageFactory) : CourseAppInitializer {
-
-    companion object ByteUtils { //DONT FORGET TO UPDATE IN il.ac.technion.cs.softwaredesign.storage.utils TOO
-        private val buffer = ByteBuffer.allocate(java.lang.Long.BYTES)
-
-        fun longToBytes(x: Long): ByteArray {
-            buffer.putLong(0, x)
-            return buffer.array()
-        }
-
-        fun bytesToLong(bytes: ByteArray): Long {
-            buffer.put(bytes, 0, bytes.size)
-            buffer.flip()//need flip
-            return buffer.long
-        }
-    }
+class CourseAppInitializerImpl
+@Inject constructor(private val storageFactory: SecureStorageFactory) : CourseAppInitializer {
 
     override fun setup() {
         storageFactory.open(USER_ID.toByteArray())
@@ -45,21 +31,27 @@ class CourseAppInitializerImpl @Inject constructor(private val storageFactory: S
         initTree(TREE_CHANNEL)
         initTree(TREE_ACTIVE_CHANNEL)
         initStatistics()
-
-
     }
 
     private fun initStatistics() {
-        val db= storageFactory.open(STATISTICS.toByteArray())
+        val db = storageFactory.open(STATISTICS.toByteArray())
         db.write(STATISTICS_KEYS.NUMBER_OF_USERS.toByteArray(), longToBytes(0L))
         db.write(STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS.toByteArray(), longToBytes(0L))
         db.write(STATISTICS_KEYS.NUMBER_OF_CHANNELS.toByteArray(), longToBytes(0L))
         db.write(STATISTICS_KEYS.MAX_CHANNEL_INDEX.toByteArray(), longToBytes(0L))
-
     }
 
-    private fun initTree(dbName:String) {
-        val db= storageFactory.open(dbName.toByteArray())
+    private fun initTree(dbName: String) {
+        val db = storageFactory.open(dbName.toByteArray())
         db.write(ROOT_KEY.toByteArray(), longToBytes(ROOT_INIT_INDEX))
+    }
+
+    companion object ByteUtils { //DONT FORGET TO UPDATE IN il.ac.technion.cs.softwaredesign.storage.utils TOO
+        private val buffer = ByteBuffer.allocate(java.lang.Long.BYTES)
+
+        fun longToBytes(x: Long): ByteArray {
+            buffer.putLong(0, x)
+            return buffer.array()
+        }
     }
 }

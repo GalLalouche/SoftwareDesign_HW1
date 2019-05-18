@@ -1,7 +1,7 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
 import il.ac.technion.cs.softwaredesign.storage.*
-import il.ac.technion.cs.softwaredesign.storage.utils.ByteUtils
+import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.DELIMITER
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_INIT_INDEX
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_KEY
@@ -59,7 +59,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
         get() {
             val rootIndexByteArray = secureStorage.read(ROOT_KEY.toByteArray())
                     ?: throw NullPointerException("root Index cannot be null")
-            val rootIndex = ByteUtils.bytesToLong(rootIndexByteArray)
+            val rootIndex = ConversionUtils.bytesToLong(rootIndexByteArray)
             return if (rootIndex <= ROOT_INIT_INDEX) null
             else {
                 val rootByteArray = secureStorage.read(rootIndexByteArray)
@@ -70,7 +70,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
         set(value) {
             if (value == null) {
                 secureStorage.write(ROOT_KEY.toByteArray(),
-                        ByteUtils.longToBytes(ROOT_INIT_INDEX))
+                        ConversionUtils.longToBytes(ROOT_INIT_INDEX))
                 field=null
             } else {
                 secureStorage.write(ROOT_KEY.toByteArray(), value.pointer.toByteArray())
@@ -651,7 +651,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
     /**
      * This class represents an inner node of the AVL tree.
      */
-    private inner class Node : IStorageConverter<Node> {
+    private inner class Node : IStorageConvertable<Node> {
         lateinit var pointer: IPointer
 
         private var nodeHeight: Int = 0
@@ -659,7 +659,6 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
         private var leftPointer: IPointer? = null
         private var rightPointer: IPointer? = null
         private lateinit var nodeKey: Key
-        //private val injector = Guice.createInjector(LibraryModule())
 
         constructor(key: Key, height: Int, size: Int) {
             this.nodeKey = key

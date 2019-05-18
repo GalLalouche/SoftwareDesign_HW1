@@ -1,6 +1,6 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
-import il.ac.technion.cs.softwaredesign.storage.utils.ByteUtils
+import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import javax.inject.Inject
 
 
@@ -16,10 +16,10 @@ class Pointer() : IPointer {
         this.pointer=p
     }
 
-    override fun toByteArray():ByteArray = ByteUtils.longToBytes(pointer)
+    override fun toByteArray():ByteArray = ConversionUtils.longToBytes(pointer)
 
     override fun fromByteArray(value:ByteArray?) {
         if (value == null) throw IllegalArgumentException("Pointer can not be null")
-        pointer = ByteUtils.bytesToLong(value)
+        pointer = ConversionUtils.bytesToLong(value)
     }
 }
