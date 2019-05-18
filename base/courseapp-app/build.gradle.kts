@@ -6,6 +6,7 @@ application {
     mainClassName = "il.ac.technion.cs.softwaredesign.MainKt"
 }
 
+val guavaVersion="11.0.2"
 val junitVersion: String? by extra
 val hamkrestVersion: String? by extra
 val guiceVersion: String? by extra
@@ -21,4 +22,5 @@ dependencies {
     testCompile("com.natpryce", "hamkrest", hamkrestVersion)
 
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
+    compile( "com.google.guava:guava: version=$guavaVersion")
 }

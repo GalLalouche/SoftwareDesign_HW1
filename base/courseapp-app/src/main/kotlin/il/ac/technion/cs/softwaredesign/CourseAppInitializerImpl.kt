@@ -1,5 +1,6 @@
 package il.ac.technion.cs.softwaredesign
 
+import com.google.common.primitives.Longs
 import il.ac.technion.cs.softwaredesign.DB_NAMES.CHANNEL_DETAILS
 import il.ac.technion.cs.softwaredesign.DB_NAMES.CHANNEL_ID
 import il.ac.technion.cs.softwaredesign.DB_NAMES.STATISTICS
@@ -12,7 +13,6 @@ import il.ac.technion.cs.softwaredesign.DB_NAMES.USER_ID
 import il.ac.technion.cs.softwaredesign.TREE_KEYS.ROOT_INIT_INDEX
 import il.ac.technion.cs.softwaredesign.TREE_KEYS.ROOT_KEY
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
-import java.nio.ByteBuffer
 import javax.inject.Inject
 
 class CourseAppInitializerImpl
@@ -33,23 +33,14 @@ class CourseAppInitializerImpl
 
     private fun initStatistics() {
         val db = storageFactory.open(STATISTICS.toByteArray())
-        db.write(STATISTICS_KEYS.NUMBER_OF_USERS.toByteArray(), longToBytes(0L))
-        db.write(STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS.toByteArray(), longToBytes(0L))
-        db.write(STATISTICS_KEYS.NUMBER_OF_CHANNELS.toByteArray(), longToBytes(0L))
-        db.write(STATISTICS_KEYS.MAX_CHANNEL_INDEX.toByteArray(), longToBytes(0L))
+        db.write(STATISTICS_KEYS.NUMBER_OF_USERS.toByteArray(), Longs.toByteArray(0L))
+        db.write(STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS.toByteArray(), Longs.toByteArray(0L))
+        db.write(STATISTICS_KEYS.NUMBER_OF_CHANNELS.toByteArray(), Longs.toByteArray(0L))
+        db.write(STATISTICS_KEYS.MAX_CHANNEL_INDEX.toByteArray(), Longs.toByteArray(0L))
     }
 
     private fun initTree(dbName: String) {
         val db = storageFactory.open(dbName.toByteArray())
-        db.write(ROOT_KEY.toByteArray(), longToBytes(ROOT_INIT_INDEX))
-    }
-
-    companion object ByteUtils { //DONT FORGET TO UPDATE IN il.ac.technion.cs.softwaredesign.storage.utils TOO
-        private val buffer = ByteBuffer.allocate(java.lang.Long.BYTES)
-
-        fun longToBytes(x: Long): ByteArray {
-            buffer.putLong(0, x)
-            return buffer.array()
-        }
+        db.write(ROOT_KEY.toByteArray(), Longs.toByteArray(ROOT_INIT_INDEX))
     }
 }
