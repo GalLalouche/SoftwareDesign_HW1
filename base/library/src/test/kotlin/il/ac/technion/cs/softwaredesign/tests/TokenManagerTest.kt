@@ -2,7 +2,8 @@ package il.ac.technion.cs.softwaredesign.tests
 
 import com.natpryce.hamkrest.equalTo
 import il.ac.technion.cs.softwaredesign.*
-import il.ac.technion.cs.softwaredesign.TokenManager.Companion.INVALID_USERNAME
+import il.ac.technion.cs.softwaredesign.managers.TokenManager
+import il.ac.technion.cs.softwaredesign.managers.TokenManager.Companion.INVALID_USERNAME
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -57,14 +58,14 @@ class TokenManagerTest {
     }
 
     /**
-     * getUsernameByToken
+     * getUserIdByToken
      */
     @Test
     fun `returned user compatible to written token-user mapping`() {
         every { storageLayer.readUsernameOfToken(any()) } returns null
         every { storageLayer.readUsernameOfToken(users[0].token) } returns users[0].userName
         val tokenManager = TokenManager(storageLayer)
-        assertWithTimeout({ tokenManager.getUsernameByToken(users[0].token) }, equalTo(users[0].userName))
+        assertWithTimeout({ tokenManager.getUserIdByToken(users[0].token) }, equalTo(users[0].userName))
     }
 
     @Test
@@ -72,7 +73,7 @@ class TokenManagerTest {
         every { storageLayer.readUsernameOfToken(any()) } returns null
         every { storageLayer.readUsernameOfToken(users[1].token) } returns users[0].userName
         val tokenManager = TokenManager(storageLayer)
-        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.getUsernameByToken(users[0].userName) })
+        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.getUserIdByToken(users[0].userName) })
     }
 
     @Test
@@ -80,16 +81,16 @@ class TokenManagerTest {
         every { storageLayer.readUsernameOfToken(any()) } returns null
         every { storageLayer.readUsernameOfToken(users[0].token) } returns INVALID_USERNAME
         val tokenManager = TokenManager(storageLayer)
-        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.getUsernameByToken(users[0].userName) })
+        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.getUserIdByToken(users[0].userName) })
     }
 
     /**
-     * assignTokenToUsername
+     * assignTokenToUserId
      */
     @Test
     fun `invalid username throws`() {
         val tokenManager = TokenManager(storageLayer)
-        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.assignTokenToUsername(INVALID_USERNAME) })
+        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.assignTokenToUserId(INVALID_USERNAME) })
     }
 
     /**

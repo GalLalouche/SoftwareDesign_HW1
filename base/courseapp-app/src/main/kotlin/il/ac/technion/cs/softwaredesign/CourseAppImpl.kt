@@ -1,53 +1,50 @@
 package il.ac.technion.cs.softwaredesign
 
 import com.google.inject.Inject
+import il.ac.technion.cs.softwaredesign.ALGORITHEMS.HASH_ALGORITHM
+import il.ac.technion.cs.softwaredesign.exceptions.InvalidTokenException
+import il.ac.technion.cs.softwaredesign.exceptions.NoSuchEntityException
+import il.ac.technion.cs.softwaredesign.exceptions.UserAlreadyLoggedInException
+import il.ac.technion.cs.softwaredesign.managers.ITokenManager
+import il.ac.technion.cs.softwaredesign.managers.IUserManager
 import java.lang.IllegalArgumentException
 import java.math.BigInteger
 import java.security.MessageDigest
 
 
-/**
- * This is the class implementing CourseApp, a course discussion group system.
- *
- * You may assume that [CourseAppInitializer.setup] was called before this class was instantiated.
- *
- * Currently specified:
- * + User authentication.
- */
-class CourseAppImpl @Inject constructor(private val storage: IStorageLayer) : CourseApp {
-    companion object {
-        private const val HASH_ALGORITHM = "MD5"
-    }
-//    private val storage=StorageLayer()
-    private var tokenManager = TokenManager(storage)
-    private var userManager = UserManager(storage)
+class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager, private val userManager: IUserManager) : CourseApp {
 
     override fun login(username: String, password: String): String {
+        var userId = userManager.getUserId(username)
         val hashedPassword = password.hashString(HASH_ALGORITHM)
-        if(userManager.isUsernameExists(username)){
-            if (userManager.getUserStatus(username) == IStorageLayer.LoginStatus.IN)
-                throw IllegalArgumentException("User is already logged in")
-            else if (userManager.getUserPassword(username) != hashedPassword)
-                throw IllegalArgumentException("Wrong password")
-        }else{
-            userManager.saveUser(username, hashedPassword,IStorageLayer.LoginStatus.IN)
+        if (userId == null) {
+            userId = userManager.add(username, hashedPassword)
+            if (userId == 1L)
+                userManager.updatePrivilege(userId, IUserManager.PrivilegeLevel.ADMIN)
+        } else {
+            if (userManager.getUserPassword(userId) != hashedPassword)
+                throw NoSuchEntityException()
+            else if (userManager.getStatus(userId) == IUserManager.LoginStatus.IN)
+                throw UserAlreadyLoggedInException()
         }
         //At this point user is surly exist we just need to create a token
-        return tokenManager.assignTokenToUsername(username)
+        return tokenManager.assignTokenToUserId(userId)
     }
 
-    override fun logout(token: String): Unit {
-        val username = tokenManager.getUsernameByToken(token)
-        val password = userManager.getUserPassword(username)
-        tokenManager.invalidateKnownUserToken(token)
-        userManager.saveUser(username, password, IStorageLayer.LoginStatus.OUT)
+    override fun logout(token: String) {
+        val userId = tokenManager.getUserIdByToken(token)
+        try {
+            tokenManager.invalidateUserToken(token)
+        }catch(e:IllegalArgumentException){
+            throw InvalidTokenException()
+        }
+        userManager.updateStatus(userId!!, IUserManager.LoginStatus.OUT)
     }
 
     override fun isUserLoggedIn(token: String, username: String): Boolean? {
-        validateToken(token)
-        if(!userManager.isUsernameExists(username)) return null
-        return userManager.getUserStatus(username) == IStorageLayer.LoginStatus.IN
-
+        if(!tokenManager.isTokenValid(token)) throw InvalidTokenException()
+        val userId= userManager.getUserId(username) ?: return null
+        return userManager.getStatus(userId) == IUserManager.LoginStatus.IN
     }
 
     override fun makeAdministrator(token: String, username: String) {
@@ -89,6 +86,4 @@ class CourseAppImpl @Inject constructor(private val storage: IStorageLayer) : Co
         return BigInteger(positiveNumberSign, hashFunc.digest(this.toByteArray())).toString(numberBase).padStart(32, '0')
     }
 
-    //the validation of the token takes place in the getUsernameByToken method for 'free'
-    private fun validateToken(token: String) = tokenManager.getUsernameByToken(token)
 }

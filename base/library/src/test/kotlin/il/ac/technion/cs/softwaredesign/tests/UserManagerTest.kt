@@ -3,7 +3,7 @@ package il.ac.technion.cs.softwaredesign.tests
 import com.natpryce.hamkrest.equalTo
 import il.ac.technion.cs.softwaredesign.IStorageLayer
 import il.ac.technion.cs.softwaredesign.User
-import il.ac.technion.cs.softwaredesign.UserManager
+import il.ac.technion.cs.softwaredesign.managers.UserManager
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test

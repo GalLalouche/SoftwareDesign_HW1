@@ -9,6 +9,7 @@ import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.SECURE_AVL_STOR
 import java.lang.NullPointerException
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Provider
 
 /**
  * The `SecureAVLTree` class represents an ordered symbol table of
@@ -50,7 +51,8 @@ import javax.inject.Inject
  * Initializes an empty symbol table.
  */
 class SecureAVLTree<Key : ISecureStorageKey<Key>>
-@Inject constructor(private val secureStorage: SecureStorage) {
+constructor(private val secureStorage: SecureStorage) {
+
 
     /**
      * The root node.

@@ -29,6 +29,9 @@ object TREE_KEYS{
     internal const val ROOT_INIT_INDEX=0L //DONT FORGET TO UPDATE IN SecureStorageConstants too
 
 }
+object ALGORITHEMS{
+    internal const val HASH_ALGORITHM = "MD5"
+}
 
 
 

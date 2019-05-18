@@ -3,7 +3,9 @@ package il.ac.technion.cs.softwaredesign.storage.datastructures
 import com.google.inject.BindingAnnotation
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
+import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.LAST_GENERATED_ID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,8 +16,8 @@ annotation class GeneratorStorage
 
 @Singleton
 class SecureSequenceGenerator
-@Inject @GeneratorStorage constructor(private val secureStorage: SecureStorage) :ISequenceGenerator {
-    private val lastGeneratedKey="LAST_GENERATED_ID".toByteArray()
+ constructor(private val secureStorage: SecureStorage) : ISequenceGenerator {
+    private val lastGeneratedKey=LAST_GENERATED_ID.toByteArray()
     override fun next(): Long {
         val currentValueInByteArray :ByteArray= secureStorage.read(lastGeneratedKey) ?:  ConversionUtils.longToBytes(TREE_CONST.ROOT_INIT_INDEX)
         val nextValue:Long= ConversionUtils.bytesToLong(currentValueInByteArray)+1L

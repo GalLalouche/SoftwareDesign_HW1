@@ -1,9 +1,8 @@
 package il.ac.technion.cs.softwaredesign.storage.statistics
 
-interface IStatisticsStorage {
-    fun getPropertyLongValue(property : String) : Long
-    fun setPropertyLongValue(property : String, value : Long)
+import il.ac.technion.cs.softwaredesign.storage.IStorageConvertable
 
-    fun getPropertyIndexListValue(property : String, index : Long) : List<Long>
-    fun setPropertyIndexListValue(property : String, index : Long, listValue : List<Long>)
+interface IStatisticsStorage {
+    fun<T:IStorageConvertable<T>> getValue(key : String) : T?
+    fun<T:IStorageConvertable<T>> setValue(key : String, value : T)
 }
