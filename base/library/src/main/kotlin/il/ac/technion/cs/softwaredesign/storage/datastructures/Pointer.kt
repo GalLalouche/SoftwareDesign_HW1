@@ -23,8 +23,8 @@ class Pointer : IPointer {
 
     override fun toByteArray():ByteArray = ConversionUtils.longToBytes(pointer)
 
-    override fun fromByteArray(value:ByteArray?) {
-        if (value == null) throw IllegalArgumentException("Pointer can not be null")
+    override fun fromByteArray(value:ByteArray) {
+        //if (value == null) throw IllegalArgumentException("Pointer can not be null")
         pointer = ConversionUtils.bytesToLong(value)
     }
 }

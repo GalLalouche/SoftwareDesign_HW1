@@ -768,8 +768,8 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
             return byteArrayStr + nodeKey.toByteArray()
         }
 
-        override fun fromByteArray(value: ByteArray?) {
-            if (value == null) throw IllegalArgumentException("Node.fromByteArray got null")
+        override fun fromByteArray(value: ByteArray) {
+            //if (value == null) throw IllegalArgumentException("Node.fromByteArray got null")
             val nodeDetails = String(value)
             val values = nodeDetails.split(DELIMITER, limit = SECURE_AVL_STORAGE_NUM_PROPERTIES)
             if (values.size < SECURE_AVL_STORAGE_NUM_PROPERTIES) throw IllegalArgumentException("Node does not contains 5 values in the persistent storage")

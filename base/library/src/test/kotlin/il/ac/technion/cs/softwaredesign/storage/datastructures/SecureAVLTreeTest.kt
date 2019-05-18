@@ -26,11 +26,9 @@ class SecureAVLTreeTest {
             return Longs.toByteArray(this.i)
         }
 
-        override fun fromByteArray(value: ByteArray?) {
-            if (value==null) throw IllegalArgumentException("byte array value cannot be null")
+        override fun fromByteArray(value: ByteArray) {
             this.i=Longs.fromByteArray(value)
         }
-
     }
 
     class ByteArrayKey(private val bytes: ByteArray) {
@@ -108,6 +106,16 @@ class SecureAVLTreeTest {
         tree.put(value2)
         blackRedTree[value2] = value2
         assertWithTimeout({ tree[value2] == blackRedTree[value2] }, isTrue)
+
+        val value3=SimpleKey(6)
+        tree.put(value3)
+        blackRedTree[value3] = value3
+        assertWithTimeout({ tree[value3] == blackRedTree[value3] }, isTrue)
+
+        val value4=SimpleKey(2)
+        tree.put(value4)
+        blackRedTree[value4] = value4
+        assertWithTimeout({ tree[value4] == blackRedTree[value4] }, isTrue)
     }
 
     @Test
