@@ -23,7 +23,8 @@ interface CourseAppStatistics {
      * Return a sorted list of the top 10 channels in the system by user count. The list will be sorted in descending
      * order, so the channel with the highest membership will be first, followed by the second, and so on.
      *
-     * If two channels have the same number of users, they will be sorted in ascending lexicographical order.
+     * If two channels have the same number of users, they will be sorted in ascending appearance order, such that a
+     * channel that was created earlier would appear first in the list.
      *
      * If there are less than 10 channels in the system, a shorter list will be returned.
      *
@@ -36,7 +37,8 @@ interface CourseAppStatistics {
      * descending order, so the channel with the highest active membership will be first, followed by the second, and so
      * on.
      *
-     * If two channels have the same number of logged-in users, they will be sorted in ascending lexicographical order.
+     * If two channels have the same number of logged-in users, they will be sorted in ascending appearance order, such
+     * that a channel that was created earlier would appear first in the list.
      *
      * If there are less than 10 channels in the system, a shorter list will be returned.
      *
@@ -49,7 +51,8 @@ interface CourseAppStatistics {
      * descending order, so the user who is a member of the most channels will be first, followed by the second, and so
      * on.
      *
-     * If two users are members of the same number of channels, they will be sorted in ascending lexicographical order.
+     * If two users are members of the same number of channels, they will be sorted in ascending appearance order. such
+     * that a user that was created earlier would appear first in the list.
      *
      * If there are less than 10 users in the system, a shorter list will be returned.
      *
