@@ -6,14 +6,15 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import il.ac.technion.cs.softwaredesign.*
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageModule
+import il.ac.technion.cs.softwaredesign.exceptions.InvalidTokenException
+import il.ac.technion.cs.softwaredesign.exceptions.NoSuchEntityException
+import il.ac.technion.cs.softwaredesign.exceptions.UserAlreadyLoggedInException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import java.lang.IllegalArgumentException
 import java.time.Duration
-import javax.inject.Inject
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class CourseAppTest{
@@ -47,7 +48,7 @@ class CourseAppTest{
         courseApp.login("aviad","shiber!$75")
         courseApp.logout(galToken1)
 
-        assertThrows<IllegalArgumentException> {
+        assertThrows<NoSuchEntityException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.login(username, "wrong_password") }
         }
     }
@@ -57,7 +58,7 @@ class CourseAppTest{
         val password="gal_password"
         courseApp.login(username, password)
         courseApp.login("aviad","shiber!$75")
-        assertThrows<IllegalArgumentException> {
+        assertThrows<UserAlreadyLoggedInException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.login(username, password) }
         }
     }
@@ -69,9 +70,9 @@ class CourseAppTest{
         courseApp.login(username, password)
         val ronToken=courseApp.login("ron", password)
         courseApp.logout(ronToken)
-        assertThrows<IllegalArgumentException> { courseApp.logout("") }
-        assertThrows<IllegalArgumentException> { courseApp.logout("bad_token") }
-        assertThrows<IllegalArgumentException> {
+        assertThrows<InvalidTokenException> { courseApp.logout("") }
+        assertThrows<InvalidTokenException> { courseApp.logout("bad_token") }
+        assertThrows<InvalidTokenException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.logout(ronToken)}
         }
     }
@@ -107,7 +108,7 @@ class CourseAppTest{
         }
         courseApp.logout(ronToken)
         courseApp.login(username,password)
-        assertThrows<IllegalArgumentException> {
+        assertThrows<InvalidTokenException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.isUserLoggedIn(ronToken,username)}
         }
     }

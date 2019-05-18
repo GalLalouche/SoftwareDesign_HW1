@@ -1,18 +1,11 @@
 package il.ac.technion.cs.softwaredesign.storage.utils
 
+import com.google.common.primitives.Longs
 import java.nio.ByteBuffer
 
 object ConversionUtils {
-    private val buffer = ByteBuffer.allocate(java.lang.Long.BYTES)
 
-    fun longToBytes(x: Long): ByteArray {
-        buffer.putLong(0, x)
-        return buffer.array()
-    }
+    fun longToBytes(x: Long): ByteArray = Longs.toByteArray(x)
 
-    fun bytesToLong(bytes: ByteArray): Long {
-        buffer.put(bytes, 0, bytes.size)
-        buffer.flip()//need flip
-        return buffer.long
-    }
+    fun bytesToLong(bytes: ByteArray): Long = Longs.fromByteArray(bytes)
 }
