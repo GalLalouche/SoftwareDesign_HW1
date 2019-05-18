@@ -41,7 +41,7 @@ class CourseAppTest{
     }
 
     @Test
-    fun `throws IllegalArgumentException after login with wrong password`(){
+    fun `throws NoSuchEntityException after login with wrong password`(){
         val username="gal"
         val password="gal_password"
         val galToken1=courseApp.login(username, password)
@@ -53,7 +53,7 @@ class CourseAppTest{
         }
     }
     @Test
-    fun `throws IllegalArgumentException after re-login`(){
+    fun `throws UserAlreadyLoggedInException after re-login`(){
         val username="gal"
         val password="gal_password"
         courseApp.login(username, password)
@@ -64,7 +64,7 @@ class CourseAppTest{
     }
 
     @Test
-    fun `throws IllegalArgumentException after logout with invalid token`(){
+    fun `throws InvalidTokenException after logout with invalid token`(){
         val username="aviad"
         val password="aviad_password"
         courseApp.login(username, password)
@@ -95,15 +95,15 @@ class CourseAppTest{
     }
 
     @Test
-    fun `throws IllegalArgumentException after checking user login status with invalid token`(){
-        assertThrows<IllegalArgumentException> {
+    fun `throws InvalidTokenException after checking user login status with invalid token`(){
+        assertThrows<InvalidTokenException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.isUserLoggedIn("","notExistingUser")}
         }
         courseApp.login("aviad","aviad_password")
         val username="ron"
         val password="ron_password"
         val ronToken=courseApp.login(username,password)
-        assertThrows<IllegalArgumentException> {
+        assertThrows<InvalidTokenException> {
             runWithTimeout(Duration.ofSeconds(10)) {courseApp.isUserLoggedIn("bad_token","notExistingUser")}
         }
         courseApp.logout(ronToken)
