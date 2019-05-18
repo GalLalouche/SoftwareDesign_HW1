@@ -11,6 +11,8 @@ import javax.inject.Singleton
 class UserIdGenerator @Inject constructor(private val statisticsStorage: IStatisticsStorage) : ISequenceGenerator {
     override fun next(): Long {
         val currentValue = statisticsStorage.getLongValue(NUMBER_OF_USERS) ?: throw NullPointerException("Number of users must be valid key")
-        return currentValue+1L
+        val newValue = currentValue+1L
+        statisticsStorage.setLongValue(NUMBER_OF_USERS, newValue)
+        return newValue
     }
 }

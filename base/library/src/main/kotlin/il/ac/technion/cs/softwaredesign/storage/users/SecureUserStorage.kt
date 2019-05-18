@@ -1,11 +1,13 @@
 package il.ac.technion.cs.softwaredesign.storage.users
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.DELIMITER
 
+@Singleton
 class SecureUserStorage @Inject constructor(secureStorageFactory: SecureStorageFactory) : IUserStorage {
     private val userIdStorage= secureStorageFactory.open(DB_NAMES.USER_ID.toByteArray())
     private val userDetailsStorage= secureStorageFactory.open(DB_NAMES.USER_DETAILS.toByteArray())
@@ -68,5 +70,7 @@ class SecureUserStorage @Inject constructor(secureStorageFactory: SecureStorageF
         val userIdByteArray = ConversionUtils.longToBytes(userId)
         val keySuffixByteArray = "$DELIMITER$property".toByteArray()
         return userIdByteArray + keySuffixByteArray
+//        val str = "$userId$DELIMITER$property"
+//        return str.toByteArray()
     }
 }
