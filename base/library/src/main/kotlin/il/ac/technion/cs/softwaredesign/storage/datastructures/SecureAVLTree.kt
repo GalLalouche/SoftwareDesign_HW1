@@ -1,7 +1,5 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
-import com.google.inject.Guice
-import il.ac.technion.cs.softwaredesign.LibraryMoudle
 import il.ac.technion.cs.softwaredesign.storage.*
 import il.ac.technion.cs.softwaredesign.storage.utils.ByteUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.DELIMITER
@@ -62,12 +60,11 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             val rootIndexByteArray = secureStorage.read(ROOT_KEY.toByteArray())
                     ?: throw NullPointerException("root Index cannot be null")
             val rootIndex = ByteUtils.bytesToLong(rootIndexByteArray)
-            if (rootIndex <= ROOT_INIT_INDEX)
-                return null
+            return if (rootIndex <= ROOT_INIT_INDEX) null
             else {
                 val rootByteArray = secureStorage.read(rootIndexByteArray)
                         ?: throw NullPointerException("root cannot be null")
-                return Node(rootByteArray)
+                Node(rootByteArray)
             }
         }
         set(value) {
@@ -662,20 +659,20 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
         private var leftPointer: IPointer? = null
         private var rightPointer: IPointer? = null
         private lateinit var nodeKey: Key
-        //private val injector = Guice.createInjector(LibraryMoudle)
+        //private val injector = Guice.createInjector(LibraryModule())
 
         constructor(key: Key, height: Int, size: Int) {
             this.nodeKey = key
             this.nodeHeight = height
             this.nodeSize = size
-            this.pointer = Pointer() //TODO REPLACE WITH injection
+            this.pointer = Pointer() //TODO REPLACE WITH injection, but how? do we even need to?
             val pointerByteArray = pointer.toByteArray()
             val nodeByteArray = this.toByteArray()
             secureStorage.write(pointerByteArray, nodeByteArray)
         }
 
         //copy ctor
-        constructor(value: Node) {
+        private constructor(value: Node) {
             this.pointer = value.pointer
             this.leftPointer = value.leftPointer
             this.rightPointer = value.rightPointer
@@ -696,7 +693,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             }
             set(value) {
                 nodeHeight = value
-                writeNodeToStorage()
+                storeNodeInStorage()
             }
 
         var size: Int
@@ -706,7 +703,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             }
             set(value) {
                 nodeSize = value
-                writeNodeToStorage()
+                storeNodeInStorage()
             }
 
         var left: Node?    // left subtree
@@ -719,7 +716,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             }
             set(value) {
                 this.leftPointer = value?.pointer
-                writeNodeToStorage()
+                storeNodeInStorage()
             }
 
         var right: Node?      // right subtree
@@ -732,7 +729,7 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             }
             set(value) {
                 this.rightPointer = value?.rightPointer
-                writeNodeToStorage()
+                storeNodeInStorage()
             }
 
         var key: Key
@@ -742,13 +739,13 @@ class SecureAVLTree<Key : ISecureStorageKey<Key>>
             }
             set(value) {
                 nodeKey = value
-                writeNodeToStorage()
+                storeNodeInStorage()
             }
 
         //private methods
 
 
-        private fun writeNodeToStorage() {
+        private fun storeNodeInStorage() {
             val pointerByteArray = pointer.toByteArray()
             secureStorage.write(pointerByteArray, this.toByteArray())
         }

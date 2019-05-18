@@ -6,7 +6,7 @@ import il.ac.technion.cs.softwaredesign.storage.datastructures.GeneratorStorage
 import il.ac.technion.cs.softwaredesign.storage.impl.SecureStorageImpl
 
 
-class LibraryMoudle : KotlinModule() {
+class LibraryModule : KotlinModule() {
     override fun configure() {
         bind<SecureStorage>().annotatedWith<GeneratorStorage>().to<SecureStorageImpl>()
 
