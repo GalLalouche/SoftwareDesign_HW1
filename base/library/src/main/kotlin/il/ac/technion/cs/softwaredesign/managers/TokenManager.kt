@@ -22,14 +22,14 @@ class TokenManager @Inject constructor(private val userStorage: IUserStorage) : 
     override fun assignTokenToUserId(userId: Long): String {
         if (userId == INVALID_USER_ID) throw IllegalArgumentException("User id is not valid")
         val token = generateValidUserToken()
-        userStorage.setUserIdToToken(userId, token)
+        userStorage.setUserIdToToken(token, userId)
         return token
     }
 
 
     override fun invalidateUserToken(token: String) {
         getUserIdByToken(token) ?: throw java.lang.IllegalArgumentException("token does not exist")
-        userStorage.setUserIdToToken(INVALID_USER_ID, token)
+        userStorage.setUserIdToToken(token, INVALID_USER_ID)
     }
 
     private fun isTokenUnique(token: String): Boolean {

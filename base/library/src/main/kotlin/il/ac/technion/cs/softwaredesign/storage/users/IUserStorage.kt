@@ -1,18 +1,18 @@
 package il.ac.technion.cs.softwaredesign.storage.users
 
 interface IUserStorage {
-    fun getUserIdByUsername(username : String) : Long?
-    fun setUserIdToUsername(userId : Long, username : String)
+    fun getUserIdByUsername(usernameKey : String) : Long?
+    fun setUserIdToUsername(usernameKey: String, userIdValue: Long)
 
-    fun getUserIdByToken(token : String) : Long?
-    fun setUserIdToToken(userId : Long, token : String)
+    fun getUserIdByToken(tokenKey : String) : Long?
+    fun setUserIdToToken(tokenKey: String, userIdValue: Long)
 
-    fun getPropertyStringByUserId(userId : Long, property : String) : String?
-    fun setPropertyStringToUserId(userId : Long, property : String, value : String)
+    fun getPropertyStringByUserId(userIdKey : Long, property : String) : String?
+    fun setPropertyStringToUserId(userIdKey : Long, property : String, value : String)
 
-    fun getPropertyLongByUserId(userId : Long, property : String) :Long?
-    fun setPropertyLongToUserId(userId : Long, property : String, value : Long)
+    fun getPropertyLongByUserId(userIdKey : Long, property : String) :Long?
+    fun setPropertyLongToUserId(userIdKey : Long, property : String, value : Long)
 
-    fun getPropertyListByUserId(userId : Long, property : String) : MutableList<Long>?
-    fun setPropertyListToUserId(userId : Long, property : String, listValue : MutableList<Long>)
+    fun getPropertyListByUserId(userIdKey : Long, property : String) : MutableList<Long>?
+    fun setPropertyListToUserId(userIdKey : Long, property : String, listValue : MutableList<Long>)
 }

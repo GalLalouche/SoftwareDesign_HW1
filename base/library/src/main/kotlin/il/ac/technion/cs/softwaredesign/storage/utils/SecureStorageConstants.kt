@@ -24,7 +24,6 @@ object DB_NAMES {
     internal const val USER_ID = "USER_ID"
     internal const val TOKEN = "TOKEN"
     internal const val USER_DETAILS = "USER_DETAILS"
-    internal const val USER_CHANNELS = "USER_CHANNELS"
     internal const val CHANNEL_ID = "CHANNEL_ID"
     internal const val CHANNEL_DETAILS = "CHANNEL_DETAILS"
     internal const val STATISTICS = "STATISTICS"

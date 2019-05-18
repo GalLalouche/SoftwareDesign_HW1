@@ -21,7 +21,7 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage, pri
         var userId = getUserId(username)
         if (userId != null) throw IllegalArgumentException("user already exist")
         userId = userIdGenerator.next()
-        userStorage.setUserIdToUsername(userId, username)
+        userStorage.setUserIdToUsername(username, userId)
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.PASSWORD_PROPERTY, password)
         updateStatus(userId, status)
         updatePrivilege(userId, privilege)

@@ -7,7 +7,6 @@ import il.ac.technion.cs.softwaredesign.DB_NAMES.TOKEN
 import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_ACTIVE_CHANNEL
 import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_CHANNEL
 import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_USER
-import il.ac.technion.cs.softwaredesign.DB_NAMES.USER_CHANNELS
 import il.ac.technion.cs.softwaredesign.DB_NAMES.USER_DETAILS
 import il.ac.technion.cs.softwaredesign.DB_NAMES.USER_ID
 import il.ac.technion.cs.softwaredesign.TREE_KEYS.ROOT_INIT_INDEX
@@ -23,7 +22,6 @@ class CourseAppInitializerImpl
         storageFactory.open(USER_ID.toByteArray())
         storageFactory.open(TOKEN.toByteArray())
         storageFactory.open(USER_DETAILS.toByteArray())
-        storageFactory.open(USER_CHANNELS.toByteArray())
         storageFactory.open(CHANNEL_ID.toByteArray())
         storageFactory.open(CHANNEL_DETAILS.toByteArray())
 

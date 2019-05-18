@@ -9,53 +9,64 @@ import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.DELIMITER
 class SecureUserStorage @Inject constructor(secureStorageFactory: SecureStorageFactory) : IUserStorage {
     private val userIdStorage= secureStorageFactory.open(DB_NAMES.USER_ID.toByteArray())
     private val userDetailsStorage= secureStorageFactory.open(DB_NAMES.USER_DETAILS.toByteArray())
-    private val userChannelsStorage= secureStorageFactory.open(DB_NAMES.USER_CHANNELS.toByteArray())
     private val tokenStorage= secureStorageFactory.open(DB_NAMES.TOKEN.toByteArray())
 
-    override fun getUserIdByUsername(username: String): Long? {
-        val userIdByteArray=userIdStorage.read(username.toByteArray()) ?: return null
+    override fun getUserIdByUsername(usernameKey: String): Long? {
+        val userIdByteArray=userIdStorage.read(usernameKey.toByteArray()) ?: return null
         return ConversionUtils.bytesToLong(userIdByteArray)
     }
 
-    override fun setUserIdToUsername(userId: Long, username: String) {
-        userIdStorage.write(username.toByteArray(),ConversionUtils.longToBytes(userId))
+    override fun setUserIdToUsername(usernameKey: String, userIdValue: Long) {
+        userIdStorage.write(usernameKey.toByteArray(),ConversionUtils.longToBytes(userIdValue))
     }
 
-    override fun getUserIdByToken(token: String): Long? {
-        val userIdByteArray=tokenStorage.read(token.toByteArray())?: return null
+    override fun getUserIdByToken(tokenKey: String): Long? {
+        val userIdByteArray=tokenStorage.read(tokenKey.toByteArray())?: return null
         return ConversionUtils.bytesToLong(userIdByteArray)
     }
 
-    override fun setUserIdToToken(userId: Long, token: String) {
-       tokenStorage.write(token.toByteArray(),ConversionUtils.longToBytes(userId))
+    override fun setUserIdToToken(tokenKey: String, userIdValue: Long) {
+       tokenStorage.write(tokenKey.toByteArray(),ConversionUtils.longToBytes(userIdValue))
     }
 
-    override fun getPropertyStringByUserId(userId: Long, property: String): String? {
-        val userIdByteArray= ConversionUtils.longToBytes(userId)
-        val keySuffixByteArray="$DELIMITER$property".toByteArray()
-        val key= userIdByteArray+keySuffixByteArray
+    override fun getPropertyStringByUserId(userIdKey: Long, property: String): String? {
+        val key = createPropertyKey(userIdKey, property)
         val value= userDetailsStorage.read(key) ?: return null
         return String(value)
     }
 
-    override fun setPropertyStringToUserId(userId: Long, property: String, value: String) {
-
+    override fun setPropertyStringToUserId(userIdKey: Long, property: String, value: String) {
+        val key = createPropertyKey(userIdKey, property)
+        userDetailsStorage.write(key, value.toByteArray())
     }
 
-    override fun getPropertyLongByUserId(userId: Long, property: String): Long? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPropertyLongByUserId(userIdKey: Long, property: String): Long? {
+        val key = createPropertyKey(userIdKey, property)
+        val value= userDetailsStorage.read(key) ?: return null
+        return ConversionUtils.bytesToLong(value)
     }
 
-    override fun setPropertyLongToUserId(userId: Long, property: String, value: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setPropertyLongToUserId(userIdKey: Long, property: String, value: Long) {
+        val key = createPropertyKey(userIdKey, property)
+        userDetailsStorage.write(key, ConversionUtils.longToBytes(value))
     }
 
-    override fun getPropertyListByUserId(userId: Long, property: String): MutableList<Long>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPropertyListByUserId(userIdKey: Long, property: String): MutableList<Long>? {
+        val key = createPropertyKey(userIdKey, property)
+        val value= userDetailsStorage.read(key) ?: return null
+        val stringValue = String(value)
+        return stringValue.split(DELIMITER).map { it.toLong() }.toMutableList()
     }
 
-    override fun setPropertyListToUserId(userId: Long, property: String, listValue: MutableList<Long>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setPropertyListToUserId(userIdKey: Long, property: String, listValue: MutableList<Long>) {
+        val key = createPropertyKey(userIdKey, property)
+        val value = listValue.joinToString(DELIMITER)
+        userDetailsStorage.write(key, value.toByteArray())
     }
 
+    private fun createPropertyKey(userId: Long, property: String) : ByteArray{
+        val userIdByteArray = ConversionUtils.longToBytes(userId)
+        val keySuffixByteArray = "$DELIMITER$property".toByteArray()
+        return userIdByteArray + keySuffixByteArray
+    }
 }
