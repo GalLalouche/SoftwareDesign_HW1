@@ -11,7 +11,7 @@ import java.util.*
 
 /**
  * The `SecureAVLTree` class represents an ordered symbol table of
- * generic key-value pairs. It supports the usual *put*, *getAddress*,
+ * generic key-value pairs. It supports the usual *put*, *get*,
  * *contains*, *delete*, *size*, and *is-empty*
  * methods. It also provides ordered methods for finding the *minimum*,
  * *maximum*, *floor*, and *ceiling*. It also provides a
@@ -35,7 +35,7 @@ import java.util.*
  * This implementation requires that the key type implements the
  * `ISecureStorageKey` interface and calls the `compareTo()` and
  * method to compare two keys and 'toByteArray' 'fromByteArray' to permit a way for serialization of the key without conflicts(this is client responsibility). It does not call either `equals()` or
- * `hashCode()`. The *put*, *getAddress*, *contains*,
+ * `hashCode()`. The *put*, *get*, *contains*,
  * *delete*, *minimum*, *maximum*, *ceiling*, and
  * *floor* operations each take logarithmic time in the worst case. The
  * *size*, and *is-empty* operations take constant time.
