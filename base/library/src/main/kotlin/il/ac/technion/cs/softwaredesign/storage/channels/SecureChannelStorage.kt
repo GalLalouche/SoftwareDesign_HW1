@@ -1,39 +1,63 @@
 package il.ac.technion.cs.softwaredesign.storage.channels
 
-import il.ac.technion.cs.softwaredesign.storage.IStorageConvertable
+import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
+import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
+import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.CHANNEL_DETAILS
+import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.CHANNEL_ID
+import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
+import javax.inject.Inject
 
-class SecureChannelStorage : IChannelStorage {
+class SecureChannelStorage @Inject constructor (private val factory: SecureStorageFactory) : IChannelStorage {
+    private val channelIdsStorage = factory.open(CHANNEL_ID.toByteArray())
+    private val channelDetailsStorage = factory.open(CHANNEL_DETAILS.toByteArray())
+
     override fun getChannelIdByChannelName(channelName: String): Long? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val channelIdByteArray=channelIdsStorage.read(channelName.toByteArray()) ?: return null
+        return ConversionUtils.bytesToLong(channelIdByteArray)
     }
 
-    override fun setChannelIdToChannelName(channelId: Long, channelName: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setChannelIdToChannelName(channelNameKey: String, channelId: Long) {
+        channelIdsStorage.write(channelNameKey.toByteArray(),ConversionUtils.longToBytes(channelId))
     }
 
-    override fun getPropertyStringByChannelId(userIdKey: Long, property: String): String? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPropertyStringByChannelId(channelIdKey: Long, property: String): String? {
+        val key = createPropertyKey(channelIdKey, property)
+        val value= channelDetailsStorage.read(key) ?: return null
+        return String(value)
     }
 
-    override fun setPropertyStringToChannelId(userIdKey: Long, property: String, value: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setPropertyStringToChannelId(channelIdKey: Long, property: String, value: String) {
+        val key = createPropertyKey(channelIdKey, property)
+        channelDetailsStorage.write(key, value.toByteArray())
     }
 
-    override fun getPropertyLongByUserId(userIdKey: Long, property: String): Long? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPropertyLongByUserId(channelIdKey: Long, property: String): Long? {
+        val key = createPropertyKey(channelIdKey, property)
+        val value= channelDetailsStorage.read(key) ?: return null
+        return ConversionUtils.bytesToLong(value)
     }
 
-    override fun setPropertyLongToUserId(userIdKey: Long, property: String, value: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setPropertyLongToUserId(channelIdKey: Long, property: String, value: Long) {
+        val key = createPropertyKey(channelIdKey, property)
+        channelDetailsStorage.write(key, ConversionUtils.longToBytes(value))
     }
 
-    override fun getPropertyListByChannelId(userId: Long, property: String): List<Long>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPropertyListByChannelId(channelIdKey: Long, property: String): List<Long>? {
+        val key = createPropertyKey(channelIdKey, property)
+        val value= channelDetailsStorage.read(key) ?: return null
+        val stringValue = String(value)
+        return stringValue.split(MANAGERS_CONSTS.DELIMITER).map { it.toLong() }.toMutableList()
     }
 
-    override fun setPropertyListToChannelId(userId: Long, property: String, listValue: List<Long>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setPropertyListToChannelId(channelIdKey: Long, property: String, listValue: List<Long>) {
+        val key = createPropertyKey(channelIdKey, property)
+        val value = listValue.joinToString(MANAGERS_CONSTS.DELIMITER)
+        channelDetailsStorage.write(key, value.toByteArray())
     }
 
-
+    private fun createPropertyKey(channelId: Long, property: String) : ByteArray{
+        val channelIdByteArray = ConversionUtils.longToBytes(channelId)
+        val keySuffixByteArray = "${MANAGERS_CONSTS.DELIMITER}$property".toByteArray()
+        return channelIdByteArray + keySuffixByteArray
+    }
 }

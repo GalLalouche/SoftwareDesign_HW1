@@ -70,7 +70,5 @@ class SecureUserStorage @Inject constructor(secureStorageFactory: SecureStorageF
         val userIdByteArray = ConversionUtils.longToBytes(userId)
         val keySuffixByteArray = "$DELIMITER$property".toByteArray()
         return userIdByteArray + keySuffixByteArray
-//        val str = "$userId$DELIMITER$property"
-//        return str.toByteArray()
     }
 }
