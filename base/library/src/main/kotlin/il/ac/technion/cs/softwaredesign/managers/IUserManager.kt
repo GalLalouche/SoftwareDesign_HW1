@@ -114,8 +114,10 @@ interface IUserManager {
 
     /**
      * updates the channel size of user id
+     * Important: this function assumes that user id is a exist in the system
      * @param userId user id
      * @param size new size
+     * @throws IllegalArgumentException if size is negative
      */
     fun updateChannelListSize(userId: Long, size: Long)
 
