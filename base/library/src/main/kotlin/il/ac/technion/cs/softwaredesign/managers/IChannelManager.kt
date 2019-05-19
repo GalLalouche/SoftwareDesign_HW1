@@ -4,14 +4,6 @@ import java.lang.IllegalArgumentException
 
 interface IChannelManager {
     /**
-     * Get channelId that match channelName
-     * @param channelName String
-     * @throws IllegalArgumentException if channelName is already exist
-     * @return Long, channel id or null if channel does not exist in the system
-     */
-    fun getId(channelName : String) : Long
-
-    /**
      * Add new channel to the system
      * @param channelName String
      * @throws IllegalArgumentException if channelName is already exist
@@ -52,6 +44,13 @@ interface IChannelManager {
      */
     fun isChannelIdExists(channelId : Long) : Boolean
 
+    /**
+     * Get channelId that match channelName
+     * @param channelName String
+     * @throws IllegalArgumentException if channelName is already exist
+     * @return Long, channel id or null if channel does not exist in the system
+     */
+    fun getId(channelName : String) : Long
 
     /** PROPERTIES **/
     /**

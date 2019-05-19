@@ -36,13 +36,19 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         invalidateChannel(channelName)
     }
 
-    // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != INIT_INDEX_VAL
     override fun isChannelNameExists(channelName: String): Boolean {
         return isChannelValid(channelName)
     }
 
     override fun isChannelIdExists(channelId: Long): Boolean {
         return isChannelValid(channelId)
+    }
+
+    override fun getId(channelName: String): Long {
+        if (!isChannelValid(channelName = channelName)) throw IllegalArgumentException("channel name is not valid")
+        val id = channelStorage.getChannelIdByChannelName(channelName)
+        if (isChannelValid(channelId = id)) return id!! // redundant, consider removing it
+        throw IllegalArgumentException("returned channel id is not valid")
     }
 
     override fun getName(channelId: Long): String {
@@ -135,12 +141,5 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     private fun invalidateChannel(channelId: Long, channelName: String) {
         channelStorage.setChannelIdToChannelName(channelName, CHANNEL_INVALID_ID)
         channelStorage.setPropertyStringToChannelId(channelId, CHANNEL_NAME_PROPERTY, CHANNEL_INVALID_NAME)
-    }
-
-    override fun getId(channelName: String): Long {
-        if (!isChannelValid(channelName = channelName)) throw IllegalArgumentException("channel name is not valid")
-        val id = channelStorage.getChannelIdByChannelName(channelName)
-        if (isChannelValid(channelId = id)) return id!! // redundant, consider removing it
-        throw IllegalArgumentException("returned channel id is not valid")
     }
 }
