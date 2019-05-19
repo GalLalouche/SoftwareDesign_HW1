@@ -135,12 +135,12 @@ class SecureAVLTreeTest {
         tree.delete(SimpleKey(50))
 
         val values = (1..3).map { SimpleKey(it.toLong()) }
-        values.forEach({tree.put(it)})
+        values.forEach {tree.put(it)}
         assertWithTimeout({ tree.contains(values[1]) }, isTrue)
         tree.delete(values[1])
         assertWithTimeout({ tree.contains(values[1]) }, isFalse)
         val moreValues = (1..20).map { SimpleKey(it.toLong()) }
-        moreValues.forEach({tree.put(it)})
+        moreValues.forEach {tree.put(it)}
 
         assertWithTimeout({ tree.contains(moreValues[8]) }, isTrue)
         tree.delete(moreValues[8])
@@ -175,9 +175,8 @@ class SecureAVLTreeTest {
     @Test
     fun min() {
         var minValue:Long= Long.MAX_VALUE
-        for(i in 1..20){
+        for(i in 1..2000){
             val v = SimpleKey(Random.nextLong(from=ROOT_INIT_INDEX+1, until=Long.MAX_VALUE))
-            if(tree.contains(v)) continue
             minValue=min(minValue,v.i)
             tree.put(v)
         }
@@ -187,6 +186,12 @@ class SecureAVLTreeTest {
 
     @Test
     fun max() {
+        for(i in 1..200){
+            val v = SimpleKey(Random.nextLong(from=ROOT_INIT_INDEX+1, until=Long.MAX_VALUE))
+            blackRedTree[v] = v
+            tree.put(v)
+        }
+        assertThat(tree.max(), equalTo(blackRedTree.lastEntry().key))
     }
 
     @Test
