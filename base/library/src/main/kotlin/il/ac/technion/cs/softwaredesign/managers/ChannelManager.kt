@@ -13,6 +13,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
                                          @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
 
     override fun add(channelName: String): Long {
+        if (channelName == CHANNEL_INVALID_NAME) throw IllegalArgumentException("channel name cannot be empty")
         if (isChannelNameExists(channelName)) throw IllegalArgumentException("channel name already exist")
         val channelId = channelIdGenerator.next()
         channelStorage.setChannelIdToChannelName(channelName, channelId)
@@ -85,6 +86,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     override fun addMemberToChannel(channelId: Long, memberId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         val currentList = ArrayList<Long>(getMembersList(channelId))
+        if (currentList.contains(memberId)) throw IllegalAccessException("member id already exists in channel")
         currentList.add(memberId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_MEMBERS_LIST, currentList)
     }
@@ -92,6 +94,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     override fun removeMemberFromChannel(channelId: Long, memberId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         val currentList = ArrayList<Long>(getMembersList(channelId))
+        if (!currentList.contains(memberId)) throw IllegalAccessException("member id does not exists in channel")
         currentList.remove(memberId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_MEMBERS_LIST, currentList)
     }
@@ -105,6 +108,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     override fun addOperatorToChannel(channelId: Long, operatorId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         val currentList = ArrayList<Long>(getMembersList(channelId))
+        if (currentList.contains(operatorId)) throw IllegalAccessException("operator id already exists in channel")
         currentList.add(operatorId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST, currentList)
     }
@@ -112,6 +116,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     override fun removeOperatorFromChannel(channelId: Long, operatorId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         val currentList = ArrayList<Long>(getMembersList(channelId))
+        if (!currentList.contains(operatorId)) throw IllegalAccessException("operator id does not exists in channel")
         currentList.remove(operatorId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST, currentList)
     }

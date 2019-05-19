@@ -94,17 +94,21 @@ interface IUserManager {
 
     /**
      * add a channel to a specific user
+     * Important: this function assumes that channel id is a valid channel
      * @param userId user id
      * @param channelId channel id
      * @throws IllegalArgumentException throws if user id does not exist in the system
+     * @throws IllegalAccessException throws if channelId already exists in users list
      */
     fun addChannelToUser(userId:Long, channelId:Long)
 
     /**
      * removes a channel to a specific user
+     * Important: this function assumes that channel id is a valid channel
      * @param userId user id
      * @param channelId channel id
      * @throws IllegalArgumentException throws if user id does not exist in the system
+     * @throws IllegalAccessException throws if channelId does not exist in users list
      */
     fun removeChannelFromUser(userId: Long,channelId: Long)
 
