@@ -21,6 +21,8 @@ object STATISTICS_KEYS{
     internal const val NUMBER_OF_LOGGED_IN_USERS="numberOfLoggenInUsers"
     internal const val NUMBER_OF_CHANNELS="numberOfChannels"
     internal const val MAX_CHANNEL_INDEX="maxChannelIndex"
+
+    internal const val INIT_INDEX_VAL=0L
 }
 
 object TREE_KEYS{

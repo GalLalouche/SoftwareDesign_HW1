@@ -33,10 +33,10 @@ class CourseAppInitializerImpl
 
     private fun initStatistics() {
         val db = storageFactory.open(STATISTICS.toByteArray())
-        db.write(STATISTICS_KEYS.NUMBER_OF_USERS.toByteArray(), Longs.toByteArray(0L))
-        db.write(STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS.toByteArray(), Longs.toByteArray(0L))
-        db.write(STATISTICS_KEYS.NUMBER_OF_CHANNELS.toByteArray(), Longs.toByteArray(0L))
-        db.write(STATISTICS_KEYS.MAX_CHANNEL_INDEX.toByteArray(), Longs.toByteArray(0L))
+        db.write(STATISTICS_KEYS.NUMBER_OF_USERS.toByteArray(), Longs.toByteArray(STATISTICS_KEYS.INIT_INDEX_VAL))
+        db.write(STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS.toByteArray(), Longs.toByteArray(STATISTICS_KEYS.INIT_INDEX_VAL))
+        db.write(STATISTICS_KEYS.NUMBER_OF_CHANNELS.toByteArray(), Longs.toByteArray(STATISTICS_KEYS.INIT_INDEX_VAL))
+        db.write(STATISTICS_KEYS.MAX_CHANNEL_INDEX.toByteArray(), Longs.toByteArray(STATISTICS_KEYS.INIT_INDEX_VAL))
     }
 
     private fun initTree(dbName: String) {

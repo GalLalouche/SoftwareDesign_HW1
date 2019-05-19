@@ -8,21 +8,29 @@ interface IChannelManager {
      * @param channelName String
      * @return Long, channel id or null if channel does not exist in the system
      */
-    fun getChannelId(channelName : String) : Long?
+    fun getId(channelName : String) : Long?
 
     /**
      * Add new channel to the system
      * @param channelName String
-     * @throws IllegalArgumentException if channelName is already exist
+     * @throws IllegalArgumentException if channelName is already exist, empty list is default
      * @return Long, channel id
      */
-    fun add(channelName : String) : Long
+    fun add(channelName: String): Long
 
     /**
      * Remove channel from the system
      * @param channelId Long
+     * @throws IllegalArgumentException throws if channel id does not exist in the system
      */
     fun remove(channelId : Long)
+
+    /**
+     * Remove channel from the system
+     * @param channelName String
+     * @throws IllegalArgumentException throws if channel name does not exist in the system
+     */
+    fun remove(channelName : String)
 
     /**
      * Check if channelName already exist in the system

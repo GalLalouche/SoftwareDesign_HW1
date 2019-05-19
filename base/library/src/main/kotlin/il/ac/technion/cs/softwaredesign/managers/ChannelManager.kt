@@ -4,13 +4,17 @@ import com.google.inject.Inject
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.channels.IChannelStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
+import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.INIT_INDEX_VAL
 import java.lang.IllegalArgumentException
 
 class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
                                          @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
 
-    override fun getChannelId(channelName: String): Long? {
-        return channelStorage.getChannelIdByChannelName(channelName)
+    // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != INIT_INDEX_VAL
+    override fun getId(channelName: String): Long? {
+        val id = channelStorage.getChannelIdByChannelName(channelName)
+        if (id != null && id != INIT_INDEX_VAL) return id
+        return null
     }
 
     override fun add(channelName: String): Long {
@@ -18,15 +22,24 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         val channelId = channelIdGenerator.next()
         channelStorage.setChannelIdToChannelName(channelName, channelId)
         channelStorage.setPropertyStringToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, channelName)
-        channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, 0L)
-
+        channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_MEMBERS, 0L)
+        channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_ACTIVE_MEMBERS, 0L)
+        channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_MEMBERS_LIST, emptyList())
+        channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST, emptyList())
         return channelId
     }
 
+    // remove channel name by mapping it to INIT_INDEX_VAL to indicate it is not valid anymore
     override fun remove(channelId: Long) {
+        val channelName = getName(channelId)
+        channelStorage.setChannelIdToChannelName(channelName, INIT_INDEX_VAL)
+    }
+
+    override fun remove(channelName : String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != INIT_INDEX_VAL
     override fun isChannelNameExists(channelName: String): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
