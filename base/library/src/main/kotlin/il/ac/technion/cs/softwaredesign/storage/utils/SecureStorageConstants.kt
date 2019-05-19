@@ -40,9 +40,9 @@ object DB_NAMES {
     internal const val STATISTICS = "STATISTICS"
     //DATA BASES FOR TREES
 
-    internal const val TREE_USER="AVL_TREE_USER"
-    internal const val TREE_CHANNEL="AVL_TREE_CHANNEL"
-    internal const val TREE_ACTIVE_CHANNEL="AVL_TREE_ACTIVE_CHANNEL"
+    internal const val TREE_USERS_BY_CHANNELS_COUNT="USERS_BY_CHANNELS_COUNT"
+    internal const val TREE_CHANNELS_BY_USERS_COUNT="CHANNELS_BY_USERS_COUNT"
+    internal const val TREE_CHANNELS_BY_ACTIVE_USERS_COUNT="CHANNELS_BY_ACTIVE_USERS_COUNT"
 }
 
 
