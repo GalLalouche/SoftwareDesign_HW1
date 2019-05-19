@@ -11,11 +11,6 @@ import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.PASSWORD_P
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
-@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-@BindingAnnotation
-annotation class UserIdSeqGenerator
-
 class UserManager @Inject constructor(private val userStorage: IUserStorage,
                                       @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator) : IUserManager {
 
@@ -28,6 +23,7 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         if (userId != null) throw IllegalArgumentException("user already exist")
         userId = userIdGenerator.next()
         userStorage.setUserIdToUsername(username, userId)
+        userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.USERNAME_PROPERTY, username)
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.PASSWORD_PROPERTY, password)
         updateStatus(userId, status)
         updatePrivilege(userId, privilege)

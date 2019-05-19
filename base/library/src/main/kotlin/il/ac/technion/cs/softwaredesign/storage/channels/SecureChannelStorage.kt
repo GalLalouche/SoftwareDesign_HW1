@@ -31,13 +31,13 @@ class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) :
         channelDetailsStorage.write(key, value.toByteArray())
     }
 
-    override fun getPropertyLongByUserId(channelIdKey: Long, property: String): Long? {
+    override fun getPropertyLongByChannelId(channelIdKey: Long, property: String): Long? {
         val key = createPropertyKey(channelIdKey, property)
         val value= channelDetailsStorage.read(key) ?: return null
         return ConversionUtils.bytesToLong(value)
     }
 
-    override fun setPropertyLongToUserId(channelIdKey: Long, property: String, value: Long) {
+    override fun setPropertyLongToChannelId(channelIdKey: Long, property: String, value: Long) {
         val key = createPropertyKey(channelIdKey, property)
         channelDetailsStorage.write(key, ConversionUtils.longToBytes(value))
     }

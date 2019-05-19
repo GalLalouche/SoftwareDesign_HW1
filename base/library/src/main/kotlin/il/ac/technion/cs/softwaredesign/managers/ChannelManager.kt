@@ -1,24 +1,26 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-import com.google.inject.BindingAnnotation
 import com.google.inject.Inject
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.channels.IChannelStorage
-
-@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.RUNTIME)
-@BindingAnnotation
-annotation class ChannelIdSeqGenerator
+import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
+import java.lang.IllegalArgumentException
 
 class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
-                                        @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
+                                         @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
 
     override fun getChannelId(channelName: String): Long? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return channelStorage.getChannelIdByChannelName(channelName)
     }
 
     override fun add(channelName: String): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (isChannelNameExists(channelName)) throw IllegalArgumentException("channel name already exist")
+        val channelId = channelIdGenerator.next()
+        channelStorage.setChannelIdToChannelName(channelName, channelId)
+        channelStorage.setPropertyStringToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, channelName)
+        channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, channelName)
+
+        return channelId
     }
 
     override fun remove(channelId: Long) {
