@@ -5,6 +5,7 @@ import com.google.inject.Guice
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasElement
+import com.natpryce.hamkrest.hasSize
 import il.ac.technion.cs.softwaredesign.IStorageLayer
 import il.ac.technion.cs.softwaredesign.User
 import il.ac.technion.cs.softwaredesign.managers.IChannelManager
@@ -112,7 +113,14 @@ class UserManagerTest {
         (1L..20L).forEach{ assertThat(channelList, hasElement(it))}
     }
 
-
+    @Test
+    fun `adding new channels to user and removing part of them validating that all channel exists`() {
+        val aviadID=userManager.add("aviad","aviad_password")
+        (1L..20L).forEach{userManager.addChannelToUser(aviadID, it)}
+        (1L..9L).forEach{userManager.removeChannelFromUser(aviadID,it) }
+        val channelList=userManager.getChannelListOfUser(aviadID)
+        assertThat(channelList.size, equalTo(10))
+    }
 
     /**
      * isUsernameExists
