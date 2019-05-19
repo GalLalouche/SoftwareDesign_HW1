@@ -358,6 +358,70 @@ class ChannelManagerTest {
         assertThrows<IllegalAccessException> {channelManager.addOperatorToChannel(id, 7000L)}
     }
 
+    @Test
+    fun `removeMemberFromChannel & removeOperatorFromChannel throws if element does exists`() {
+        val id = channelManager.add("ron")
+        assertThrows<IllegalAccessException> {channelManager.removeMemberFromChannel(id, 20L)}
+        assertThrows<IllegalAccessException> {channelManager.removeOperatorFromChannel(id, 7000L)}
+    }
+
+    @Test
+    fun `getMembers&operators return empty list after init`() {
+        val id = channelManager.add("ron")
+        assertThat(channelManager.getMembersList(id), equalTo(emptyList()))
+        assertThat(channelManager.getOperatorsList(id), equalTo(emptyList()))
+    }
+
+    @Test
+    fun `getMembers&operators return full list`() {
+        val id = channelManager.add("ron")
+
+        val members = listOf<Long>(20L, 8000L, 500L, 4747L)
+        val operators = listOf<Long>(2066L, 8040L, 5011L, 47337L)
+
+        members.forEach({channelManager.addMemberToChannel(id, it)})
+        operators.forEach({channelManager.addOperatorToChannel(id, it)})
+
+        assertThat(channelManager.getMembersList(id), equalTo(members))
+        assertThat(channelManager.getOperatorsList(id), equalTo(operators))
+    }
+
+    @Test
+    fun `removeMembers&operators removes element`() {
+        val id = channelManager.add("ron")
+
+        val members = mutableListOf<Long>(20L, 8000L, 500L, 4747L)
+        val operators = mutableListOf<Long>(2066L, 8040L, 5011L, 47337L)
+
+        members.forEach({channelManager.addMemberToChannel(id, it)})
+        operators.forEach({channelManager.addOperatorToChannel(id, it)})
+
+        channelManager.removeMemberFromChannel(id, members[2])
+        channelManager.removeOperatorFromChannel(id, operators[2])
+
+        members.removeAt(2)
+        operators.removeAt(2)
+        assertThat(channelManager.getMembersList(id), equalTo(members.toList()))
+        assertThat(channelManager.getOperatorsList(id), equalTo(operators.toList()))
+    }
+
+    @Test
+    fun `removeMembers&operators makes list empty`() {
+        val id = channelManager.add("ron")
+
+        val members = mutableListOf<Long>(20L, 8000L, 500L, 4747L)
+        val operators = mutableListOf<Long>(2066L, 8040L, 5011L, 47337L)
+
+        members.forEach({channelManager.addMemberToChannel(id, it)})
+        operators.forEach({channelManager.addOperatorToChannel(id, it)})
+
+        members.forEach({channelManager.removeMemberFromChannel(id, it)})
+        operators.forEach({channelManager.removeOperatorFromChannel(id, it)})
+
+        assertThat(channelManager.getMembersList(id), equalTo(emptyList()))
+        assertThat(channelManager.getOperatorsList(id), equalTo(emptyList()))
+    }
+
 
 
 }
