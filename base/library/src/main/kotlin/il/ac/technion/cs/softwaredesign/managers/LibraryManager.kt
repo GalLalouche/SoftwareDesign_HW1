@@ -17,19 +17,19 @@ class LibraryManager @Inject constructor(
         IChannelManager by channelManager,
         IStatisticsManager by statisticsManager {
 
-    private val channelsByUsersCountStorage = factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
-    private val channelsByActiveUsersCountStorage = factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
+    private val channeldByUsersCountStorage = factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
+    private val channeldByActiveUsersCountStorage = factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
     private val usersByChannelsCountStorage = factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
 
     private val defaultKey: () -> CountIdKey = { CountIdKey() }
 
-    private val channelsByUsersCountTree = SecureAVLTree<CountIdKey>(channelsByUsersCountStorage, defaultKey)
-    private val channelsByActiveUsersCountTree = SecureAVLTree<CountIdKey>(channelsByActiveUsersCountStorage, defaultKey)
+    private val channeldByUsersCountTree = SecureAVLTree<CountIdKey>(channeldByUsersCountStorage, defaultKey)
+    private val channeldByActiveUsersCountTree = SecureAVLTree<CountIdKey>(channeldByActiveUsersCountStorage, defaultKey)
     private val usersByChannelsCountTree = SecureAVLTree<CountIdKey>(usersByChannelsCountStorage, defaultKey)
 
-    private inner class CountIdKey : ISecureStorageKey<CountIdKey> {
-        var count : Long = 0 // primary key
-        var id : Long = MANAGERS_CONSTS.CHANNEL_INVALID_ID // secondary key
+    private inner class CountIdKey(private var count: Long = 0, // primary key
+                                   private var id: Long = MANAGERS_CONSTS.CHANNEL_INVALID_ID) // secondary key
+                                    : ISecureStorageKey<CountIdKey> {
 
         override fun compareTo(other: CountIdKey): Int {
             val primaryRes = count.compareTo(other.count)
@@ -52,8 +52,6 @@ class LibraryManager @Inject constructor(
         }
     }
 
-//    private val channelsByUserCountTree : SecureAVLTree<>
-
     /** COMPLEX STATISTICS **/
     /** This functions used to update the data structures related to statistics **/
 
@@ -64,22 +62,46 @@ class LibraryManager @Inject constructor(
      * @throws
      */
     fun updateUserStatusInSystem(userId: Long, status: IUserManager.LoginStatus) {
-        // should update channelsByActiveUsersCountTree
-        // should remove operators? no
+        // should update channeldByActiveUsersCountTree, (assume list and size has been updated in course app before)
+        // consider new user?
+        // increase nr users
+        // incease / decrease nr active users
 
+        updateChanneldByActiveUsersCountTreeOnStatusUpdate(status, userId)
+        TODO("implement")
     }
+
+    private fun updateChanneldByActiveUsersCountTreeOnStatusUpdate(status: IUserManager.LoginStatus, userId: Long) {
+        val diff: Int = if (status == IUserManager.LoginStatus.IN) -1 else 1
+        val channelsList = userManager.getChannelListOfUser(userId)
+        for (channelId in channelsList) {
+            val newCount = channelManager.getNumberOfActiveMembersInChannel(channelId)
+            // user logged out => old one is bigger(+1), user logged in => old one is smaller(-1)
+            val oldCount = newCount + diff
+            val oldKey = CountIdKey(oldCount, channelId)
+            val newKey = CountIdKey(newCount, channelId)
+            channeldByActiveUsersCountTree.delete(oldKey)
+            channeldByActiveUsersCountTree.put(newKey)
+        }
+    }
+
+    private fun updateusersByChannelsCountTreeOnStatusUpdate(userId: Long) {TODO("implement")}
 
     /**
      * Update channel and user after user joined to channel
      * @param userId Long
      * @param channelId Long
      */
-    fun joinUserToChannel(userId: Long, channelId: Long) {}
+    fun joinUserToChannel(userId: Long, channelId: Long) {
+        // should update channeldByUsersCountTree, channeldByActiveUsersCountTree, usersByChannelsCountTree
+        // consider new user? new channel?
+        TODO("implement")
+    }
 
     /**
      * Update channel and user after user leaved the channel
      * @param userId Long
      * @param channelId Long
      */
-    fun removeUserFromChannel(userId: Long, channelId: Long) {}
+    fun removeUserFromChannel(userId: Long, channelId: Long) {TODO("implement")}
 }
