@@ -98,17 +98,21 @@ interface IChannelManager {
 
     /**
      * add a member to a specific channel
+     * Important: this function assumes that member id is a valid user
      * @param channelId channel Id
      * @param memberId member Id
      * @throws IllegalArgumentException throws if channel Id does not exist in the system
+     * @throws IllegalAccessException throws if memberId already exists in channel
      */
     fun addMemberToChannel(channelId:Long, memberId:Long)
 
     /**
      * removes a member from a specific channel
+     * Important: this function assumes that member id is a valid user
      * @param channelId channel Id
      * @param memberId member Id
-     * @throws IllegalArgumentException throws if channel Id does not exist in the system
+     * @throws IllegalArgumentException throws if channel Id or member id does not exist in the system
+     * @throws IllegalAccessException throws if memberId does not exist in channel
      */
     fun removeMemberFromChannel(channelId: Long,memberId: Long)
 
@@ -124,17 +128,21 @@ interface IChannelManager {
 
     /**
      * add an operators to a specific channel
+     * Important: this function assumes that member id is a valid user
      * @param channelId channel Id
      * @param operatorId operators Id
-     * @throws IllegalArgumentException throws if channel Id does not exist in the system
+     * @throws IllegalArgumentException throws if channel Id or operator id does not exist in the system
+     * @throws IllegalAccessException throws if operatorId already exists in channel
      */
     fun addOperatorToChannel(channelId:Long, operatorId:Long)
 
     /**
      * removes an operators from a specific channel
+     * Important: this function assumes that member id is a valid user
      * @param channelId channel Id
      * @param operatorId operators Id
-     * @throws IllegalArgumentException throws if channel Id does not exist in the system
+     * @throws IllegalArgumentException throws if channel Id or operator id does not exist in the system
+     * @throws IllegalAccessException throws if operatorId does not exist in channel
      */
     fun removeOperatorFromChannel(channelId: Long, operatorId: Long)
 }

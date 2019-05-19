@@ -78,12 +78,14 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
 
     override fun addChannelToUser(userId: Long, channelId: Long) {
         val currentList = ArrayList<Long>(getChannelListOfUser(userId))
+        if (currentList.contains(channelId)) throw IllegalAccessException("channel id already exists in users list")
         currentList.add(channelId)
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, currentList)
     }
 
     override fun removeChannelFromUser(userId: Long, channelId: Long) {
         val currentList = ArrayList<Long>(getChannelListOfUser(userId))
+        if (!currentList.contains(channelId)) throw IllegalAccessException("channel id does not exists in users list")
         currentList.remove(channelId)
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, currentList)
     }
