@@ -43,7 +43,4 @@ interface IStatisticsManager {
      * @return Long, the updated value
      */
     fun decreaseLoggedInUsersBy(count : Int = 1) : Long
-
-
-    /** COMPLEX STATISTICS **/
 }
