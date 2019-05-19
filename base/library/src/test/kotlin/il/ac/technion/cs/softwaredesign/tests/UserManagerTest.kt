@@ -61,7 +61,7 @@
 //     * getUserPassword
 //     */
 //    @Test
-//    fun `get user password return right password`() {
+//    fun `getAddress user password return right password`() {
 //        every { storageLayer.readPasswordStatusOfUsername(any()) } returns null
 //        every { storageLayer.readPasswordStatusOfUsername(users[0].userName) } returns Pair(users[0].password, IStorageLayer.LoginStatus.OUT)
 //        val userManager = UserManager(storageLayer)
@@ -69,7 +69,7 @@
 //    }
 //
 //    @Test
-//    fun `get user password throws when read return null`() {
+//    fun `getAddress user password throws when read return null`() {
 //        every { storageLayer.readPasswordStatusOfUsername(any()) } returns null
 //        every { storageLayer.readPasswordStatusOfUsername(users[1].userName) } returns Pair(users[1].password, IStorageLayer.LoginStatus.OUT)
 //        val userManager = UserManager(storageLayer)
@@ -80,7 +80,7 @@
 //     * getUserStatus
 //     */
 //    @Test
-//    fun `get user status return logged out status`() {
+//    fun `getAddress user status return logged out status`() {
 //        every { storageLayer.readPasswordStatusOfUsername(any()) } returns null
 //        every { storageLayer.readPasswordStatusOfUsername(users[0].userName) } returns Pair(users[0].password, IStorageLayer.LoginStatus.OUT)
 //        val userManager = UserManager(storageLayer)
@@ -88,7 +88,7 @@
 //    }
 //
 //    @Test
-//    fun `get user status return logged in status`() {
+//    fun `getAddress user status return logged in status`() {
 //        every { storageLayer.readPasswordStatusOfUsername(any()) } returns null
 //        every { storageLayer.readPasswordStatusOfUsername(users[0].userName) } returns Pair(users[0].password, IStorageLayer.LoginStatus.IN)
 //        val userManager = UserManager(storageLayer)
@@ -96,7 +96,7 @@
 //    }
 //
 //    @Test
-//    fun `get user status throws when read return null`() {
+//    fun `getAddress user status throws when read return null`() {
 //        every { storageLayer.readPasswordStatusOfUsername(any()) } returns null
 //        every { storageLayer.readPasswordStatusOfUsername(users[1].userName) } returns Pair(users[1].password, IStorageLayer.LoginStatus.OUT)
 //        val userManager = UserManager(storageLayer)

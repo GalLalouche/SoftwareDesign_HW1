@@ -5,7 +5,7 @@ import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import javax.inject.Inject
 
 class Pointer : IPointer {
-    override fun getValue(): Long {
+    override fun getAddress(): Long {
         return pointer
     }
 //    @Inject

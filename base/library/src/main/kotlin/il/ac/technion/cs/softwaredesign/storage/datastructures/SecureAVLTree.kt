@@ -8,12 +8,10 @@ import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_KEY
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.SECURE_AVL_STORAGE_NUM_PROPERTIES
 import java.lang.NullPointerException
 import java.util.*
-import javax.inject.Inject
-import javax.inject.Provider
 
 /**
  * The `SecureAVLTree` class represents an ordered symbol table of
- * generic key-value pairs. It supports the usual *put*, *get*,
+ * generic key-value pairs. It supports the usual *put*, *getAddress*,
  * *contains*, *delete*, *size*, and *is-empty*
  * methods. It also provides ordered methods for finding the *minimum*,
  * *maximum*, *floor*, and *ceiling*. It also provides a
@@ -37,7 +35,7 @@ import javax.inject.Provider
  * This implementation requires that the key type implements the
  * `ISecureStorageKey` interface and calls the `compareTo()` and
  * method to compare two keys and 'toByteArray' 'fromByteArray' to permit a way for serialization of the key without conflicts(this is client responsibility). It does not call either `equals()` or
- * `hashCode()`. The *put*, *get*, *contains*,
+ * `hashCode()`. The *put*, *getAddress*, *contains*,
  * *delete*, *minimum*, *maximum*, *ceiling*, and
  * *floor* operations each take logarithmic time in the worst case. The
  * *size*, and *is-empty* operations take constant time.
@@ -51,33 +49,32 @@ import javax.inject.Provider
  * Initializes an empty symbol table.
  */
 class SecureAVLTree<Key : ISecureStorageKey<Key>>
-constructor(private val secureStorage: SecureStorage,private val keyDefault:()->Key) {
+constructor(private val secureStorage: SecureStorage, private val keyDefault: () -> Key) {
     /**
      * The root node.
      */
     private var root: Node? = null
         get() {
             val rootIndexByteArray = secureStorage.read(ROOT_KEY.toByteArray())
-                    ?: throw NullPointerException("root Index cannot be null")
-            val rootIndex = ConversionUtils.bytesToLong(rootIndexByteArray)
-            if (rootIndex <= ROOT_INIT_INDEX) return null
-            else {
+                    ?: throw NullPointerException("root Index should not be null after loading from storage")
+            val rootIndex = rootIndexByteArray.bytesToLong()
+            return if (rootIndex <= ROOT_INIT_INDEX) null else {
                 val rootByteArray = secureStorage.read(rootIndexByteArray)
                         ?: throw NullPointerException("root cannot be null")
-                return Node(rootByteArray, Pointer(rootIndex))
+                Node(rootByteArray, Pointer(rootIndex))
             }
         }
         set(value) {
+            val rootKeyByteArray = ROOT_KEY.toByteArray()
             if (value == null) {
-                secureStorage.write(ROOT_KEY.toByteArray(),
+                secureStorage.write(rootKeyByteArray,
                         ConversionUtils.longToBytes(ROOT_INIT_INDEX))
-                field=null
+                field = null
             } else {
-                secureStorage.write(ROOT_KEY.toByteArray(), value.pointer.toByteArray())
+                secureStorage.write(rootKeyByteArray, value.pointer.pointerToByteArray())
                 field = value
             }
         }
-
 
     /**
      * Checks if the symbol table is empty.
@@ -92,7 +89,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      *
      * @return the number key-value pairs in the symbol table
      */
-    fun size(): Int {
+    fun size(): Long {
         return size(root)
     }
 
@@ -103,7 +100,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      *
      * @return the number of nodes in the subtree
      */
-    private fun size(x: Node?): Int {
+    private fun size(x: Node?): Long {
         return x?.size ?: 0
     }
 
@@ -114,7 +111,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      *
      * @return the height of the internal AVL tree (-1 is returned if tree is empty)
      */
-    fun height(): Int {
+    fun height(): Long {
         return height(root)
     }
 
@@ -125,7 +122,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      *
      * @return the height of the subtree -1 is returned if x subtree is empty
      */
-    private fun height(x: Node?): Int {
+    private fun height(x: Node?): Long {
         return x?.height ?: -1
     }
 
@@ -208,8 +205,8 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
                 return x
             }
         }
-        x.size = 1 + size(x.left) + size(x.right)
-        x.height = 1 + Math.max(height(x.left), height(x.right))
+        x.size = 1L + size(x.left) + size(x.right)
+        x.height = 1L + Math.max(height(x.left), height(x.right))
         return balance(x)
     }
 
@@ -245,7 +242,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      * @param x the subtree
      * @return the balance factor of the subtree
      */
-    private fun balanceFactor(x: Node): Int {
+    private fun balanceFactor(x: Node): Long {
         return height(x.left) - height(x.right)
     }
 
@@ -260,9 +257,9 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
         x.left = y!!.right
         y.right = x
         y.size = x.size
-        x.size = 1 + size(x.left) + size(x.right)
-        x.height = 1 + Math.max(height(x.left), height(x.right))
-        y.height = 1 + Math.max(height(y.left), height(y.right))
+        x.size = 1L + size(x.left) + size(x.right)
+        x.height = 1L + Math.max(height(x.left), height(x.right))
+        y.height = 1L + Math.max(height(y.left), height(y.right))
         return y
     }
 
@@ -277,9 +274,9 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
         x.right = y!!.left
         y.left = x
         y.size = x.size
-        x.size = 1 + size(x.left) + size(x.right)
-        x.height = 1 + Math.max(height(x.left), height(x.right))
-        y.height = 1 + Math.max(height(y.left), height(y.right))
+        x.size = 1L + size(x.left) + size(x.right)
+        x.height = 1L + Math.max(height(x.left), height(x.right))
+        y.height = 1L + Math.max(height(y.left), height(y.right))
         return y
     }
 
@@ -319,8 +316,8 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
                 }
             }
         }
-        node.size = 1 + size(node.left) + size(node.right)
-        node.height = 1 + Math.max(height(node.left), height(node.right))
+        node.size = 1L + size(node.left) + size(node.right)
+        node.height = 1L + Math.max(height(node.left), height(node.right))
         return balance(node)
     }
 
@@ -344,8 +341,8 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
     private fun deleteMin(x: Node): Node? {
         if (x.left == null) return x.right
         x.left = deleteMin(x.left!!)
-        x.size = 1 + size(x.left) + size(x.right)
-        x.height = 1 + Math.max(height(x.left), height(x.right))
+        x.size = 1L + size(x.left) + size(x.right)
+        x.height = 1L + Math.max(height(x.left), height(x.right))
         return balance(x)
     }
 
@@ -369,8 +366,8 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
     private fun deleteMax(x: Node): Node? {
         if (x.right == null) return x.left
         x.right = deleteMax(x.right!!)
-        x.size = 1 + size(x.left) + size(x.right)
-        x.height = 1 + Math.max(height(x.left), height(x.right))
+        x.size = 1L + size(x.left) + size(x.right)
+        x.height = 1L + Math.max(height(x.left), height(x.right))
         return balance(x)
     }
 
@@ -490,7 +487,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      * @throws IllegalArgumentException unless `k` is between 0 and
      * `size() -1 `
      */
-    fun select(k: Int): Key {
+    fun select(k: Long): Key {
         if (k < 0 || k >= size()) throw IllegalArgumentException("key is out of range. should be between [0,${size() - 1}]}")
         val x = select(root, k)
         return x!!.key
@@ -503,12 +500,12 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      * @param k the kth smallest key in the subtree
      * @return the node with key the kth smallest key in the subtree
      */
-    private fun select(x: Node?, k: Int): Node? {
+    private fun select(x: Node?, k: Long): Node? {
         if (x == null) return null
         val t = size(x.left)
         return when {
             t > k -> select(x.left, k)
-            t < k -> select(x.right, k - t - 1)
+            t < k -> select(x.right, k - t - 1L)
             else -> x
         }
     }
@@ -521,7 +518,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      * @return the number of keys in the symbol table strictly less than
      * `key`
      */
-    fun rank(key: Key): Int {
+    fun rank(key: Key): Long {
         return rank(key, root)
     }
 
@@ -532,7 +529,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      * @param x the subtree
      * @return the number of keys in the subtree less than key
      */
-    private fun rank(key: Key, x: Node?): Int {
+    private fun rank(key: Key, x: Node?): Long {
         if (x == null) return 0
         val cmp = key.compareTo(x.key)
         return when {
@@ -621,10 +618,10 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
      * @return the number of keys in the symbol table between `lo`
      * (inclusive) and `hi` (exclusive)
      */
-    fun size(lo: Key, hi: Key): Int {
+    fun size(lo: Key, hi: Key): Long {
         if (lo > hi) return 0
         return if (contains(hi))
-            rank(hi) - rank(lo) + 1
+            rank(hi) - rank(lo) + 1L
         else
             rank(hi) - rank(lo)
     }
@@ -647,22 +644,39 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
         if (cmphi > 0) keys(x.right, queue, lo, hi)
     }
 
+    /** Utils **/
+
+    private fun Long.longToByteArray(): ByteArray {
+        return ConversionUtils.longToBytes(this)
+    }
+
+    private fun ByteArray.bytesToLong(): Long {
+        return ConversionUtils.bytesToLong(this)
+    }
+
+    private fun IPointer.pointerToByteArray(): ByteArray {
+        return this.getAddress().longToByteArray()
+    }
+
+    private fun ByteArray.bytesArrayToPointer(): IPointer {
+        return Pointer(this.bytesToLong())
+    }
 
     /**
      * This class represents an inner node of the AVL tree.
      */
     private inner class Node : IStorageConvertable<Node> {
-        val addressGenerator : ISequenceGenerator = SecureSequenceGenerator(secureStorage)
+        val addressGenerator: ISequenceGenerator = SecureSequenceGenerator(secureStorage)
 
         var pointer: IPointer//TODO REPLACE WITH injection, but how? do we even need to?
 
-        private var nodeHeight: Int = 0
-        private var nodeSize: Int = 0
+        private var nodeHeight: Long = 0
+        private var nodeSize: Long = 0
         private var leftPointer: IPointer? = null
         private var rightPointer: IPointer? = null
         private var nodeKey: Key = keyDefault()
 
-        constructor(key: Key, height: Int, size: Int) {
+        constructor(key: Key, height: Long, size: Long) {
             this.nodeKey = key
             this.nodeHeight = height
             this.nodeSize = size
@@ -684,11 +698,11 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
 
         constructor(nodeByteArray: ByteArray, pointer: IPointer) {
             this.fromByteArray(nodeByteArray)
-            this.pointer=pointer
+            this.pointer = pointer
         }
 
 
-        var height: Int
+        var height: Long
             get() {
                 loadNodeFromStorage()
                 return nodeHeight
@@ -698,7 +712,7 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
                 storeNodeInStorage()
             }
 
-        var size: Int
+        var size: Long
             get() {
                 loadNodeFromStorage()
                 return nodeSize
@@ -763,35 +777,48 @@ constructor(private val secureStorage: SecureStorage,private val keyDefault:()->
         override fun toByteArray(): ByteArray {
             // <height>_<size>_<left>_<right>_<key> , key is last because it can contains delimiters
             // if number of properties is changed dont forget to update SECURE_AVL_STORAGE_NUM_PROPERTIES
-            val nodeDetails = "$nodeHeight$DELIMITER$nodeSize$DELIMITER${leftPointer?.getValue()}$DELIMITER${rightPointer?.getValue()}$DELIMITER"
-            val byteArrayStr = nodeDetails.toByteArray()
-            return byteArrayStr + nodeKey.toByteArray()
+            val nodeHeightByteArrayInString = String(nodeHeight.longToByteArray())
+            val nodeSizeByteArrayInString = String(nodeSize.longToByteArray())
+            var leftPointerString = null.toString()
+            var rightPointerString = null.toString()
+            if (leftPointer != null)
+                leftPointerString = String(leftPointer!!.pointerToByteArray())
+            if (rightPointer != null)
+                rightPointerString = String(rightPointer!!.pointerToByteArray())
+            val nodeKeyByteArrayInString = String(nodeKey.toByteArray())
+            return ("$nodeHeightByteArrayInString$DELIMITER" +
+                    "$nodeSizeByteArrayInString$DELIMITER" +
+                    "$leftPointerString$DELIMITER" +
+                    "$rightPointerString$DELIMITER" +
+                    "$nodeKeyByteArrayInString").toByteArray()
         }
 
+
         override fun fromByteArray(value: ByteArray) {
-            //if (value == null) throw IllegalArgumentException("Node.fromByteArray got null")
             val nodeDetails = String(value)
             val values = nodeDetails.split(DELIMITER, limit = SECURE_AVL_STORAGE_NUM_PROPERTIES)
-            if (values.size < SECURE_AVL_STORAGE_NUM_PROPERTIES) throw IllegalArgumentException("Node does not contains 5 values in the persistent storage")
+            if (values.size < SECURE_AVL_STORAGE_NUM_PROPERTIES)
+                throw IllegalArgumentException("Node does not contains $SECURE_AVL_STORAGE_NUM_PROPERTIES values in the persistent storage")
 
-            nodeHeight = values[0].toInt()
-            nodeSize = values[1].toInt()
+            nodeHeight = values[0].toByteArray().bytesToLong()
+            nodeSize = values[1].toByteArray().bytesToLong()
             val nullValue = null.toString()
-            val leftPointerStr = values[2]
-            if (leftPointerStr.contains(nullValue)) {
+            val leftPointerString = values[2]
+            if (leftPointerString.contains(nullValue)) {
                 leftPointer = null
             } else {
-                leftPointer = Pointer(leftPointerStr.toLong())
+                leftPointer = leftPointerString.toByteArray().bytesArrayToPointer()
             }
-            val rightPointerStr = values[3]
-            if (rightPointerStr.contains(nullValue)) {
+            val rightPointerString = values[3]
+            if (rightPointerString.contains(nullValue)) {
                 rightPointer = null
             } else {
-                rightPointer = Pointer(rightPointerStr.toLong())
+                rightPointer = rightPointerString.toByteArray().bytesArrayToPointer()
             }
             nodeKey.fromByteArray(values[4].toByteArray())
         }
     }
+
 
     /**
      * Checks if the AVL tree invariants are fine.

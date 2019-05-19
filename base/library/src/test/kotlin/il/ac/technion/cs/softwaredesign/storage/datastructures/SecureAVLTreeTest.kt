@@ -79,8 +79,7 @@ class SecureAVLTreeTest {
 
     @Test
     fun isEmpty() {
-        assertWithTimeout({ tree.size()==blackRedTree.size  }, isTrue)
-
+        assertThat(tree.size(), equalTo(blackRedTree.size.toLong()))
     }
 
     @Test
@@ -177,7 +176,7 @@ class SecureAVLTreeTest {
     fun min() {
         var minValue:Long= Long.MAX_VALUE
         for(i in 1..5){
-            val v = SimpleKey(Random.nextLong(from=0, until=Long.MAX_VALUE))
+            val v = SimpleKey(Random.nextLong(from=ROOT_INIT_INDEX+1, until=Long.MAX_VALUE))
             if(tree.contains(v)) continue
             minValue=min(minValue,v.i)
             tree.put(v)
