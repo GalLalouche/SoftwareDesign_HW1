@@ -1,6 +1,18 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-class ChannelManager : IChannelManager {
+import com.google.inject.BindingAnnotation
+import com.google.inject.Inject
+import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
+import il.ac.technion.cs.softwaredesign.storage.channels.IChannelStorage
+
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class ChannelIdSeqGenerator
+
+class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
+                                        @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
+
     override fun getChannelId(channelName: String): Long? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

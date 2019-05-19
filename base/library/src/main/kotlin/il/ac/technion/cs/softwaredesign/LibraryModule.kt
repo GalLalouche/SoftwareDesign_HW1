@@ -19,8 +19,10 @@ class LibraryModule : KotlinModule() {
         bind<IStatisticsStorage>().to<SecureStatisticsStorage>()
         bind<IChannelStorage>().to<SecureChannelStorage>()
         bind<ISequenceGenerator>().annotatedWith<UserIdSeqGenerator>().to<UserIdGenerator>()
+        bind<ISequenceGenerator>().annotatedWith<ChannelIdSeqGenerator>().to<ChannelIdGenerator>()
         bind<IUserStorage>().to<SecureUserStorage>()
         bind<ITokenManager>().to<TokenManager>()
         bind<IUserManager>().to<UserManager>()
+        bind<IChannelManager>().to<ChannelManager>()
     }
 }
