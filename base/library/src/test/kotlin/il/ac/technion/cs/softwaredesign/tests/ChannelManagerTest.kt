@@ -39,7 +39,7 @@ class ChannelManagerTest {
     }
 
     @Test
-    fun `cannot add invalid user name`() {
+    fun `cannot add invalid channel name`() {
         assertThrows<IllegalArgumentException> { channelManager.add(MANAGERS_CONSTS.CHANNEL_INVALID_NAME) }
     }
 
@@ -342,11 +342,20 @@ class ChannelManagerTest {
     }
 
     @Test
-    fun `add&remove MemberToChannel throws for user id that does not exist`() {
+    fun `add&remove MemberToChannel throws for channel id that does not exist`() {
         val id = channelManager.add("ron")
         channelManager.remove(id)
         assertThrows<IllegalArgumentException> {channelManager.addMemberToChannel(id, 20L)}
         assertThrows<IllegalArgumentException> {channelManager.removeMemberFromChannel(id, 7000L)}
+    }
+
+    @Test
+    fun `addMemberToChannel & addOperatorToChannel throws if element exists`() {
+        val id = channelManager.add("ron")
+        channelManager.addMemberToChannel(id, 20L)
+        channelManager.addOperatorToChannel(id, 7000L)
+        assertThrows<IllegalAccessException> {channelManager.addMemberToChannel(id, 20L)}
+        assertThrows<IllegalAccessException> {channelManager.addOperatorToChannel(id, 7000L)}
     }
 
 

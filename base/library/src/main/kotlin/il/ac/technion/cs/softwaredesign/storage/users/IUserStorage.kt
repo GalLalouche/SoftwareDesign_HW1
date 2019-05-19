@@ -13,6 +13,6 @@ interface IUserStorage {
     fun getPropertyLongByUserId(userIdKey : Long, property : String) :Long?
     fun setPropertyLongToUserId(userIdKey : Long, property : String, value : Long)
 
-    fun getPropertyListByUserId(userIdKey : Long, property : String) : MutableList<Long>?
-    fun setPropertyListToUserId(userIdKey : Long, property : String, listValue : MutableList<Long>)
+    fun getPropertyListByUserId(userIdKey : Long, property : String) : List<Long>?
+    fun setPropertyListToUserId(userIdKey : Long, property : String, listValue : List<Long>)
 }
