@@ -1,6 +1,8 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
 import com.google.common.primitives.Longs
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import il.ac.technion.cs.softwaredesign.storage.ISecureStorageKey
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_INIT_INDEX
@@ -13,8 +15,10 @@ import io.mockk.mockk
 import io.mockk.slot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 import java.util.*
+import kotlin.math.min
+import kotlin.random.Random
+
 
 class SecureAVLTreeTest {
 
@@ -41,7 +45,7 @@ class SecureAVLTreeTest {
     private val storageMock= mutableMapOf<ByteArrayKey,ByteArray>()
     private var storageLayer: SecureStorage = mockk()
     private val tree=SecureAVLTree(storageLayer) {SimpleKey(0L)}
-    private val blackRedTree=TreeMap<SimpleKey,SimpleKey>()
+    private val blackRedTree= TreeMap<SimpleKey,SimpleKey>()
 
     private fun initTree() {
 
@@ -171,15 +175,15 @@ class SecureAVLTreeTest {
 
     @Test
     fun min() {
-        val values = (1..20).map { SimpleKey(it.toLong()) }
-        values.forEach({tree.put(it); blackRedTree[it]=it})
-        assertWithTimeout({tree.min() == values[0]}, isTrue)
-
-        val random : Random = Random()
-        (1..3).forEach({val v = SimpleKey(random.nextLong()); tree.put(v); blackRedTree[v]=v})
-//        val min = blackRedTree.entries.first().key
-//        val treeMin = tree.min()
-//        assertWithTimeout({treeMin == min}, isTrue)
+        var minValue:Long= Long.MAX_VALUE
+        for(i in 1..5){
+            val v = SimpleKey(Random.nextLong(from=0, until=Long.MAX_VALUE))
+            if(tree.contains(v)) continue
+            minValue=min(minValue,v.i)
+            tree.put(v)
+        }
+         val treeMin = tree.min().i
+         assertThat(treeMin, equalTo(minValue))
     }
 
     @Test
