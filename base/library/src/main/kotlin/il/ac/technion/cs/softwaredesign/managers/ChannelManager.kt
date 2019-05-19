@@ -18,7 +18,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         val channelId = channelIdGenerator.next()
         channelStorage.setChannelIdToChannelName(channelName, channelId)
         channelStorage.setPropertyStringToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, channelName)
-        channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, channelName)
+        channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY, 0L)
 
         return channelId
     }
