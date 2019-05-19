@@ -6,29 +6,35 @@ interface IChannelManager {
     /**
      * Get channelId that match channelName
      * @param channelName String
+     * @throws IllegalArgumentException if channelName is already exist
      * @return Long, channel id or null if channel does not exist in the system
      */
-    fun getId(channelName : String) : Long?
+    fun getId(channelName : String) : Long
 
     /**
      * Add new channel to the system
      * @param channelName String
-     * @throws IllegalArgumentException if channelName is already exist, empty list is default
+     * @throws IllegalArgumentException if channelName is already exist
      * @return Long, channel id
      */
     fun add(channelName: String): Long
 
     /**
      * Remove channel from the system
+     * Consider using this function and not the other overloads, when you can
      * @param channelId Long
-     * @throws IllegalArgumentException throws if channel id does not exist in the system
+     */
+    fun remove(channelId : Long, channelName : String)
+
+    /**
+     * Remove channel from the system
+     * @param channelId Long
      */
     fun remove(channelId : Long)
 
     /**
      * Remove channel from the system
      * @param channelName String
-     * @throws IllegalArgumentException throws if channel name does not exist in the system
      */
     fun remove(channelName : String)
 
@@ -127,16 +133,16 @@ interface IChannelManager {
     /**
      * add an operators to a specific channel
      * @param channelId channel Id
-     * @param operatorsId operators Id
+     * @param operatorId operators Id
      * @throws IllegalArgumentException throws if channel Id does not exist in the system
      */
-    fun addOperatorToChannel(channelId:Long, operatorsId:Long)
+    fun addOperatorToChannel(channelId:Long, operatorId:Long)
 
     /**
      * removes an operators from a specific channel
      * @param channelId channel Id
-     * @param operatorsId operators Id
+     * @param operatorId operators Id
      * @throws IllegalArgumentException throws if channel Id does not exist in the system
      */
-    fun removeOperatorFromChannel(channelId: Long,operatorsId: Long)
+    fun removeOperatorFromChannel(channelId: Long, operatorId: Long)
 }

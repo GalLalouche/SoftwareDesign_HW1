@@ -1,5 +1,8 @@
 @file:JvmName("SecureStorageConstants")
 package il.ac.technion.cs.softwaredesign.storage.utils
+
+import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.INIT_INDEX_VAL
+
 object MANAGERS_CONSTS{
     internal const val DELIMITER = "_"
     const val INVALID_USER_ID=-1L
@@ -16,6 +19,8 @@ object MANAGERS_CONSTS{
     const val CHANNEL_NR_MEMBERS="nr_members"
     const val CHANNEL_MEMBERS_LIST="members_list"
     const val CHANNEL_OPERATORS_LIST="operators_list"
+    const val CHANNEL_INVALID_NAME=""
+    const val CHANNEL_INVALID_ID=INIT_INDEX_VAL
 
 }
 object TREE_CONST {
