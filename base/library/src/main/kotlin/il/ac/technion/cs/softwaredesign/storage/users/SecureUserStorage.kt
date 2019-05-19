@@ -53,14 +53,15 @@ class SecureUserStorage @Inject constructor(secureStorageFactory: SecureStorageF
         userDetailsStorage.write(key, ConversionUtils.longToBytes(value))
     }
 
-    override fun getPropertyListByUserId(userIdKey: Long, property: String): MutableList<Long>? {
+    override fun getPropertyListByUserId(userIdKey: Long, property: String): List<Long>? {
         val key = createPropertyKey(userIdKey, property)
         val value= userDetailsStorage.read(key) ?: return null
         val stringValue = String(value)
+        if (stringValue == "") return emptyList()
         return stringValue.split(DELIMITER).map { it.toLong() }.toMutableList()
     }
 
-    override fun setPropertyListToUserId(userIdKey: Long, property: String, listValue: MutableList<Long>) {
+    override fun setPropertyListToUserId(userIdKey: Long, property: String, listValue: List<Long>) {
         val key = createPropertyKey(userIdKey, property)
         val value = listValue.joinToString(DELIMITER)
         userDetailsStorage.write(key, value.toByteArray())
