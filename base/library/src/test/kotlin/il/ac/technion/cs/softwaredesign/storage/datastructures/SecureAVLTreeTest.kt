@@ -216,6 +216,16 @@ class SecureAVLTreeTest {
 
     @Test
     fun keysInOrder() {
+        for(i in 1..200){
+            val v = SimpleKey(Random.nextLong(from=ROOT_INIT_INDEX+1, until=Long.MAX_VALUE))
+            blackRedTree[v] = v
+            tree.put(v)
+        }
+        val values = tree.keysInOrder().iterator()
+        for (res in blackRedTree) {
+            val current = values.next()
+            assertThat(current, equalTo(res.key))
+        }
     }
 
     @Test

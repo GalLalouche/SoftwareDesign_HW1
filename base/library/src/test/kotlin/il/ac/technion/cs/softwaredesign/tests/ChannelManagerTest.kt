@@ -421,7 +421,4 @@ class ChannelManagerTest {
         assertThat(channelManager.getMembersList(id), equalTo(emptyList()))
         assertThat(channelManager.getOperatorsList(id), equalTo(emptyList()))
     }
-
-
-
 }
