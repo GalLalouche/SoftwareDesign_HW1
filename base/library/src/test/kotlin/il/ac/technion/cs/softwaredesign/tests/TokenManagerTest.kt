@@ -1,12 +1,6 @@
 package il.ac.technion.cs.softwaredesign.tests
 
-import com.authzee.kotlinguice4.getInstance
-import com.google.inject.Guice
-import com.google.inject.Inject
-import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import il.ac.technion.cs.softwaredesign.*
-import il.ac.technion.cs.softwaredesign.managers.ITokenManager
 import il.ac.technion.cs.softwaredesign.managers.TokenManager
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.INVALID_USER_ID
@@ -21,6 +15,7 @@ class TokenManagerTest{
 
     private val userStorage = mockk<IUserStorage>()
     private val tokenManager=TokenManager(userStorage)
+
 
     /**
      * isTokenValid
@@ -80,23 +75,4 @@ class TokenManagerTest{
         every{ userStorage.getUserIdByToken("invalidToken")} returns null
         assertThrowsWithTimeout<Unit, IllegalArgumentException>({ tokenManager.invalidateUserToken("invalidToken") })
     }
-
-   /*
-     * assignTokenToUserId
-     *//*
-    @Test
-    fun `invalid username throws`() {
-        val tokenManager = TokenManager(userStorage)
-        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.assignTokenToUserId(INVALID_USERNAME) })
-    }
-
-    *//**
-     * invalidateUserToken
-     *//*
-    @Test
-    fun `invalid mapped username throws`() {
-        every { userStorage.readUsernameOfToken(any()) } returns INVALID_USERNAME
-        val tokenManager = TokenManager(userStorage)
-        assertThrowsWithTimeout<Unit, IllegalArgumentException>({ tokenManager.invalidateUserToken(users[0].token) })
-    }*/
 }

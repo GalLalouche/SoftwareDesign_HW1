@@ -6,7 +6,10 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasElement
 import il.ac.technion.cs.softwaredesign.managers.IUserManager
+import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
+import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
@@ -17,6 +20,19 @@ class UserManagerTest {
     private val injector = Guice.createInjector(LibraryTestModule())
 
     private val userManager = injector.getInstance<IUserManager>()
+
+    @BeforeEach
+    private fun init() {
+        initStatistics()
+    }
+
+    private fun initStatistics() {
+        val statisticsStorage = injector.getInstance<IStatisticsStorage>()
+        statisticsStorage.setLongValue(STATISTICS_KEYS.NUMBER_OF_USERS, STATISTICS_KEYS.INIT_INDEX_VAL)
+        statisticsStorage.setLongValue(STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS, STATISTICS_KEYS.INIT_INDEX_VAL)
+        statisticsStorage.setLongValue(STATISTICS_KEYS.NUMBER_OF_CHANNELS, STATISTICS_KEYS.INIT_INDEX_VAL)
+        statisticsStorage.setLongValue(STATISTICS_KEYS.MAX_CHANNEL_INDEX, STATISTICS_KEYS.INIT_INDEX_VAL)
+    }
 
 
     @Test
@@ -113,7 +129,7 @@ class UserManagerTest {
         (1L..20L).forEach { userManager.addChannelToUser(aviadID, it) }
         (1L..9L).forEach { userManager.removeChannelFromUser(aviadID, it) }
         val channelList = userManager.getChannelListOfUser(aviadID)
-        assertThat(channelList.size, equalTo(10))
+        assertThat(channelList.size, equalTo(11))
     }
 
     @Test
