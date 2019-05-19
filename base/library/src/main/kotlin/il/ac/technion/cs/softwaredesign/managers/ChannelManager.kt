@@ -12,42 +12,6 @@ import java.lang.IllegalArgumentException
 class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
                                          @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
 
-    // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != CHANNEL_INVALID_ID
-    // and its id_name is not mapped to CHANNEL_INVALID_NAME
-    private fun isChannelValid(channelId: Long?) : Boolean {
-        if (channelId != null && channelId != CHANNEL_INVALID_ID) return true
-        return false
-    }
-    private fun isChannelValid(channelName: String?) : Boolean {
-        if (channelName != null && channelName != CHANNEL_INVALID_NAME) return true
-        return false
-    }
-
-    private fun invalidateChannel(channelId: Long) {
-        try {
-            val channelName = getName(channelId)
-            invalidateChannel(channelId, channelName)
-        } catch (e : Exception) {}
-    }
-    private fun invalidateChannel(channelName: String) {
-        try {
-            val channelId = getId(channelName)
-            invalidateChannel(channelId, channelName)
-        } catch (e : Exception) {}
-    }
-    // if you can, use this overload
-    private fun invalidateChannel(channelId: Long, channelName: String) {
-        channelStorage.setChannelIdToChannelName(channelName, CHANNEL_INVALID_ID)
-        channelStorage.setPropertyStringToChannelId(channelId, CHANNEL_NAME_PROPERTY, CHANNEL_INVALID_NAME)
-    }
-
-    override fun getId(channelName: String): Long {
-        if (!isChannelValid(channelName = channelName)) throw IllegalArgumentException("channel name is not valid")
-        val id = channelStorage.getChannelIdByChannelName(channelName)
-                if (isChannelValid(channelId = id)) return id!! // redundant, consider removing it
-                throw IllegalArgumentException("returned channel id is not valid")
-    }
-
     override fun add(channelName: String): Long {
         if (isChannelNameExists(channelName)) throw IllegalArgumentException("channel name already exist")
         val channelId = channelIdGenerator.next()
@@ -142,5 +106,41 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         val currentList = ArrayList<Long>(getMembersList(channelId))
         currentList.remove(operatorId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST, currentList)
+    }
+
+    // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != CHANNEL_INVALID_ID
+    // and its id_name is not mapped to CHANNEL_INVALID_NAME
+    private fun isChannelValid(channelId: Long?) : Boolean {
+        if (channelId != null && channelId != CHANNEL_INVALID_ID) return true
+        return false
+    }
+    private fun isChannelValid(channelName: String?) : Boolean {
+        if (channelName != null && channelName != CHANNEL_INVALID_NAME) return true
+        return false
+    }
+
+    private fun invalidateChannel(channelId: Long) {
+        try {
+            val channelName = getName(channelId)
+            invalidateChannel(channelId, channelName)
+        } catch (e : Exception) {}
+    }
+    private fun invalidateChannel(channelName: String) {
+        try {
+            val channelId = getId(channelName)
+            invalidateChannel(channelId, channelName)
+        } catch (e : Exception) {}
+    }
+    // if you can, use this overload
+    private fun invalidateChannel(channelId: Long, channelName: String) {
+        channelStorage.setChannelIdToChannelName(channelName, CHANNEL_INVALID_ID)
+        channelStorage.setPropertyStringToChannelId(channelId, CHANNEL_NAME_PROPERTY, CHANNEL_INVALID_NAME)
+    }
+
+    override fun getId(channelName: String): Long {
+        if (!isChannelValid(channelName = channelName)) throw IllegalArgumentException("channel name is not valid")
+        val id = channelStorage.getChannelIdByChannelName(channelName)
+        if (isChannelValid(channelId = id)) return id!! // redundant, consider removing it
+        throw IllegalArgumentException("returned channel id is not valid")
     }
 }
