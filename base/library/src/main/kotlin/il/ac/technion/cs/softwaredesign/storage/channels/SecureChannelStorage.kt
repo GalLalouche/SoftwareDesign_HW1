@@ -46,6 +46,7 @@ class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) :
         val key = createPropertyKey(channelIdKey, property)
         val value= channelDetailsStorage.read(key) ?: return null
         val stringValue = String(value)
+        if (stringValue == "") return emptyList()
         return stringValue.split(MANAGERS_CONSTS.DELIMITER).map { it.toLong() }.toMutableList()
     }
 
