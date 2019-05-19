@@ -11,14 +11,6 @@ class SecureChannelStorage : IChannelStorage {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun <T : IStorageConvertable<T>> getPropertyValueByChannelId(channelId: Long, property: String): T? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <T : IStorageConvertable<T>> setPropertyValueToChannelId(channelId: Long, property: String, value: T) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun getPropertyStringByChannelId(userIdKey: Long, property: String): String? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -42,4 +34,6 @@ class SecureChannelStorage : IChannelStorage {
     override fun setPropertyListToChannelId(userId: Long, property: String, listValue: List<Long>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+
 }
