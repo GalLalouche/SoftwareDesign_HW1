@@ -73,16 +73,15 @@ class TokenManagerTest{
         every{ userStorage.getUserIdByToken(token)} returns INVALID_USER_ID
         assertWithTimeout({tokenManager.isTokenValid(token)}, isFalse)
     }
-/*
+
     @Test
-    fun `invalid username user throws`() {
-        every { userStorage.readUsernameOfToken(any()) } returns null
-        every { userStorage.readUsernameOfToken(users[0].token) } returns INVALID_USERNAME
-        val tokenManager = TokenManager(userStorage)
-        assertThrowsWithTimeout<String, IllegalArgumentException>({ tokenManager.getUserIdByToken(users[0].userName) })
+    fun `throws IllegalArgumentException if token does not belong to any user`() {
+        every {userStorage.getUserIdByToken(any())} returns 1L
+        every{ userStorage.getUserIdByToken("invalidToken")} returns null
+        assertThrowsWithTimeout<Unit, IllegalArgumentException>({ tokenManager.invalidateUserToken("invalidToken") })
     }
 
-    *//**
+   /*
      * assignTokenToUserId
      *//*
     @Test
