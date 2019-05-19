@@ -53,7 +53,6 @@ interface CourseApp {
      */
     fun isUserLoggedIn(token: String, username: String): Boolean?
 
-
     /**
      * Make another user, identified by [username], an administrator. Only users who are administrators may perform this
      * operation.

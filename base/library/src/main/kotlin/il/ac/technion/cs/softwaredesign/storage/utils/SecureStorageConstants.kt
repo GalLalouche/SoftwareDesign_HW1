@@ -11,6 +11,12 @@ object MANAGERS_CONSTS{
     const val LIST_PROPERTY="list"
     const val SIZE_PROPERTY="size"
 
+    const val CHANNEL_NAME_PROPERTY="channel_name"
+    const val CHANNEL_NR_ACTIVE_MEMBERS="nr_active_members"
+    const val CHANNEL_NR_MEMBERS="nr_members"
+    const val CHANNEL_MEMBERS_LIST="members_list"
+    const val CHANNEL_OPERATORS_LIST="operators_list"
+
 }
 object TREE_CONST {
     internal const val DELIMITER = "_"

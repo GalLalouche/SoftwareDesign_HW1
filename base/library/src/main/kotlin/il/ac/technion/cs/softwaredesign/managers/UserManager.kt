@@ -75,19 +75,19 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         return password ?: throw IllegalArgumentException("user id does not exist")
     }
 
-    override fun getChannelListOfUser(userId: Long): MutableList<Long> {
+    override fun getChannelListOfUser(userId: Long): List<Long> {
         return userStorage.getPropertyListByUserId(userId, LIST_PROPERTY)
                 ?: throw IllegalArgumentException("user id does not exist")
     }
 
     override fun addChannelToUser(userId: Long, channelId: Long) {
-        val currentList = getChannelListOfUser(userId)
+        val currentList = ArrayList<Long>(getChannelListOfUser(userId))
         currentList.add(channelId)
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, currentList)
     }
 
     override fun removeChannelFromUser(userId: Long, channelId: Long) {
-        val currentList = getChannelListOfUser(userId)
+        val currentList = ArrayList<Long>(getChannelListOfUser(userId))
         currentList.remove(channelId)
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, currentList)
     }

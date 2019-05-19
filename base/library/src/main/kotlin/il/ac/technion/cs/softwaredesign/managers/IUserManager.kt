@@ -90,7 +90,7 @@ interface IUserManager {
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return ids of the channels
      */
-    fun getChannelListOfUser(userId: Long):MutableList<Long>
+    fun getChannelListOfUser(userId: Long): List<Long>
 
     /**
      * add a channel to a specific user

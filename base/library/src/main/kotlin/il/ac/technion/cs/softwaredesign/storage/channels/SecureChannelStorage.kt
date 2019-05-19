@@ -7,7 +7,7 @@ import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.CHANNEL_ID
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import javax.inject.Inject
 
-class SecureChannelStorage @Inject constructor (private val factory: SecureStorageFactory) : IChannelStorage {
+class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) : IChannelStorage {
     private val channelIdsStorage = factory.open(CHANNEL_ID.toByteArray())
     private val channelDetailsStorage = factory.open(CHANNEL_DETAILS.toByteArray())
 
