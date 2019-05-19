@@ -119,11 +119,17 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != CHANNEL_INVALID_ID
     // and its id_name is not mapped to CHANNEL_INVALID_NAME
     private fun isChannelValid(channelId: Long?) : Boolean {
-        if (channelId != null && channelId != CHANNEL_INVALID_ID) return true
+        if (channelId != null && channelId != CHANNEL_INVALID_ID) {
+            val name = channelStorage.getPropertyStringByChannelId(channelId, CHANNEL_NAME_PROPERTY)
+            return name != null && name != CHANNEL_INVALID_NAME
+        }
         return false
     }
     private fun isChannelValid(channelName: String?) : Boolean {
-        if (channelName != null && channelName != CHANNEL_INVALID_NAME) return true
+        if (channelName != null && channelName != CHANNEL_INVALID_NAME) {
+            val id = channelStorage.getChannelIdByChannelName(channelName)
+            return id != null && id != CHANNEL_INVALID_ID
+        }
         return false
     }
 
