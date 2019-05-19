@@ -12,7 +12,7 @@ import java.lang.IllegalArgumentException
 class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
                                          @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator) : IChannelManager {
 
-    override fun add(channelName: String): Long {
+    override fun addChannel(channelName: String): Long {
         if (channelName == CHANNEL_INVALID_NAME) throw IllegalArgumentException("channel name cannot be empty")
         if (isChannelNameExists(channelName)) throw IllegalArgumentException("channel name already exist")
         val channelId = channelIdGenerator.next()
@@ -25,11 +25,11 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         return channelId
     }
 
-    override fun remove(channelId: Long) {
+    override fun removeChannel(channelId: Long) {
         invalidateChannel(channelId)
     }
 
-    override fun remove(channelName : String) {
+    override fun removeChannel(channelName : String) {
         invalidateChannel(channelName)
     }
 
@@ -41,43 +41,43 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         return isChannelValid(channelId)
     }
 
-    override fun getId(channelName: String): Long {
+    override fun getChannelIdByName(channelName: String): Long {
         if (!isChannelValid(channelName = channelName)) throw IllegalArgumentException("channel name is not valid")
         val id = channelStorage.getChannelIdByChannelName(channelName)
                 if (isChannelValid(channelId = id)) return id!! // TODO: redundant, consider removing it
                 throw IllegalArgumentException("returned channel id is not valid")
     }
 
-    override fun getName(channelId: Long): String {
+    override fun getChannelNameById(channelId: Long): String {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         val name = channelStorage.getPropertyStringByChannelId(channelId, CHANNEL_NAME_PROPERTY)
                 if (isChannelValid(channelName = name)) return name!! // TODO: redundant, consider removing it
                 throw IllegalArgumentException("returned channel name is not valid")
     }
 
-    override fun getNumberOfActiveMembers(channelId: Long): Long {
+    override fun getNumberOfActiveMembersInChannel(channelId: Long): Long {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         return channelStorage.getPropertyLongByChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_ACTIVE_MEMBERS)
                 ?: throw IllegalArgumentException("channel id is valid but returned null")
     }
 
-    override fun updateNumberOfActiveMembers(channelId: Long, value: Long) {
+    override fun updateNumberOfActiveMembersInChannel(channelId: Long, value: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_ACTIVE_MEMBERS, value)
     }
 
-    override fun getNumberOfMembers(channelId: Long): Long {
+    override fun getNumberOfMembersInChannel(channelId: Long): Long {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         return channelStorage.getPropertyLongByChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_MEMBERS)
                 ?: throw IllegalArgumentException("channel id is valid but returned null")
     }
 
-    override fun updateNumberOfMembers(channelId: Long, value: Long) {
+    override fun updateNumberOfMembersInChannel(channelId: Long, value: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_MEMBERS, value)
     }
 
-    override fun getMembersList(channelId: Long): List<Long> {
+    override fun getChannelMembersList(channelId: Long): List<Long> {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         return channelStorage.getPropertyListByChannelId(channelId, MANAGERS_CONSTS.CHANNEL_MEMBERS_LIST)
                 ?: throw IllegalArgumentException("channel id does not exist")
@@ -85,7 +85,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
 
     override fun addMemberToChannel(channelId: Long, memberId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
-        val currentList = ArrayList<Long>(getMembersList(channelId))
+        val currentList = ArrayList<Long>(getChannelMembersList(channelId))
         if (currentList.contains(memberId)) throw IllegalAccessException("member id already exists in channel")
         currentList.add(memberId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_MEMBERS_LIST, currentList)
@@ -93,13 +93,13 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
 
     override fun removeMemberFromChannel(channelId: Long, memberId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
-        val currentList = ArrayList<Long>(getMembersList(channelId))
+        val currentList = ArrayList<Long>(getChannelMembersList(channelId))
         if (!currentList.contains(memberId)) throw IllegalAccessException("member id does not exists in channel")
         currentList.remove(memberId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_MEMBERS_LIST, currentList)
     }
 
-    override fun getOperatorsList(channelId: Long): List<Long> {
+    override fun getChannelOperatorsList(channelId: Long): List<Long> {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         return channelStorage.getPropertyListByChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST)
                 ?: throw IllegalArgumentException("channel id does not exist")
@@ -107,7 +107,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
 
     override fun addOperatorToChannel(channelId: Long, operatorId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
-        val currentList = ArrayList<Long>(getOperatorsList(channelId))
+        val currentList = ArrayList<Long>(getChannelOperatorsList(channelId))
         if (currentList.contains(operatorId)) throw IllegalAccessException("operator id already exists in channel")
         currentList.add(operatorId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST, currentList)
@@ -115,7 +115,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
 
     override fun removeOperatorFromChannel(channelId: Long, operatorId: Long) {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
-        val currentList = ArrayList<Long>(getOperatorsList(channelId))
+        val currentList = ArrayList<Long>(getChannelOperatorsList(channelId))
         if (!currentList.contains(operatorId)) throw IllegalAccessException("operator id does not exists in channel")
         currentList.remove(operatorId)
         channelStorage.setPropertyListToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_OPERATORS_LIST, currentList)
@@ -140,13 +140,13 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
 
     private fun invalidateChannel(channelId: Long) {
         try {
-            val channelName = getName(channelId)
+            val channelName = getChannelNameById(channelId)
             invalidateChannel(channelId, channelName)
         } catch (e : IllegalArgumentException) {}
     }
     private fun invalidateChannel(channelName: String) {
         try {
-            val channelId = getId(channelName)
+            val channelId = getChannelIdByName(channelName)
             invalidateChannel(channelId, channelName)
         } catch (e : IllegalArgumentException) {}
     }

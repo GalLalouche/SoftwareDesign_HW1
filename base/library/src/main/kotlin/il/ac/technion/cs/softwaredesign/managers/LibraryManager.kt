@@ -1,6 +1,15 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-class LibraryManager {
+import com.google.inject.Inject
+
+class LibraryManager @Inject constructor(
+        private val userManager: IUserManager,
+        private val channelManager: IChannelManager,
+        private val statisticsManager: IStatisticsManager) :
+        IUserManager by userManager,
+        IChannelManager by channelManager,
+        IStatisticsManager by statisticsManager {
+
     /** COMPLEX STATISTICS **/
     /** This functions used to update the data structures related to statistics **/
 
@@ -10,7 +19,8 @@ class LibraryManager {
      * @param status IUserManager.LoginStatus to be updated
      * @throws
      */
-    fun updateUserStatus(userId: Long, status: IUserManager.LoginStatus) {}
+    fun updateUserStatus(userId: Long, status: IUserManager.LoginStatus) {
+    }
 
     /**
      * Update channel and user after user joined to channel

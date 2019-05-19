@@ -93,7 +93,7 @@ interface IUserManager {
     fun getChannelListOfUser(userId: Long): List<Long>
 
     /**
-     * add a channel to a specific user
+     * addChannel a channel to a specific user
      * Important: this function assumes that channel id is a valid channel
      * @param userId user id
      * @param channelId channel id

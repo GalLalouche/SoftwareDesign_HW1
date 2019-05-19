@@ -9,19 +9,19 @@ interface IChannelManager {
      * @throws IllegalArgumentException if channelName is already exist
      * @return Long, channel id
      */
-    fun add(channelName: String): Long
+    fun addChannel(channelName: String): Long
 
     /**
      * Remove channel from the system
      * @param channelId Long
      */
-    fun remove(channelId : Long)
+    fun removeChannel(channelId : Long)
 
     /**
      * Remove channel from the system
      * @param channelName String
      */
-    fun remove(channelName : String)
+    fun removeChannel(channelName : String)
 
     /**
      * Check if channelName already exist in the system
@@ -43,7 +43,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException if channelName is already exist
      * @return Long, channel id or null if channel does not exist in the system
      */
-    fun getId(channelName : String) : Long
+    fun getChannelIdByName(channelName : String) : Long
 
     /** PROPERTIES **/
     /**
@@ -52,7 +52,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channel id does not exist in the system
      * @return String, channel name
      */
-    fun getName(channelId : Long) : String
+    fun getChannelNameById(channelId : Long) : String
 
     /**
      * Get the number of active members in a specific channel
@@ -60,7 +60,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channel id does not exist in the system
      * @return Long, number of active members
      */
-    fun getNumberOfActiveMembers(channelId : Long) : Long
+    fun getNumberOfActiveMembersInChannel(channelId : Long) : Long
 
     /**
      * Update the number of active members in a specific channel
@@ -68,7 +68,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channel id does not exist in the system
      * @param value Long
      */
-    fun updateNumberOfActiveMembers(channelId : Long, value : Long)
+    fun updateNumberOfActiveMembersInChannel(channelId : Long, value : Long)
 
     /**
      * Get the number of total members in a specific channel
@@ -76,7 +76,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channel id does not exist in the system
      * @return Long, number of total members
      */
-    fun getNumberOfMembers(channelId : Long) : Long
+    fun getNumberOfMembersInChannel(channelId : Long) : Long
 
     /**
      * Update the number of members in a specific channel
@@ -84,7 +84,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channel id does not exist in the system
      * @param value Long
      */
-    fun updateNumberOfMembers(channelId : Long, value : Long)
+    fun updateNumberOfMembersInChannel(channelId : Long, value : Long)
 
 
     /** MEMBERS LIST **/
@@ -94,7 +94,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channelId does not exist in the system
      * @return ids of the members of current channel
      */
-    fun getMembersList(channelId: Long) : List<Long>
+    fun getChannelMembersList(channelId: Long) : List<Long>
 
     /**
      * add a member to a specific channel
@@ -124,7 +124,7 @@ interface IChannelManager {
      * @throws IllegalArgumentException throws if channelId does not exist in the system
      * @return ids of the operators of current channel
      */
-    fun getOperatorsList(channelId: Long) : List<Long>
+    fun getChannelOperatorsList(channelId: Long) : List<Long>
 
     /**
      * add an operators to a specific channel
