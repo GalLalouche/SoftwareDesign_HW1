@@ -13,13 +13,6 @@ interface IChannelManager {
 
     /**
      * Remove channel from the system
-     * Consider using this function and not the other overloads, when you can
-     * @param channelId Long
-     */
-    fun remove(channelId : Long, channelName : String)
-
-    /**
-     * Remove channel from the system
      * @param channelId Long
      */
     fun remove(channelId : Long)
