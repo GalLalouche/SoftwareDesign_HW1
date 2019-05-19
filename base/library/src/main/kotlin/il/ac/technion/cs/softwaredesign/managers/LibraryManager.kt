@@ -19,7 +19,7 @@ class LibraryManager @Inject constructor(
      * @param status IUserManager.LoginStatus to be updated
      * @throws
      */
-    fun updateUserStatus(userId: Long, status: IUserManager.LoginStatus) {
+    fun updateUserStatusInSystem(userId: Long, status: IUserManager.LoginStatus) {
     }
 
     /**

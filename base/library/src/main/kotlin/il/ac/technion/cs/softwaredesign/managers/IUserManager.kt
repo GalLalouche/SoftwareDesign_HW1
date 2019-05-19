@@ -29,14 +29,14 @@ interface IUserManager {
      * @throws IllegalArgumentException if username is already exist
      * @return user id that was added to the system
      */
-    fun add(username: String, password: String, status:LoginStatus = LoginStatus.IN, privilege:PrivilegeLevel=PrivilegeLevel.USER):Long
+    fun addUser(username: String, password: String, status:LoginStatus = LoginStatus.IN, privilege:PrivilegeLevel=PrivilegeLevel.USER):Long
 
     /**
      * updates a user privilege
      * @param userId String the user name of the user
      * @param privilege privilege of the user
      */
-    fun updatePrivilege(userId: Long, privilege: PrivilegeLevel)
+    fun updateUserPrivilege(userId: Long, privilege: PrivilegeLevel)
 
     /**
      * gets the user privilege
@@ -44,14 +44,14 @@ interface IUserManager {
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return the user privilege
      */
-    fun getPrivilege(userId:Long):PrivilegeLevel
+    fun getUserPrivilege(userId:Long):PrivilegeLevel
 
     /**
      * updates a user privilege
      * @param username String the user name of the user
      * @param status status of the user
      */
-    fun updateStatus(userId:Long, status:LoginStatus)
+    fun updateUserStatus(userId:Long, status:LoginStatus)
 
     /**
      * gets the user status
@@ -59,7 +59,7 @@ interface IUserManager {
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return login status of user
      */
-    fun getStatus(userId:Long):LoginStatus
+    fun getUserStatus(userId:Long):LoginStatus
 
 
     /**
@@ -119,7 +119,7 @@ interface IUserManager {
      * @param size new size
      * @throws IllegalArgumentException if size is negative
      */
-    fun updateChannelListSize(userId: Long, size: Long)
+    fun updateUserChannelListSize(userId: Long, size: Long)
 
     /**
      * gets the channel list size of the user
@@ -127,5 +127,5 @@ interface IUserManager {
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return size of the channel list
      */
-    fun getChannelListSize(userId: Long):Long
+    fun getUserChannelListSize(userId: Long):Long
 }

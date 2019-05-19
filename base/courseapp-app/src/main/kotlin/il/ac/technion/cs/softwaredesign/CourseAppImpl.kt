@@ -18,13 +18,13 @@ class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager,
         var userId = userManager.getUserId(username)
         val hashedPassword = password.hashString(HASH_ALGORITHM)
         if (userId == null) {
-            userId = userManager.add(username, hashedPassword)
+            userId = userManager.addUser(username, hashedPassword)
             if (userId == 1L)
-                userManager.updatePrivilege(userId, IUserManager.PrivilegeLevel.ADMIN)
+                userManager.updateUserPrivilege(userId, IUserManager.PrivilegeLevel.ADMIN)
         } else {
             if (userManager.getUserPassword(userId) != hashedPassword)
                 throw NoSuchEntityException()
-            else if (userManager.getStatus(userId) == IUserManager.LoginStatus.IN)
+            else if (userManager.getUserStatus(userId) == IUserManager.LoginStatus.IN)
                 throw UserAlreadyLoggedInException()
         }
         //At this point user is surly exist we just need to create a token
@@ -38,13 +38,13 @@ class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager,
         }catch(e:IllegalArgumentException){
             throw InvalidTokenException()
         }
-        userManager.updateStatus(userId!!, IUserManager.LoginStatus.OUT)
+        userManager.updateUserStatus(userId!!, IUserManager.LoginStatus.OUT)
     }
 
     override fun isUserLoggedIn(token: String, username: String): Boolean? {
         if(!tokenManager.isTokenValid(token)) throw InvalidTokenException()
         val userId= userManager.getUserId(username) ?: return null
-        return userManager.getStatus(userId) == IUserManager.LoginStatus.IN
+        return userManager.getUserStatus(userId) == IUserManager.LoginStatus.IN
     }
 
     override fun makeAdministrator(token: String, username: String) {

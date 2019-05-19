@@ -1,6 +1,5 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-import com.google.inject.BindingAnnotation
 import il.ac.technion.cs.softwaredesign.managers.IUserManager.*
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
@@ -18,16 +17,16 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         return userStorage.getUserIdByUsername(username)
     }
 
-    override fun add(username: String, password: String, status: LoginStatus, privilege: PrivilegeLevel):Long {
+    override fun addUser(username: String, password: String, status: LoginStatus, privilege: PrivilegeLevel):Long {
         var userId = getUserId(username)
         if (userId != null) throw IllegalArgumentException("user already exist")
         userId = userIdGenerator.next()
         userStorage.setUserIdToUsername(username, userId)
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.USERNAME_PROPERTY, username)
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.PASSWORD_PROPERTY, password)
-        updateStatus(userId, status)
-        updatePrivilege(userId, privilege)
-        updateChannelListSize(userId, 0L)
+        updateUserStatus(userId, status)
+        updateUserPrivilege(userId, privilege)
+        updateUserChannelListSize(userId, 0L)
         initChannelList(userId)
         return userId
     }
@@ -36,21 +35,21 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, mutableListOf())
     }
 
-    override fun updatePrivilege(userId: Long, privilege: PrivilegeLevel) {
+    override fun updateUserPrivilege(userId: Long, privilege: PrivilegeLevel) {
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.PRIVILAGE_PROPERTY, privilege.ordinal.toString())
     }
 
-    override fun getPrivilege(userId: Long): PrivilegeLevel {
+    override fun getUserPrivilege(userId: Long): PrivilegeLevel {
         val userPrivilege = userStorage.getPropertyStringByUserId(userId, MANAGERS_CONSTS.PRIVILAGE_PROPERTY)
                 ?: throw IllegalArgumentException("user id does not exist")
         return PrivilegeLevel.values()[userPrivilege.toInt()]
     }
 
-    override fun updateStatus(userId: Long, status: LoginStatus) {
+    override fun updateUserStatus(userId: Long, status: LoginStatus) {
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.STATUS_PROPERTY, status.ordinal.toString())
     }
 
-    override fun getStatus(userId: Long): LoginStatus {
+    override fun getUserStatus(userId: Long): LoginStatus {
         val userPrivilege = userStorage.getPropertyStringByUserId(userId, MANAGERS_CONSTS.STATUS_PROPERTY)
                 ?: throw IllegalArgumentException("user id does not exist")
         return LoginStatus.values()[userPrivilege.toInt()]
@@ -90,12 +89,12 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, currentList)
     }
 
-    override fun updateChannelListSize(userId: Long, size: Long) {
+    override fun updateUserChannelListSize(userId: Long, size: Long) {
         if(size<0) throw IllegalArgumentException("size must be non-negative")
         userStorage.setPropertyLongToUserId(userId, MANAGERS_CONSTS.SIZE_PROPERTY, size)
     }
 
-    override fun getChannelListSize(userId: Long): Long {
+    override fun getUserChannelListSize(userId: Long): Long {
         return userStorage.getPropertyLongByUserId(userId, MANAGERS_CONSTS.SIZE_PROPERTY)
                 ?: throw IllegalArgumentException("user id does not exist")
     }
