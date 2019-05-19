@@ -58,20 +58,21 @@ constructor(private val secureStorage: SecureStorage, private val keyDefault: ()
             val rootIndexByteArray = secureStorage.read(ROOT_KEY.toByteArray())
                     ?: throw NullPointerException("root Index should not be null after loading from storage")
             val rootIndex = rootIndexByteArray.bytesToLong()
-            return if (rootIndex <= ROOT_INIT_INDEX) null else {
-                val rootByteArray = secureStorage.read(rootIndexByteArray)
+
+            if (rootIndex <= ROOT_INIT_INDEX) return null
+
+            val rootByteArray = secureStorage.read(rootIndexByteArray)
                         ?: throw NullPointerException("root cannot be null")
-                Node(rootByteArray, Pointer(rootIndex))
-            }
+            return Node(rootByteArray, Pointer(rootIndex))
+
         }
         set(value) {
             val rootKeyByteArray = ROOT_KEY.toByteArray()
             if (value == null) {
-                secureStorage.write(rootKeyByteArray,
-                        ConversionUtils.longToBytes(ROOT_INIT_INDEX))
+                secureStorage.write(rootKeyByteArray,ROOT_INIT_INDEX.longToByteArray())
                 field = null
             } else {
-                secureStorage.write(rootKeyByteArray, value.pointer.pointerToByteArray())
+                secureStorage.write(rootKeyByteArray, value.pointer.toByteArray())
                 field = value
             }
         }
@@ -654,13 +655,6 @@ constructor(private val secureStorage: SecureStorage, private val keyDefault: ()
         return ConversionUtils.bytesToLong(this)
     }
 
-    private fun IPointer.pointerToByteArray(): ByteArray {
-        return this.getAddress().longToByteArray()
-    }
-
-    private fun ByteArray.bytesArrayToPointer(): IPointer {
-        return Pointer(this.bytesToLong())
-    }
 
     /**
      * This class represents an inner node of the AVL tree.
@@ -775,47 +769,66 @@ constructor(private val secureStorage: SecureStorage, private val keyDefault: ()
 
 
         override fun toByteArray(): ByteArray {
-            // <height>_<size>_<left>_<right>_<key> , key is last because it can contains delimiters
+            // <height><size><left><right><key> , key is last because it can may be size bigger than long
             // if number of properties is changed dont forget to update SECURE_AVL_STORAGE_NUM_PROPERTIES
-            val nodeHeightByteArrayInString = String(nodeHeight.longToByteArray())
-            val nodeSizeByteArrayInString = String(nodeSize.longToByteArray())
-            var leftPointerString = null.toString()
-            var rightPointerString = null.toString()
+            // note: all properties are Long Byte size, if for any reason you save another type you should
+            //also handle the inverse of it in fromByteArray, by using number of bytes for example
+
+            val nodeHeightByteArray = nodeHeight.longToByteArray()
+            val nodeSizeByteArray =nodeSize.longToByteArray()
+            val nullByteArray= ROOT_INIT_INDEX.longToByteArray()
+            var leftPointerByteArray = nullByteArray
+            var rightPointerByteArray = nullByteArray
             if (leftPointer != null)
-                leftPointerString = String(leftPointer!!.pointerToByteArray())
+                leftPointerByteArray = leftPointer!!.toByteArray()
             if (rightPointer != null)
-                rightPointerString = String(rightPointer!!.pointerToByteArray())
-            val nodeKeyByteArrayInString = String(nodeKey.toByteArray())
-            return ("$nodeHeightByteArrayInString$DELIMITER" +
-                    "$nodeSizeByteArrayInString$DELIMITER" +
-                    "$leftPointerString$DELIMITER" +
-                    "$rightPointerString$DELIMITER" +
-                    "$nodeKeyByteArrayInString").toByteArray()
+                rightPointerByteArray = rightPointer!!.toByteArray()
+
+            return nodeHeightByteArray+ nodeSizeByteArray+ leftPointerByteArray+
+                    rightPointerByteArray+nodeKey.toByteArray()
+
         }
 
 
-        override fun fromByteArray(value: ByteArray) {
-            val nodeDetails = String(value)
-            val values = nodeDetails.split(DELIMITER, limit = SECURE_AVL_STORAGE_NUM_PROPERTIES)
-            if (values.size < SECURE_AVL_STORAGE_NUM_PROPERTIES)
-                throw IllegalArgumentException("Node does not contains $SECURE_AVL_STORAGE_NUM_PROPERTIES values in the persistent storage")
 
-            nodeHeight = values[0].toByteArray().bytesToLong()
-            nodeSize = values[1].toByteArray().bytesToLong()
-            val nullValue = null.toString()
-            val leftPointerString = values[2]
-            if (leftPointerString.contains(nullValue)) {
+        override fun fromByteArray(value: ByteArray) {
+
+            val (values,key) = extractDetails(value)
+            if (values.size < SECURE_AVL_STORAGE_NUM_PROPERTIES-1)
+                throw IllegalArgumentException("Node does not contains ${SECURE_AVL_STORAGE_NUM_PROPERTIES-1} values in the persistent storage")
+
+            nodeHeight = values[0]
+            nodeSize = values[1]
+
+            val leftPointerValue = values[2]
+            if (leftPointerValue==ROOT_INIT_INDEX) {
                 leftPointer = null
             } else {
-                leftPointer = leftPointerString.toByteArray().bytesArrayToPointer()
+                leftPointer = Pointer(leftPointerValue)
             }
-            val rightPointerString = values[3]
-            if (rightPointerString.contains(nullValue)) {
+            val rightPointerValue = values[3]
+            if (rightPointerValue==ROOT_INIT_INDEX) {
                 rightPointer = null
             } else {
-                rightPointer = rightPointerString.toByteArray().bytesArrayToPointer()
+                rightPointer = Pointer(rightPointerValue)
             }
-            nodeKey.fromByteArray(values[4].toByteArray())
+            nodeKey=key
+        }
+
+        private fun extractDetails(storedValue: ByteArray): Pair<MutableList<Long>, Key> {
+            var start=0
+            var end=Long.SIZE_BYTES-1
+            var details= mutableListOf<Long>()
+            val numOfLongValues=SECURE_AVL_STORAGE_NUM_PROPERTIES-2
+            for(i in 0..numOfLongValues) {
+                details.add(storedValue.sliceArray(IntRange(start,end)).bytesToLong())
+                start+=Long.SIZE_BYTES
+                end+=Long.SIZE_BYTES
+            }
+            end=Long.SIZE_BYTES * (SECURE_AVL_STORAGE_NUM_PROPERTIES-1)
+            val key=keyDefault()
+            key.fromByteArray(storedValue.drop(end).toByteArray())
+           return Pair(details,key)
         }
     }
 
