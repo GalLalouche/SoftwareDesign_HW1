@@ -91,6 +91,7 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
     }
 
     override fun updateChannelListSize(userId: Long, size: Long) {
+        if(size<0) throw IllegalArgumentException("size must be non-negative")
         userStorage.setPropertyLongToUserId(userId, MANAGERS_CONSTS.SIZE_PROPERTY, size)
     }
 
