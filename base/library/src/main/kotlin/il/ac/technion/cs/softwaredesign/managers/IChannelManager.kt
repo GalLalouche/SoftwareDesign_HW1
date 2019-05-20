@@ -147,4 +147,18 @@ interface IChannelManager {
      * @throws IllegalAccessException throws if operatorId does not exist in channel
      */
     fun removeOperatorFromChannel(channelId: Long, operatorId: Long)
+
+
+    /** CHANNEL COMPLEX STATISTICS **/
+    /**
+     * Get a list contains 10 best channels by users count (or less than 10 if nr of total channels < 10)
+     * @return List<String> of channel names
+     */
+    fun getTop10ChannelsByUsersCount() : List<String>
+
+    /**
+     * Get a list contains 10 best channels by active users count (or less than 10 if nr of total channels < 10)
+     * @return List<String> of channel names
+     */
+    fun getTop10ChannelsByActiveUsersCount() : List<String>
 }
