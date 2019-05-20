@@ -1,13 +1,18 @@
 package il.ac.technion.cs.softwaredesign.tests
 
 import com.authzee.kotlinguice4.getInstance
+import com.google.common.primitives.Longs
 import com.google.inject.Guice
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import il.ac.technion.cs.softwaredesign.managers.IChannelManager
+import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
+import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_INIT_INDEX
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_KEY
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -18,6 +23,16 @@ class ChannelManagerTest {
     private val injector = Guice.createInjector(LibraryTestModule())
 
     private val channelManager = injector.getInstance<IChannelManager>()
+
+    private fun initTrees() {
+        val factory = injector.getInstance<SecureStorageFactory>()
+        val s1 = factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
+        val s2 = factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
+        val s3 = factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
+        s1.write(ROOT_KEY.toByteArray(), Longs.toByteArray(ROOT_INIT_INDEX))
+        s2.write(ROOT_KEY.toByteArray(), Longs.toByteArray(ROOT_INIT_INDEX))
+        s3.write(ROOT_KEY.toByteArray(), Longs.toByteArray(ROOT_INIT_INDEX))
+    }
 
     private fun initStatistics() {
         val statisticsStorage = injector.getInstance<IStatisticsStorage>()
@@ -30,6 +45,7 @@ class ChannelManagerTest {
     @BeforeEach
     private fun init() {
         initStatistics()
+        initTrees()
     }
 
     @Test

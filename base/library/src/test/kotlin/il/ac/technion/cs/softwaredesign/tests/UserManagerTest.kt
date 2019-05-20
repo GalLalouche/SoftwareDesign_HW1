@@ -1,13 +1,17 @@
 package il.ac.technion.cs.softwaredesign.tests
 
 import com.authzee.kotlinguice4.getInstance
+import com.google.common.primitives.Longs
 import com.google.inject.Guice
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasElement
 import il.ac.technion.cs.softwaredesign.managers.IUserManager
+import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
+import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS
+import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,14 +20,18 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class UserManagerTest {
 
-
     private val injector = Guice.createInjector(LibraryTestModule())
 
     private val userManager = injector.getInstance<IUserManager>()
 
-    @BeforeEach
-    private fun init() {
-        initStatistics()
+    private fun initTrees() {
+        val factory = injector.getInstance<SecureStorageFactory>()
+        val s1 = factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
+        val s2 = factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
+        val s3 = factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
+        s1.write(TREE_CONST.ROOT_KEY.toByteArray(), Longs.toByteArray(TREE_CONST.ROOT_INIT_INDEX))
+        s2.write(TREE_CONST.ROOT_KEY.toByteArray(), Longs.toByteArray(TREE_CONST.ROOT_INIT_INDEX))
+        s3.write(TREE_CONST.ROOT_KEY.toByteArray(), Longs.toByteArray(TREE_CONST.ROOT_INIT_INDEX))
     }
 
     private fun initStatistics() {
@@ -34,6 +42,11 @@ class UserManagerTest {
         statisticsStorage.setLongValue(STATISTICS_KEYS.MAX_CHANNEL_INDEX, STATISTICS_KEYS.INIT_INDEX_VAL)
     }
 
+    @BeforeEach
+    private fun init() {
+        initStatistics()
+        initTrees()
+    }
 
     @Test
     fun `gets the user id from the system`() {
@@ -83,7 +96,7 @@ class UserManagerTest {
 
     @Test
     fun `all methods throws IllegalArgumentException if user id does not exist in the system`() {
-        val userID = userManager.addUser("aviad", "password")
+        userManager.addUser("aviad", "password")
         assertThrowsWithTimeout<Long, IllegalArgumentException>({ userManager.addUser("aviad", "password") })
         assertThrowsWithTimeout<IUserManager.PrivilegeLevel, IllegalArgumentException>({ userManager.getUserPrivilege(1000L) })
         assertThrowsWithTimeout<IUserManager.LoginStatus, IllegalArgumentException>({ userManager.getUserStatus(1000L) })
@@ -92,12 +105,11 @@ class UserManagerTest {
         assertThrowsWithTimeout<Unit, IllegalArgumentException>({ userManager.addChannelToUser(1000L, 0) })
         assertThrowsWithTimeout<Unit, IllegalArgumentException>({ userManager.removeChannelFromUser(1000L, 0) })
         assertThrowsWithTimeout<Unit, IllegalArgumentException>({ userManager.getUserChannelListSize(1000L) })
-        assertThrowsWithTimeout<Unit, IllegalArgumentException>({ userManager.updateUserChannelListSize(userID, -5) })
     }
 
     @Test
     fun `is username exist after he was added to the system`() {
-        val aviadID = userManager.addUser("aviad", "aviad_password")
+        userManager.addUser("aviad", "aviad_password")
         assertThat(userManager.isUsernameExists("aviad"), isTrue)
         assertThat(userManager.isUsernameExists("yossi"), isFalse)
     }
@@ -130,12 +142,5 @@ class UserManagerTest {
         (1L..9L).forEach { userManager.removeChannelFromUser(aviadID, it) }
         val channelList = userManager.getChannelListOfUser(aviadID)
         assertThat(channelList.size, equalTo(11))
-    }
-
-    @Test
-    fun `updating channel list size`() {
-        val aviadID = userManager.addUser("aviad", "aviad_password")
-        userManager.updateUserChannelListSize(aviadID, 5L)
-        assertThat(userManager.getUserChannelListSize(aviadID), equalTo(5L))
     }
 }

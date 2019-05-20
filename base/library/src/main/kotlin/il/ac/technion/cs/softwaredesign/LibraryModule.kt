@@ -17,6 +17,7 @@ import il.ac.technion.cs.softwaredesign.storage.users.SecureUserStorage
 class LibraryModule : KotlinModule() {
     override fun configure() {
         bind<IStatisticsStorage>().to<SecureStatisticsStorage>()
+        bind<IStatisticsManager>().to<StatisticsManager>()
         bind<IChannelStorage>().to<SecureChannelStorage>()
         bind<ISequenceGenerator>().annotatedWith<UserIdSeqGenerator>().to<UserIdGenerator>()
         bind<ISequenceGenerator>().annotatedWith<ChannelIdSeqGenerator>().to<ChannelIdGenerator>()
