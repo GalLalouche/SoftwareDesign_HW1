@@ -11,7 +11,7 @@ class CountIdKey(private var count: Long = 0, // primary key
     override fun compareTo(other: CountIdKey): Int {
         val primaryRes = count.compareTo(other.count)
         if (primaryRes != 0) return primaryRes
-        return -id.compareTo(other.id)
+        return -(id.compareTo(other.id))
     }
 
     // format: <count><id>

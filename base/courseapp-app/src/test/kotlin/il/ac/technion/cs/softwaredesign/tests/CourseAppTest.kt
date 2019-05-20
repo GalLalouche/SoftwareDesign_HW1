@@ -135,4 +135,16 @@ class CourseAppTest{
         val actual =courseApp.isUserLoggedIn(token,"notExsitingUser")
         assertEquals(null, actual,"when user does not exist null expected to be returned")
     }
+
+    @Test
+    fun `test regex`() {
+        val channelMatch = "#dksnsjfs287342347s7s7s_sdk__#_fdad__#"
+        val channelNoMatch = "dksnsjfs287342347s7s7s_sdk__#_fdad__#"
+        val channelNoMatch2 = "#@dksnsjfs287342347s7s7s_sdk__#_fdad__#"
+        val empty = ""
+        assertThat(CourseAppImpl.regex matches channelMatch, isTrue)
+        assertThat(CourseAppImpl.regex matches channelNoMatch, isFalse)
+        assertThat(CourseAppImpl.regex matches channelNoMatch2, isFalse)
+        assertThat(CourseAppImpl.regex matches empty, isFalse)
+    }
 }

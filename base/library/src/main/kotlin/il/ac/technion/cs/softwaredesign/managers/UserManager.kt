@@ -83,12 +83,12 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         try {
             val oldStatus = getUserStatus(userId)
             if (oldStatus == status) return
+            userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.STATUS_PROPERTY, status.ordinal.toString())
             if (status == LoginStatus.IN) {
                 statisticsManager.increaseLoggedInUsersBy()
             } else {
                 statisticsManager.decreaseLoggedInUsersBy()
             }
-            userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.STATUS_PROPERTY, status.ordinal.toString())
         } catch (e : IllegalArgumentException) { /* user id does not exist, do nothing */  }
     }
 
