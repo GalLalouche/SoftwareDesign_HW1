@@ -145,4 +145,12 @@ interface IUserManager {
      * @return Long
      */
     fun getLoggedInUsers() : Long
+
+
+    /** USER COMPLEX STATISTICS **/
+    /**
+     * Get a list contains 10 best users by channels count (or less than 10 if nr of total users < 10)
+     * @return List<String> of usernames
+     */
+    fun getTop10UsersByChannelsCount() : List<String>
 }

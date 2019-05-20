@@ -204,6 +204,17 @@ class SecureAVLTreeTest {
 
     @Test
     fun select() {
+        for(i in 1..200){
+            val v = SimpleKey(Random.nextLong(from=ROOT_INIT_INDEX+1, until=Long.MAX_VALUE))
+            blackRedTree[v] = v
+            tree.put(v)
+        }
+        var k = 0L
+        for (res in blackRedTree) {
+            val current = tree.select(k)
+            assertThat(current, equalTo(res.key))
+            k++
+        }
     }
 
     @Test

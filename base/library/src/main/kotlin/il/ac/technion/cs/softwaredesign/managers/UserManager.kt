@@ -18,7 +18,6 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
                                       factory: SecureStorageFactory,
                                       private val statisticsManager: IStatisticsManager,
                                       @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator) : IUserManager {
-
     private val defaultKey: () -> CountIdKey = { CountIdKey() }
     private val usersByChannelsCountStorage = factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
     private val usersByChannelsCountTree = SecureAVLTree<CountIdKey>(usersByChannelsCountStorage, defaultKey)
@@ -150,6 +149,11 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         return statisticsManager.getLoggedInUsers()
     }
 
+
+    /** USER COMPLEX STATISTICS **/
+    override fun getTop10UsersByChannelsCount(): List<String> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     /** PRIVATES **/
     private fun initChannelList(userId: Long) {
