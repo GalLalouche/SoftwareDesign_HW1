@@ -152,7 +152,16 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
 
     /** USER COMPLEX STATISTICS **/
     override fun getTop10UsersByChannelsCount(): List<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val values = mutableListOf<String>()
+        val nrUsers = getTotalUsers()
+        val nrOutputUsers = if (nrUsers > 10) 10 else nrUsers
+        for (k in 1..nrOutputUsers) {
+            val kthLarger = nrUsers - k
+            val userId = usersByChannelsCountTree.select(kthLarger).getId()
+            val userName = getUsernameById(userId)
+            values.add(userName)
+        }
+        return values
     }
 
     /** PRIVATES **/

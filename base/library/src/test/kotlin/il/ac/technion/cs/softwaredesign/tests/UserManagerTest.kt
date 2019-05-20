@@ -222,4 +222,84 @@ class UserManagerTest {
         assertThat(userManager.getUserChannelListSize(id1), equalTo(0L))
         assertThat(userManager.getChannelListOfUser(id1).size.toLong(), equalTo(userManager.getUserChannelListSize(id1)))
     }
+
+    @Test
+    fun `test get top 10`() {
+        val ids = (0..40).map { userManager.addUser(it.toString(), it.toString()) }
+        ids.forEach { userManager.addChannelToUser(it,it * 100) }
+
+        val best = mutableListOf<Long>(ids[14], ids[37], ids[5], ids[7], ids[20], ids[12], ids[18], ids[33], ids[8], ids[0])
+        (5000..5028).forEach { userManager.addChannelToUser(best[0],it.toLong()) }
+        (5000..5022).forEach { userManager.addChannelToUser(best[1],it.toLong()) }
+        (5000..5020).forEach { userManager.addChannelToUser(best[2],it.toLong()) }
+        (5000..5019).forEach { userManager.addChannelToUser(best[3],it.toLong()) }
+        (5000..5017).forEach { userManager.addChannelToUser(best[4],it.toLong()) }
+        (5000..5012).forEach { userManager.addChannelToUser(best[5],it.toLong()) }
+        (5000..5009).forEach { userManager.addChannelToUser(best[6],it.toLong()) }
+        (5000..5006).forEach { userManager.addChannelToUser(best[7],it.toLong()) }
+        (5000..5004).forEach { userManager.addChannelToUser(best[8],it.toLong()) }
+        (5000..5001).forEach { userManager.addChannelToUser(best[9],it.toLong()) }
+
+        val output = userManager.getTop10UsersByChannelsCount()
+        for ((k, username) in output.withIndex()) {
+            assertThat(userManager.getUserId(username), equalTo(best[k]))
+        }
+    }
+
+    @Test
+    fun `test get top 7`() {
+        val ids = (0..6).map { userManager.addUser(it.toString(), it.toString()) }
+        ids.forEach { userManager.addChannelToUser(it,it * 100) }
+
+        val best = mutableListOf<Long>(ids[2], ids[5], ids[0], ids[4], ids[3], ids[1], ids[6])
+        (5000..5028).forEach { userManager.addChannelToUser(best[0],it.toLong()) }
+        (5000..5022).forEach { userManager.addChannelToUser(best[1],it.toLong()) }
+        (5000..5020).forEach { userManager.addChannelToUser(best[2],it.toLong()) }
+        (5000..5019).forEach { userManager.addChannelToUser(best[3],it.toLong()) }
+        (5000..5017).forEach { userManager.addChannelToUser(best[4],it.toLong()) }
+
+        (5000..5012).forEach { userManager.addChannelToUser(best[5],it.toLong()) }
+        (5000..5012).forEach { userManager.addChannelToUser(best[6],it.toLong()) }
+
+        val output = userManager.getTop10UsersByChannelsCount()
+        val outputIds = output.map { userManager.getUserId(it) }
+        for ((k, userId) in outputIds.withIndex()) {
+            assertThat(userId, equalTo(best[k]))
+        }
+    }
+
+    @Test
+    fun `check secondary order`() {
+        val ids = (0..6).map { userManager.addUser(it.toString(), it.toString()) }
+        ids.forEach { userManager.addChannelToUser(it,it * 100) }
+
+        val best = mutableListOf<Long>(ids[2], ids[5], ids[0], ids[3], ids[4], ids[1], ids[6])
+        (5000..5028).forEach { userManager.addChannelToUser(best[0],it.toLong()) }
+        (5000..5022).forEach { userManager.addChannelToUser(best[1],it.toLong()) }
+        (5000..5020).forEach { userManager.addChannelToUser(best[2],it.toLong()) }
+
+        (5000..5017).forEach { userManager.addChannelToUser(best[3],it.toLong()) }
+        (5000..5017).forEach { userManager.addChannelToUser(best[4],it.toLong()) }
+
+        (5000..5012).forEach { userManager.addChannelToUser(best[5],it.toLong()) }
+        (5000..5012).forEach { userManager.addChannelToUser(best[6],it.toLong()) }
+
+        val output = userManager.getTop10UsersByChannelsCount()
+        val outputIds = output.map { userManager.getUserId(it) }
+        for ((k, userId) in outputIds.withIndex()) {
+            assertThat(userId, equalTo(best[k]))
+        }
+    }
+
+    @Test
+    fun `check secondary order only`() {
+        val ids = (0..30).map { userManager.addUser(it.toString(), it.toString()) }
+        ids.forEach { userManager.addChannelToUser(it,it * 100) }
+
+        val output = userManager.getTop10UsersByChannelsCount()
+        val outputIds = output.map { userManager.getUserId(it) }
+        for ((k, userId) in outputIds.withIndex()) {
+            assertThat(userId, equalTo(ids[k]))
+        }
+    }
 }
