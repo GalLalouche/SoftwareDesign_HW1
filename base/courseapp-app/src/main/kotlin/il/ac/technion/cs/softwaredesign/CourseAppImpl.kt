@@ -120,7 +120,8 @@ class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager,
             throw UserNotAuthorizedException()
 
         val userId = userManager.getUserId(username)
-        if (operatorPriv == IUserManager.PrivilegeLevel.ADMIN && (userId == null || userId != initiatorUserId)) {
+        if (!isUserOperator(initiatorUserId, channelId) && operatorPriv == IUserManager.PrivilegeLevel.ADMIN
+                && (userId == null || userId != initiatorUserId)) {
             throw UserNotAuthorizedException()
         }
 

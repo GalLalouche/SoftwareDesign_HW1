@@ -18,7 +18,7 @@ import java.time.Duration.ofSeconds
 
 
 class CourseAppStaffTest {
-    private val injector = Guice.createInjector(CourseAppTestModule(), SecureStorageModule())
+    private val injector = Guice.createInjector(CourseAppTestModule())
 
     private val courseAppInitializer = injector.getInstance<CourseAppInitializer>()
 

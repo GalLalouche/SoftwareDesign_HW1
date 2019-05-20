@@ -20,4 +20,4 @@ fun <T> assertWithTimeout(executable: () -> T, criteria: Matcher<T>, timeout: Du
         assertThat(runWithTimeout(timeout, executable), criteria)
 
 inline fun <T, reified E : Throwable> assertThrowsWithTimeout(noinline executable: () -> T, timeout: Duration = ofSeconds(10)) =
-        assertThrows<E> { runWithTimeout(ofSeconds(10), executable) }
+        assertThrows<E> { runWithTimeout(timeout, executable) }
