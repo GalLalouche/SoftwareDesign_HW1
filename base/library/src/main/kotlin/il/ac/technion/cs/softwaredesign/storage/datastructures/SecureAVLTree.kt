@@ -662,7 +662,7 @@ constructor(private val secureStorage: SecureStorage, private val keyDefault: ()
     private inner class Node : IStorageConvertable<Node> {
         val addressGenerator: ISequenceGenerator = SecureSequenceGenerator(secureStorage)
 
-        var pointer: IPointer//TODO REPLACE WITH injection, but how? do we even need to?
+        var pointer: IPointer
 
         private var nodeHeight: Long = 0
         private var nodeSize: Long = 0
@@ -838,13 +838,13 @@ constructor(private val secureStorage: SecureStorage, private val keyDefault: ()
      *
      * @return `true` if the AVL tree invariants are fine
      */
-    private fun check(): Boolean { //TODO: remove before submission
+    private fun check(): Boolean {
         return true
-        if (!isBST()) println("Symmetric order not consistent")
-        if (!isAVL()) println("AVL property not consistent")
-        if (!isSizeConsistent()) println("Subtree counts not consistent")
-        if (!isRankConsistent()) println("Ranks not consistent")
-        return isBST() && isAVL() && isSizeConsistent() && isRankConsistent()
+//        if (!isBST()) println("Symmetric order not consistent")
+//        if (!isAVL()) println("AVL property not consistent")
+//        if (!isSizeConsistent()) println("Subtree counts not consistent")
+//        if (!isRankConsistent()) println("Ranks not consistent")
+//        return isBST() && isAVL() && isSizeConsistent() && isRankConsistent()
     }
 
     /**
