@@ -8,6 +8,7 @@ class CourseAppTestModule : KotlinModule() {
     override fun configure() {
         bind<SecureStorageFactory>().toInstance(SecureHashMapStorageFactoryImpl())
         install(LibraryModule())
+        bind<CourseAppStatistics>().to<CourseAppStatisticsImpl>()
         bind<CourseAppInitializer>().to<CourseAppInitializerImpl>()
         bind<CourseApp>().to<CourseAppImpl>()
     }

@@ -14,8 +14,7 @@ class CourseAppModule : KotlinModule() {
     override fun configure() {
         bind<CourseAppInitializer>().to<CourseAppInitializerImpl>()
         install(LibraryModule())
-        bind<ITokenManager>().to<TokenManager>()
-        bind<IUserManager>().to<UserManager>()
+        bind<CourseAppStatistics>().to<CourseAppStatisticsImpl>()
         bind<CourseApp>().to<CourseAppImpl>()
     }
 
