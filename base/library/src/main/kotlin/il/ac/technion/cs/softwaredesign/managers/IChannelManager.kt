@@ -47,8 +47,15 @@ interface IChannelManager {
      */
     fun getChannelNameById(channelId : Long) : String
 
+    /**
+     * get number of channels in the system
+     * @return Long
+     */
+    fun getNumberOfChannels() : Long
+
 
     /** NUMBER OF ACTIVE MEMBERS **/
+    /** this property should be updated regardless members list updates **/
     /**
      * Get the number of active members in a specific channel
      * @param channelId Long

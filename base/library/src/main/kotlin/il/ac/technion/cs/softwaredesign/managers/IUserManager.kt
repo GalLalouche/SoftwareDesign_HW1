@@ -15,13 +15,6 @@ interface IUserManager {
     }
 
     /**
-     * gets the user id from the system
-     * @param username user name
-     * @return user id or null if user does not exist in the system
-     */
-    fun getUserId(username:String):Long?
-
-    /**
      * Add a new user to the system.
      * @param username String the user name of the user
      * @param password String the password of the user
@@ -31,12 +24,14 @@ interface IUserManager {
      */
     fun addUser(username: String, password: String, status:LoginStatus = LoginStatus.IN, privilege:PrivilegeLevel=PrivilegeLevel.USER):Long
 
+
+    /** GETTERS & SETTERS **/
     /**
-     * updates a user privilege
-     * @param userId String the user name of the user
-     * @param privilege privilege of the user
+     * gets the user id from the system
+     * @param username user name
+     * @return user id or null if user does not exist in the system
      */
-    fun updateUserPrivilege(userId: Long, privilege: PrivilegeLevel)
+    fun getUserId(username:String):Long?
 
     /**
      * gets the user name
@@ -55,19 +50,34 @@ interface IUserManager {
     fun getUserPrivilege(userId:Long):PrivilegeLevel
 
     /**
-     * updates a user privilege
-     * @param userId String the user name of the user
-     * @param status status of the user
-     */
-    fun updateUserStatus(userId:Long, status:LoginStatus)
-
-    /**
      * gets the user status
      * @param userId user id
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return login status of user
      */
     fun getUserStatus(userId:Long):LoginStatus
+
+    /**
+     * Get the password of the given user id
+     * @param userId String
+     * @throws IllegalArgumentException if user id does not exist in the system
+     * @return String - the password if username exists
+     */
+    fun getUserPassword(userId: Long) : String
+
+    /**
+     * updates a user privilege
+     * @param userId String the user name of the user
+     * @param privilege privilege of the user
+     */
+    fun updateUserPrivilege(userId: Long, privilege: PrivilegeLevel)
+
+    /**
+     * updates a user privilege
+     * @param userId String the user name of the user
+     * @param status status of the user
+     */
+    fun updateUserStatus(userId:Long, status:LoginStatus)
 
 
     /**
@@ -84,14 +94,8 @@ interface IUserManager {
      */
     fun isUserIdExists(userId : Long) : Boolean
 
-    /**
-     * Get the password of the given user id
-     * @param userId String
-     * @throws IllegalArgumentException if user id does not exist in the system
-     * @return String - the password if username exists
-     */
-    fun getUserPassword(userId: Long) : String
 
+    /** CHANNELS OF USER **/
     /**
      * gets the channel list of a specific user
      * @param userId user id
@@ -99,6 +103,14 @@ interface IUserManager {
      * @return ids of the channels
      */
     fun getChannelListOfUser(userId: Long): List<Long>
+
+    /**
+     * gets the channel list size of the user
+     * @param userId user id
+     * @throws IllegalArgumentException throws if user id does not exist in the system
+     * @return size of the channel list
+     */
+    fun getUserChannelListSize(userId: Long):Long
 
     /**
      * addChannel a channel to a specific user
@@ -120,20 +132,17 @@ interface IUserManager {
      */
     fun removeChannelFromUser(userId: Long,channelId: Long)
 
+
+    /** USER STATISTICS **/
     /**
-     * updates the channel size of user id
-     * Important: this function assumes that user id is a exist in the system
-     * @param userId user id
-     * @param size new size
-     * @throws IllegalArgumentException if size is negative
+     * get number of total users in the system
+     * @return Long
      */
-    fun updateUserChannelListSize(userId: Long, size: Long)
+    fun getTotalUsers() : Long
 
     /**
-     * gets the channel list size of the user
-     * @param userId user id
-     * @throws IllegalArgumentException throws if user id does not exist in the system
-     * @return size of the channel list
+     * get number of total logged in users in the system
+     * @return Long
      */
-    fun getUserChannelListSize(userId: Long):Long
+    fun getLoggedInUsers() : Long
 }

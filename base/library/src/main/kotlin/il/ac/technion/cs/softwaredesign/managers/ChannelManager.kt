@@ -77,9 +77,13 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
                 throw IllegalArgumentException("returned channel name is not valid")
     }
 
+    override fun getNumberOfChannels(): Long {
+        return statisticsManager.getNumberOfChannels()
+    }
+
 
     /** NUMBER OF ACTIVE MEMBERS **/
-    /** this property should be update regardless members list updates **/
+    /** this property should be updated regardless members list updates **/
     override fun getNumberOfActiveMembersInChannel(channelId: Long): Long {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         return channelStorage.getPropertyLongByChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_ACTIVE_MEMBERS)
