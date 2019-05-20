@@ -445,4 +445,86 @@ class ChannelManagerTest {
         assertThat(channelManager.getChannelMembersList(id), equalTo(emptyList()))
         assertThat(channelManager.getChannelOperatorsList(id), equalTo(emptyList()))
     }
+
+    @Test
+    fun `getNumberOfChannels update after add`() {
+        assertThat(channelManager.getNumberOfChannels(), equalTo(0L))
+        channelManager.addChannel("ron")
+        assertThat(channelManager.getNumberOfChannels(), equalTo(1L))
+        channelManager.addChannel("ron1")
+        channelManager.addChannel("ron2")
+        channelManager.addChannel("ron3")
+        assertThat(channelManager.getNumberOfChannels(), equalTo(4L))
+    }
+
+    @Test
+    fun `getNumberOfChannels update after remove`() {
+        val id0 = channelManager.addChannel("ron")
+        val id1 = channelManager.addChannel("ron1")
+        val id2 = channelManager.addChannel("ron2")
+        var id3 = channelManager.addChannel("ron3")
+        channelManager.removeChannel(id3)
+        assertThat(channelManager.getNumberOfChannels(), equalTo(3L))
+        channelManager.removeChannel(id0)
+        assertThat(channelManager.getNumberOfChannels(), equalTo(2L))
+        channelManager.removeChannel(id1)
+        channelManager.removeChannel(id2)
+        assertThat(channelManager.getNumberOfChannels(), equalTo(0L))
+        id3 = channelManager.addChannel("ron3")
+        assertThat(channelManager.getNumberOfChannels(), equalTo(1L))
+        channelManager.removeChannel(id3)
+        assertThat(channelManager.getNumberOfChannels(), equalTo(0L))
+    }
+
+    @Test
+    fun `increase decrease number of active members`(){
+        val id0 = channelManager.addChannel("ron")
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id0), equalTo(0L))
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id0)
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id0)
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id0)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id0), equalTo(3L))
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id0)
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id0)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id0), equalTo(3L))
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id0)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id0), equalTo(2L))
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id0)
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id0)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id0), equalTo(0L))
+    }
+
+    @Test
+    fun `after removing channel, list size has changed`(){
+        val id1 = channelManager.addChannel("ron")
+        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(0L))
+        channelManager.addMemberToChannel(id1, 123L)
+        channelManager.addMemberToChannel(id1, 128L)
+        channelManager.addMemberToChannel(id1, 129L)
+        channelManager.removeMemberFromChannel(id1, 123L)
+        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(2L))
+        assertThat(channelManager.getChannelMembersList(id1).size.toLong(), equalTo(channelManager.getNumberOfMembersInChannel(id1)))
+    }
+
+    @Test
+    fun `add the same element twice throws and list size is valid`(){
+        val id1 = channelManager.addChannel("ron")
+        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(0L))
+        channelManager.addMemberToChannel(id1, 123L)
+        assertThrows<IllegalAccessException> { channelManager.addMemberToChannel(id1, 123L) }
+        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(1L))
+        assertThat(channelManager.getChannelMembersList(id1).size.toLong(), equalTo(channelManager.getNumberOfMembersInChannel(id1)))
+    }
+
+    @Test
+    fun `remove the same element twice throws and list size is valid`(){
+        val id1 = channelManager.addChannel("ron")
+        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(0L))
+        assertThat(channelManager.getChannelMembersList(id1).size.toLong(), equalTo(channelManager.getNumberOfMembersInChannel(id1)))
+        channelManager.addMemberToChannel(id1, 123L)
+        channelManager.removeMemberFromChannel(id1, 123L)
+        assertThrows<IllegalAccessException> { channelManager.removeMemberFromChannel(id1, 123L) }
+        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(0L))
+        assertThat(channelManager.getChannelMembersList(id1).size.toLong(), equalTo(channelManager.getNumberOfMembersInChannel(id1)))
+    }
 }

@@ -12,10 +12,7 @@ import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class UserManagerTest {
@@ -142,5 +139,87 @@ class UserManagerTest {
         (1L..9L).forEach { userManager.removeChannelFromUser(aviadID, it) }
         val channelList = userManager.getChannelListOfUser(aviadID)
         assertThat(channelList.size, equalTo(11))
+    }
+
+    @Test
+    fun `after inserting users, total users is valid`() {
+        assertThat(userManager.getTotalUsers(), equalTo(0L))
+        userManager.addUser("ron", "ron_password")
+        userManager.addUser("aviad", "aviad_password")
+        userManager.addUser("gal", "gal_password")
+        assertThat(userManager.getTotalUsers(), equalTo(3L))
+    }
+
+    @Test
+    fun `after inserting users, loggedInUsers is valid`() {
+        assertThat(userManager.getLoggedInUsers(), equalTo(0L))
+        userManager.addUser("ron", "ron_password")
+        userManager.addUser("aviad", "aviad_password")
+        userManager.addUser("gal", "gal_password")
+        assertThat(userManager.getLoggedInUsers(), equalTo(3L))
+    }
+
+    @Test
+    fun `after status update, loggedInUsers is valid`() {
+        assertThat(userManager.getLoggedInUsers(), equalTo(0L))
+        val id1 = userManager.addUser("ron", "ron_password")
+        val id2 = userManager.addUser("aviad", "aviad_password")
+        val id3 = userManager.addUser("gal", "gal_password")
+        assertThat(userManager.getLoggedInUsers(), equalTo(3L))
+        userManager.updateUserStatus(id1, IUserManager.LoginStatus.IN)
+        userManager.updateUserStatus(id1, IUserManager.LoginStatus.OUT)
+        assertThat(userManager.getLoggedInUsers(), equalTo(2L))
+        userManager.updateUserStatus(id1, IUserManager.LoginStatus.IN)
+        assertThat(userManager.getLoggedInUsers(), equalTo(3L))
+        userManager.updateUserStatus(id2, IUserManager.LoginStatus.OUT)
+        userManager.updateUserStatus(id2, IUserManager.LoginStatus.OUT)
+        assertThat(userManager.getLoggedInUsers(), equalTo(2L))
+        userManager.updateUserStatus(id3, IUserManager.LoginStatus.OUT)
+        assertThat(userManager.getLoggedInUsers(), equalTo(1L))
+    }
+
+    @Test
+    fun `after adding channel, list size has changed`(){
+        val id1 = userManager.addUser("ron", "ron_password")
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(0L))
+        userManager.addChannelToUser(id1, 123L)
+        userManager.addChannelToUser(id1, 128L)
+        userManager.addChannelToUser(id1, 129L)
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(3L))
+        assertThat(userManager.getChannelListOfUser(id1).size.toLong(), equalTo(userManager.getUserChannelListSize(id1)))
+    }
+
+    @Test
+    fun `after removing channel, list size has changed`(){
+        val id1 = userManager.addUser("ron", "ron_password")
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(0L))
+        userManager.addChannelToUser(id1, 123L)
+        userManager.addChannelToUser(id1, 128L)
+        userManager.addChannelToUser(id1, 129L)
+        userManager.removeChannelFromUser(id1, 123L)
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(2L))
+        assertThat(userManager.getChannelListOfUser(id1).size.toLong(), equalTo(userManager.getUserChannelListSize(id1)))
+    }
+
+    @Test
+    fun `add the same element twice throws and list size is valid`(){
+        val id1 = userManager.addUser("ron", "ron_password")
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(0L))
+        userManager.addChannelToUser(id1, 123L)
+        assertThrows<IllegalAccessException> { userManager.addChannelToUser(id1, 123L) }
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(1L))
+        assertThat(userManager.getChannelListOfUser(id1).size.toLong(), equalTo(userManager.getUserChannelListSize(id1)))
+    }
+
+    @Test
+    fun `remove the same element twice throws and list size is valid`(){
+        val id1 = userManager.addUser("ron", "ron_password")
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(0L))
+        assertThat(userManager.getChannelListOfUser(id1).size.toLong(), equalTo(userManager.getUserChannelListSize(id1)))
+        userManager.addChannelToUser(id1, 123L)
+        userManager.removeChannelFromUser(id1, 123L)
+        assertThrows<IllegalAccessException> { userManager.removeChannelFromUser(id1, 123L) }
+        assertThat(userManager.getUserChannelListSize(id1), equalTo(0L))
+        assertThat(userManager.getChannelListOfUser(id1).size.toLong(), equalTo(userManager.getUserChannelListSize(id1)))
     }
 }
