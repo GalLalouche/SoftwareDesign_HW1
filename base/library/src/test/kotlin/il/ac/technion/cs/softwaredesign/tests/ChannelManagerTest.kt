@@ -56,8 +56,8 @@ class ChannelManagerTest {
 
     @Test
     fun `remove channel by name and add it again not throws`() {
-        channelManager.addChannel("ron")
-        channelManager.removeChannel("ron")
+        val id = channelManager.addChannel("ron")
+        channelManager.removeChannel(id)
         channelManager.addChannel("ron")
     }
 
@@ -81,8 +81,8 @@ class ChannelManagerTest {
 
     @Test
     fun `isChannelNameExists returned false if channel removed by name`() {
-        channelManager.addChannel("ron")
-        channelManager.removeChannel("ron")
+        val id = channelManager.addChannel("ron")
+        channelManager.removeChannel(id)
         assertThat(channelManager.isChannelNameExists("ron"), isFalse, {"channel name does not exist"})
     }
 
@@ -108,13 +108,6 @@ class ChannelManagerTest {
     @Test
     fun `isChannelIdExists returned false if no channel added`() {
         assertThat(channelManager.isChannelIdExists(8L), isFalse, {"channel id does not exist"})
-    }
-
-    @Test
-    fun `isChannelIdExists returned false if channel removed by name`() {
-        val id = channelManager.addChannel("ron")
-        channelManager.removeChannel("ron")
-        assertThat(channelManager.isChannelIdExists(id), isFalse, {"channel id does not exist"})
     }
 
     @Test
@@ -231,15 +224,17 @@ class ChannelManagerTest {
     }
 
     @Test
-    fun `updateNumberOfActiveMembers throws for CHANNEL_INVALID_ID`() {
+    fun `inc_dec NumberOfActiveMembers throws for CHANNEL_INVALID_ID`() {
         channelManager.addChannel("ron")
-        assertThrows<IllegalArgumentException> {channelManager.updateNumberOfActiveMembersInChannel(MANAGERS_CONSTS.CHANNEL_INVALID_ID, 6L)}
+        assertThrows<IllegalArgumentException> {channelManager.increaseNumberOfActiveMembersInChannelBy(MANAGERS_CONSTS.CHANNEL_INVALID_ID, 6L)}
+        assertThrows<IllegalArgumentException> {channelManager.decreaseNumberOfActiveMembersInChannelBy(MANAGERS_CONSTS.CHANNEL_INVALID_ID, 6L)}
     }
 
     @Test
-    fun `updateNumberOfActiveMembers throws for invalid channel id`() {
+    fun `inc_dec NumberOfActiveMembers throws for invalid channel id`() {
         val id = channelManager.addChannel("ron")
-        assertThrows<IllegalArgumentException> {channelManager.updateNumberOfActiveMembersInChannel(id + 1L, 8L)}
+        assertThrows<IllegalArgumentException> {channelManager.increaseNumberOfActiveMembersInChannelBy(id + 1L, 8L)}
+        assertThrows<IllegalArgumentException> {channelManager.decreaseNumberOfActiveMembersInChannelBy(MANAGERS_CONSTS.CHANNEL_INVALID_ID, 6L)}
     }
 
     @Test
@@ -247,16 +242,16 @@ class ChannelManagerTest {
         val id1 = channelManager.addChannel("ron")
         val id2 = channelManager.addChannel("ben")
         val id3 = channelManager.addChannel("aviad")
-        channelManager.updateNumberOfActiveMembersInChannel(id1, 8L)
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id1, 8L)
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(8L))
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(0L))
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
-        channelManager.updateNumberOfActiveMembersInChannel(id1, 12L)
-        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(12L))
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id1, 12L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(20L))
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(0L))
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
-        channelManager.updateNumberOfActiveMembersInChannel(id2, 18L)
-        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(12L))
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id2, 18L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(20L))
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(18L))
         assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
     }
@@ -266,18 +261,32 @@ class ChannelManagerTest {
         val id1 = channelManager.addChannel("ron")
         val id2 = channelManager.addChannel("ben")
         val id3 = channelManager.addChannel("aviad")
-        channelManager.updateNumberOfMembersInChannel(id1, 8L)
-        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(8L))
-        assertThat(channelManager.getNumberOfMembersInChannel(id2), equalTo(0L))
-        assertThat(channelManager.getNumberOfMembersInChannel(id3), equalTo(0L))
-        channelManager.updateNumberOfMembersInChannel(id1, 12L)
-        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(12L))
-        assertThat(channelManager.getNumberOfMembersInChannel(id2), equalTo(0L))
-        assertThat(channelManager.getNumberOfMembersInChannel(id3), equalTo(0L))
-        channelManager.updateNumberOfMembersInChannel(id2, 18L)
-        assertThat(channelManager.getNumberOfMembersInChannel(id1), equalTo(12L))
-        assertThat(channelManager.getNumberOfMembersInChannel(id2), equalTo(18L))
-        assertThat(channelManager.getNumberOfMembersInChannel(id3), equalTo(0L))
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id1, 8L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(8L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(0L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id1, 12L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(20L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(0L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
+        channelManager.increaseNumberOfActiveMembersInChannelBy(id2, 18L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(20L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(18L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
+
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id1, 3L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(17L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(18L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id1, 5L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(12L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(18L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
+        channelManager.decreaseNumberOfActiveMembersInChannelBy(id2, 18L)
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id1), equalTo(12L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id2), equalTo(0L))
+        assertThat(channelManager.getNumberOfActiveMembersInChannel(id3), equalTo(0L))
+
     }
 
     @Test

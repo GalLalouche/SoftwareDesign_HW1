@@ -18,12 +18,6 @@ interface IChannelManager {
     fun removeChannel(channelId : Long)
 
     /**
-     * Remove channel from the system
-     * @param channelName String
-     */
-    fun removeChannel(channelName : String)
-
-    /**
      * Check if channelName already exist in the system
      * @param channelName String
      * @return Boolean - true if exist, false if not
@@ -45,7 +39,6 @@ interface IChannelManager {
      */
     fun getChannelIdByName(channelName : String) : Long
 
-    /** PROPERTIES **/
     /**
      * Get channel name
      * @param channelId Long
@@ -54,6 +47,8 @@ interface IChannelManager {
      */
     fun getChannelNameById(channelId : Long) : String
 
+
+    /** NUMBER OF ACTIVE MEMBERS **/
     /**
      * Get the number of active members in a specific channel
      * @param channelId Long
@@ -63,13 +58,23 @@ interface IChannelManager {
     fun getNumberOfActiveMembersInChannel(channelId : Long) : Long
 
     /**
-     * Update the number of active members in a specific channel
+     * increase the number of active members in a specific channel by [count]
      * @param channelId Long
+     * @param count Long
      * @throws IllegalArgumentException throws if channel id does not exist in the system
-     * @param value Long
      */
-    fun updateNumberOfActiveMembersInChannel(channelId : Long, value : Long)
+    fun increaseNumberOfActiveMembersInChannelBy(channelId: Long, count: Long = 1L)
 
+    /**
+     * decrease the number of active members in a specific channel by [count]
+     * @param channelId Long
+     * @param count Long
+     * @throws IllegalArgumentException throws if channel id does not exist in the system
+     */
+    fun decreaseNumberOfActiveMembersInChannelBy(channelId: Long, count: Long = 1L)
+
+
+    /** MEMBERS LIST **/
     /**
      * Get the number of total members in a specific channel
      * @param channelId Long
@@ -78,16 +83,6 @@ interface IChannelManager {
      */
     fun getNumberOfMembersInChannel(channelId : Long) : Long
 
-    /**
-     * Update the number of members in a specific channel
-     * @param channelId Long
-     * @throws IllegalArgumentException throws if channel id does not exist in the system
-     * @param value Long
-     */
-    fun updateNumberOfMembersInChannel(channelId : Long, value : Long)
-
-
-    /** MEMBERS LIST **/
     /**
      * gets members list of a specific channel
      * @param channelId channel Id

@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 class UserManager @Inject constructor(private val userStorage: IUserStorage,
                                       @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator) : IUserManager {
-
     override fun getUserId(username: String): Long? {
         return userStorage.getUserIdByUsername(username)
     }
@@ -37,6 +36,11 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
 
     override fun updateUserPrivilege(userId: Long, privilege: PrivilegeLevel) {
         userStorage.setPropertyStringToUserId(userId, MANAGERS_CONSTS.PRIVILAGE_PROPERTY, privilege.ordinal.toString())
+    }
+
+    override fun getUsernameById(userId: Long): String {
+        return userStorage.getPropertyStringByUserId(userId, MANAGERS_CONSTS.USERNAME_PROPERTY) ?:
+                throw IllegalArgumentException("user id does not exist")
     }
 
     override fun getUserPrivilege(userId: Long): PrivilegeLevel {

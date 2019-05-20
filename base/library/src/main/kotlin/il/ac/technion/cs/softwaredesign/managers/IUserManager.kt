@@ -39,6 +39,14 @@ interface IUserManager {
     fun updateUserPrivilege(userId: Long, privilege: PrivilegeLevel)
 
     /**
+     * gets the user name
+     * @param userId user id
+     * @throws IllegalArgumentException throws if user id does not exist in the system
+     * @return the user name
+     */
+    fun getUsernameById(userId:Long):String
+
+    /**
      * gets the user privilege
      * @param userId user id
      * @throws IllegalArgumentException throws if user id does not exist in the system
@@ -48,7 +56,7 @@ interface IUserManager {
 
     /**
      * updates a user privilege
-     * @param username String the user name of the user
+     * @param userId String the user name of the user
      * @param status status of the user
      */
     fun updateUserStatus(userId:Long, status:LoginStatus)
@@ -71,7 +79,7 @@ interface IUserManager {
 
     /**
      * Check if user id already exist in the system
-     * @param username String
+     * @param userId String
      * @return Boolean - true if exist, false if not
      */
     fun isUserIdExists(userId : Long) : Boolean

@@ -5,9 +5,9 @@ import il.ac.technion.cs.softwaredesign.DB_NAMES.CHANNEL_DETAILS
 import il.ac.technion.cs.softwaredesign.DB_NAMES.CHANNEL_ID
 import il.ac.technion.cs.softwaredesign.DB_NAMES.STATISTICS
 import il.ac.technion.cs.softwaredesign.DB_NAMES.TOKEN
-import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_ACTIVE_CHANNEL
-import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_CHANNEL
-import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_USER
+import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT
+import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT
+import il.ac.technion.cs.softwaredesign.DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT
 import il.ac.technion.cs.softwaredesign.DB_NAMES.USER_DETAILS
 import il.ac.technion.cs.softwaredesign.DB_NAMES.USER_ID
 import il.ac.technion.cs.softwaredesign.TREE_KEYS.ROOT_INIT_INDEX
@@ -25,9 +25,9 @@ class CourseAppInitializerImpl
         storageFactory.open(CHANNEL_ID.toByteArray())
         storageFactory.open(CHANNEL_DETAILS.toByteArray())
 
-        initTree(TREE_USER)
-        initTree(TREE_CHANNEL)
-        initTree(TREE_ACTIVE_CHANNEL)
+        initTree(TREE_USERS_BY_CHANNELS_COUNT)
+        initTree(TREE_CHANNELS_BY_USERS_COUNT)
+        initTree(TREE_CHANNELS_BY_ACTIVE_USERS_COUNT)
         initStatistics()
     }
 

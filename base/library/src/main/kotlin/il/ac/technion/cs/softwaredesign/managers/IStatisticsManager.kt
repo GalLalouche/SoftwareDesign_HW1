@@ -17,18 +17,25 @@ interface IStatisticsManager {
     // fun setLoggedInUsers(value : Long)
 
     /**
-     * Increase number of users in the system by [count]
-     * @param count Int, increase value by count
-     * @return Long, the updated value
+     * get number of channels in the system
+     * @return Long
      */
-    fun increaseTotalUsersBy(count : Int = 1) : Long
+    fun getNumberOfChannels() : Long
 
-    /**
-     * Decrease number of users in the system by [count]
-     * @param count Int, decrease value by count
-     * @return Long, the updated value
-     */
-    fun decreaseTotalUsersBy(count : Int = 1) : Long
+    //done by user id generator
+//    /**
+//     * Increase number of users in the system by [count]
+//     * @param count Int, increase value by count
+//     * @return Long, the updated value
+//     */
+//    fun increaseTotalUsersBy(count : Int = 1) : Long
+//
+//    /**
+//     * Decrease number of users in the system by [count]
+//     * @param count Int, decrease value by count
+//     * @return Long, the updated value
+//     */
+//    fun decreaseTotalUsersBy(count : Int = 1) : Long
 
     /**
      * Increase number of logged in users in the system by [count]
@@ -43,4 +50,18 @@ interface IStatisticsManager {
      * @return Long, the updated value
      */
     fun decreaseLoggedInUsersBy(count : Int = 1) : Long
+
+    /**
+     * Increase number of channels in the system by [count]
+     * @param count Int, increase value by count
+     * @return Long, the updated value
+     */
+    fun increaseNumberOfChannelsBy(count : Int = 1) : Long
+
+    /**
+     * Decrease number of channels in the system by [count]
+     * @param count Int, decrease value by count
+     * @return Long, the updated value
+     */
+    fun decreaseNumberOfChannelsBy(count : Int = 1) : Long
 }
