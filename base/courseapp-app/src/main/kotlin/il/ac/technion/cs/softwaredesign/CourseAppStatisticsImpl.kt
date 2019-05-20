@@ -1,12 +1,12 @@
 package il.ac.technion.cs.softwaredesign
 
-import com.google.inject.Inject
 import il.ac.technion.cs.softwaredesign.managers.IChannelManager
 import il.ac.technion.cs.softwaredesign.managers.ITokenManager
 import il.ac.technion.cs.softwaredesign.managers.IUserManager
+import javax.inject.Inject
 
-class CourseAppStatisticsImpl @Inject constructor(  private val userManager: IUserManager,
-                                                    private val channelManager: IChannelManager) : CourseAppStatistics {
+class CourseAppStatisticsImpl @Inject constructor(private val userManager: IUserManager,
+                                                  private val channelManager: IChannelManager) : CourseAppStatistics {
     override fun totalUsers(): Long {
         return userManager.getTotalUsers()
     }

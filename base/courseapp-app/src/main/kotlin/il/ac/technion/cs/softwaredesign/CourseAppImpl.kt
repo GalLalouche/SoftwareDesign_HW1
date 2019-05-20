@@ -1,6 +1,5 @@
 package il.ac.technion.cs.softwaredesign
 
-import com.google.inject.Inject
 import il.ac.technion.cs.softwaredesign.ALGORITHEMS.HASH_ALGORITHM
 import il.ac.technion.cs.softwaredesign.exceptions.*
 import il.ac.technion.cs.softwaredesign.managers.IChannelManager
@@ -10,6 +9,7 @@ import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.math.BigInteger
 import java.security.MessageDigest
+import javax.inject.Inject
 
 
 class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager,

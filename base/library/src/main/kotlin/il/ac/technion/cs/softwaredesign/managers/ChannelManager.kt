@@ -1,6 +1,5 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-import com.google.inject.Inject
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.channels.IChannelStorage
@@ -14,6 +13,7 @@ import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.CHANNEL_IN
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.CHANNEL_INVALID_NAME
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY
 import java.lang.IllegalArgumentException
+import javax.inject.Inject
 
 class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
                                          private val statisticsManager: IStatisticsManager,

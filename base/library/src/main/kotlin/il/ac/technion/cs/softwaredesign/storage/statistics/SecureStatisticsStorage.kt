@@ -1,9 +1,9 @@
 package il.ac.technion.cs.softwaredesign.storage.statistics
 
-import com.google.inject.Inject
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
+import javax.inject.Inject
 
 class SecureStatisticsStorage @Inject constructor(secureStorageFactory: SecureStorageFactory) : IStatisticsStorage{
     private val statisticsStorage= secureStorageFactory.open(DB_NAMES.STATISTICS.toByteArray())
