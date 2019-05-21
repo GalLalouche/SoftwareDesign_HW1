@@ -7,7 +7,6 @@ import il.ac.technion.cs.softwaredesign.storage.impl.SecureStorageImpl
 
 class CourseAppModule : KotlinModule() {
     override fun configure() {
-        bind<SecureStorageFactory>().toInstance(SecureStorageFactoryImpl())
         bind<CourseAppInitializer>().to<CourseAppInitializerImpl>()
         install(LibraryModule())
         bind<CourseAppStatistics>().to<CourseAppStatisticsImpl>()

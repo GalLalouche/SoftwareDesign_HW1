@@ -7,7 +7,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import il.ac.technion.cs.softwaredesign.CourseApp
 import il.ac.technion.cs.softwaredesign.CourseAppInitializer
-import il.ac.technion.cs.softwaredesign.tests.CourseAppTestModule
+import il.ac.technion.cs.softwaredesign.CourseAppModule
 import il.ac.technion.cs.softwaredesign.CourseAppStatistics
 import il.ac.technion.cs.softwaredesign.exceptions.InvalidTokenException
 import il.ac.technion.cs.softwaredesign.exceptions.UserNotAuthorizedException
@@ -18,7 +18,7 @@ import java.time.Duration.ofSeconds
 
 
 class CourseAppStaffTest {
-    private val injector = Guice.createInjector(CourseAppTestModule(), SecureStorageModule())
+    private val injector = Guice.createInjector(CourseAppModule(), OurSecureStorageModule())
 
     private val courseAppInitializer = injector.getInstance<CourseAppInitializer>()
 
