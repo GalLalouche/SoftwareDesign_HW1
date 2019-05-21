@@ -169,6 +169,7 @@ class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager,
         return channelManager.getNumberOfMembersInChannel(channelId)
     }
 
+    /** TODO: REMOVE/REPLACE/UNUSE THIS CLASS IN BEFORE SUBMISSION **/
     class ImpossibleSituation(message: String? = null, cause: Throwable? = null) : Exception(message, cause)
 
     /** PRIVATES **/
