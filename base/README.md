@@ -21,6 +21,7 @@ This assignment uses the code from the submission by: <315722744\>-<302935697\>
 
 #### Managers layer
     -UserManager: User Manager is the entity that responsible to all the actions related to user
+        -generate user id using Generator
         -each user has id, name, status, privilege, and channels list
         -contains avl tree of users, and responsible to update it
             -each user has a representing node in the tree
@@ -28,6 +29,7 @@ This assignment uses the code from the submission by: <315722744\>-<302935697\>
     -TokenManager: Token Manager is the entity that responsible to all the actions related to tokens in the system
         -mapping from token to user id
     -ChannelManager: Channel Manager is the entity that responsible to all the actions related to channels in the system
+        -generate channel id using Generator
         -each channel has id, name, active users counter and 2 lists: members list and operator list (contains user ids)
         -contains 2 avl trees of channels, and responsible to update them
             -each channel has a representing node in the trees
