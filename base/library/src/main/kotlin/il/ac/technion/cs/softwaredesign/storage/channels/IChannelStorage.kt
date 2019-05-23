@@ -1,4 +1,4 @@
-package il.ac.technion.cs.softwaredesign.storage.channels
+package il.ac.technion.cs.softwaredesign.storage.api
 
 interface IChannelStorage {
 

@@ -1,4 +1,4 @@
-package il.ac.technion.cs.softwaredesign.storage.users
+package il.ac.technion.cs.softwaredesign.storage.channels
 
 interface IUserStorage {
     fun getUserIdByUsername(usernameKey : String) : Long?

@@ -1,6 +1,4 @@
-package il.ac.technion.cs.softwaredesign.storage.statistics
-
-import il.ac.technion.cs.softwaredesign.storage.IStorageConvertable
+package il.ac.technion.cs.softwaredesign.storage.api
 
 interface IStatisticsStorage {
     fun getLongValue(key : String) : Long?
