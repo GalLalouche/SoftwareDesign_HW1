@@ -1,6 +1,7 @@
 package il.ac.technion.cs.softwaredesign.storage.channels
 
 interface IChannelStorage {
+
     fun getChannelIdByChannelName(channelName : String) : Long?
     fun setChannelIdToChannelName(channelNameKey: String, channelId: Long)
 

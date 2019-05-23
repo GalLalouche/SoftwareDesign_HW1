@@ -16,7 +16,7 @@ class CourseAppImpl @Inject constructor(private val tokenManager: ITokenManager,
                                         private val userManager: IUserManager,
                                         private val channelManager: IChannelManager) : CourseApp {
 
-    companion object {
+    internal companion object {
         val regex : Regex = Regex("#[#_A-Za-z0-9]*")
     }
 
