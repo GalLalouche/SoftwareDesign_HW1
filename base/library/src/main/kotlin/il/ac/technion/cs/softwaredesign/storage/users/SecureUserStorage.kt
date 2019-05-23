@@ -1,5 +1,9 @@
 package il.ac.technion.cs.softwaredesign.storage.users
 
+import il.ac.technion.cs.softwaredesign.managers.AuthenticationStored
+import il.ac.technion.cs.softwaredesign.managers.MemberDetailsStored
+import il.ac.technion.cs.softwaredesign.managers.MemberIdStored
+import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
@@ -8,10 +12,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SecureUserStorage @Inject constructor(secureStorageFactory: SecureStorageFactory) : IUserStorage {
-    private val userIdStorage= secureStorageFactory.open(DB_NAMES.USER_ID.toByteArray())
-    private val userDetailsStorage= secureStorageFactory.open(DB_NAMES.USER_DETAILS.toByteArray())
-    private val tokenStorage= secureStorageFactory.open(DB_NAMES.TOKEN.toByteArray())
+class SecureUserStorage @Inject constructor(
+        @MemberIdStored private val userIdStorage:SecureStorage,
+        @MemberDetailsStored private val userDetailsStorage:SecureStorage,
+        @AuthenticationStored private val tokenStorage:SecureStorage) : IUserStorage {
 
     override fun getUserIdByUsername(usernameKey: String): Long? {
         val userIdByteArray=userIdStorage.read(usernameKey.toByteArray()) ?: return null
