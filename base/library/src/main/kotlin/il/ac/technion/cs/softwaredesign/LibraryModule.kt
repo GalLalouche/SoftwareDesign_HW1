@@ -10,6 +10,7 @@ import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.channels.IChannelStorage
 import il.ac.technion.cs.softwaredesign.storage.channels.SecureChannelStorage
+import il.ac.technion.cs.softwaredesign.storage.proxies.SecureStorageCache
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.statistics.SecureStatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
@@ -39,21 +40,29 @@ class LibraryModule : KotlinModule() {
 
     @Provides
     fun provideTokenStorage(factory:SecureStorageFactory): @AuthenticationStored SecureStorage{
-       return  factory.open(DB_NAMES.TOKEN.toByteArray())
+       return SecureStorageCache(factory.open(DB_NAMES.TOKEN.toByteArray()))
     }
 
     @Provides
     fun provideUserDetailsStorage(factory:SecureStorageFactory): @MemberDetailsStored SecureStorage{
-        return  factory.open(DB_NAMES.USER_DETAILS.toByteArray())
+        return SecureStorageCache(factory.open(DB_NAMES.USER_DETAILS.toByteArray()))
     }
 
     @Provides
     fun provideUserIdStorage(factory:SecureStorageFactory): @MemberIdStored SecureStorage{
-        return  factory.open(DB_NAMES.USER_DETAILS.toByteArray())
+        return SecureStorageCache(factory.open(DB_NAMES.USER_DETAILS.toByteArray()))
     }
 
     @Provides
-    fun statisticsStorage(factory:SecureStorageFactory): @StatisticsStored SecureStorage{
-        return  factory.open(DB_NAMES.STATISTICS.toByteArray())
+    fun provideStatisticsStorage(factory:SecureStorageFactory): @StatisticsStored SecureStorage{
+        return SecureStorageCache(factory.open(DB_NAMES.STATISTICS.toByteArray()))
+    }
+    @Provides
+    fun provideChannelIdStorage(factory:SecureStorageFactory): @ChannelIdStored SecureStorage{
+        return SecureStorageCache(factory.open(DB_NAMES.CHANNEL_ID.toByteArray()))
+    }
+    @Provides
+    fun provideChannelDetailsStorage(factory:SecureStorageFactory): @ChannelDetailsStored SecureStorage{
+        return SecureStorageCache(factory.open(DB_NAMES.CHANNEL_DETAILS.toByteArray()))
     }
 }

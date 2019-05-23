@@ -1,28 +1,30 @@
 package il.ac.technion.cs.softwaredesign.storage.channels
 
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
+import il.ac.technion.cs.softwaredesign.managers.ChannelDetailsStored
+import il.ac.technion.cs.softwaredesign.managers.ChannelIdStored
+import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
-import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.CHANNEL_DETAILS
-import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.CHANNEL_ID
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) : IChannelStorage {
-    private val channelIdsStorage = factory.open(CHANNEL_ID.toByteArray())
-    private val channelDetailsStorage = factory.open(CHANNEL_DETAILS.toByteArray())
+@Singleton
+class SecureChannelStorage
+@Inject constructor(@ChannelIdStored private val channelIdsStorage: SecureStorage,
+                    @ChannelDetailsStored private val channelDetailsStorage: SecureStorage) : IChannelStorage {
 
     override fun getChannelIdByChannelName(channelName: String): Long? {
-        val channelIdByteArray=channelIdsStorage.read(channelName.toByteArray()) ?: return null
+        val channelIdByteArray = channelIdsStorage.read(channelName.toByteArray()) ?: return null
         return ConversionUtils.bytesToLong(channelIdByteArray)
     }
 
     override fun setChannelIdToChannelName(channelNameKey: String, channelId: Long) {
-        channelIdsStorage.write(channelNameKey.toByteArray(),ConversionUtils.longToBytes(channelId))
+        channelIdsStorage.write(channelNameKey.toByteArray(), ConversionUtils.longToBytes(channelId))
     }
 
     override fun getPropertyStringByChannelId(channelIdKey: Long, property: String): String? {
         val key = createPropertyKey(channelIdKey, property)
-        val value= channelDetailsStorage.read(key) ?: return null
+        val value = channelDetailsStorage.read(key) ?: return null
         return String(value)
     }
 
@@ -33,7 +35,7 @@ class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) :
 
     override fun getPropertyLongByChannelId(channelIdKey: Long, property: String): Long? {
         val key = createPropertyKey(channelIdKey, property)
-        val value= channelDetailsStorage.read(key) ?: return null
+        val value = channelDetailsStorage.read(key) ?: return null
         return ConversionUtils.bytesToLong(value)
     }
 
@@ -44,7 +46,7 @@ class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) :
 
     override fun getPropertyListByChannelId(channelIdKey: Long, property: String): List<Long>? {
         val key = createPropertyKey(channelIdKey, property)
-        val value= channelDetailsStorage.read(key) ?: return null
+        val value = channelDetailsStorage.read(key) ?: return null
         val stringValue = String(value)
         if (stringValue == "") return emptyList()
         return stringValue.split(MANAGERS_CONSTS.DELIMITER).map { it.toLong() }.toMutableList()
@@ -56,7 +58,7 @@ class SecureChannelStorage @Inject constructor (factory: SecureStorageFactory) :
         channelDetailsStorage.write(key, value.toByteArray())
     }
 
-    private fun createPropertyKey(channelId: Long, property: String) : ByteArray{
+    private fun createPropertyKey(channelId: Long, property: String): ByteArray {
         val channelIdByteArray = ConversionUtils.longToBytes(channelId)
         val keySuffixByteArray = "${MANAGERS_CONSTS.DELIMITER}$property".toByteArray()
         return channelIdByteArray + keySuffixByteArray

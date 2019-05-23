@@ -31,3 +31,13 @@ annotation class MemberIdStored
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
 annotation class StatisticsStored
+
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class ChannelIdStored
+
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class ChannelDetailsStored

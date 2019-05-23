@@ -6,7 +6,9 @@ import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SecureStatisticsStorage @Inject constructor(@StatisticsStored private val statisticsStorage: SecureStorage) : IStatisticsStorage {
 
     override fun getLongValue(key: String): Long? {

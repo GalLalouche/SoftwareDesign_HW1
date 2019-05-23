@@ -19,11 +19,11 @@ class CourseAppInitializerImpl
 @Inject constructor(private val storageFactory: SecureStorageFactory) : CourseAppInitializer {
 
     override fun setup() {
-        storageFactory.open(USER_ID.toByteArray())
+        /*storageFactory.open(USER_ID.toByteArray())
         storageFactory.open(TOKEN.toByteArray())
         storageFactory.open(USER_DETAILS.toByteArray())
         storageFactory.open(CHANNEL_ID.toByteArray())
-        storageFactory.open(CHANNEL_DETAILS.toByteArray())
+        storageFactory.open(CHANNEL_DETAILS.toByteArray())*/
 
         initTree(TREE_USERS_BY_CHANNELS_COUNT)
         initTree(TREE_CHANNELS_BY_USERS_COUNT)
