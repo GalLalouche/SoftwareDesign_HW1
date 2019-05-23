@@ -1,6 +1,7 @@
 package il.ac.technion.cs.softwaredesign
 
 import com.authzee.kotlinguice4.KotlinModule
+import com.google.inject.Inject
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.matcher.Matcher
@@ -40,48 +41,48 @@ class LibraryModule : KotlinModule() {
                 .and(Matchers.subclassesOf(SecureStorageFactory::class.java))
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideTokenStorage(factory: SecureStorageFactory): @AuthenticationStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.TOKEN.toByteArray()))
+        return factory.open(DB_NAMES.TOKEN.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideUserDetailsStorage(factory: SecureStorageFactory): @MemberDetailsStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.USER_DETAILS.toByteArray()))
+        return factory.open(DB_NAMES.USER_DETAILS.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideUserIdStorage(factory: SecureStorageFactory): @MemberIdStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.USER_ID.toByteArray()))
+        return factory.open(DB_NAMES.USER_ID.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideStatisticsStorage(factory: SecureStorageFactory): @StatisticsStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.STATISTICS.toByteArray()))
+        return factory.open(DB_NAMES.STATISTICS.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideChannelIdStorage(factory: SecureStorageFactory): @ChannelIdStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.CHANNEL_ID.toByteArray()))
+        return factory.open(DB_NAMES.CHANNEL_ID.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideChannelDetailsStorage(factory: SecureStorageFactory): @ChannelDetailsStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.CHANNEL_DETAILS.toByteArray()))
+        return factory.open(DB_NAMES.CHANNEL_DETAILS.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideChannelByUserCountStorage(factory: SecureStorageFactory): @ChannelByUserCountStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray()))
+        return factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideChannelByActiveUserCountStorage(factory: SecureStorageFactory): @ChannelByActiveUserCountStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray()))
+        return factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Inject
     fun provideUsersByChannelCountStorage(factory: SecureStorageFactory): @ChannelByActiveUserCountStorage SecureStorage {
-        return SecureStorageCache(factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray()))
+        return factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
     }
 }
