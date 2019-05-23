@@ -15,29 +15,44 @@ annotation class ChannelIdSeqGenerator
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
-annotation class AuthenticationStored
+annotation class AuthenticationStorage
 
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
-annotation class MemberDetailsStored
+annotation class MemberDetailsStorage
 
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
-annotation class MemberIdStored
+annotation class MemberIdStorage
 
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
-annotation class StatisticsStored
+annotation class StatisticsStorage
 
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
-annotation class ChannelIdStored
+annotation class ChannelIdStorage
 
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @BindingAnnotation
-annotation class ChannelDetailsStored
+annotation class ChannelDetailsStorage
+
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class ChannelByUserCountStorage
+
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class ChannelByActiveUserCountStorage
+
+@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY,AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.RUNTIME)
+@BindingAnnotation
+annotation class UsersByChannelCountStorage

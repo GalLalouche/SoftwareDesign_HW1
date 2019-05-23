@@ -7,7 +7,9 @@ import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.NUMBER_OF_CHANNELS
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class StatisticsManager @Inject constructor(private val statisticsStorage: IStatisticsStorage) : IStatisticsManager {
     override fun getTotalUsers(): Long {
         return statisticsStorage.getLongValue(STATISTICS_KEYS.NUMBER_OF_USERS) ?:

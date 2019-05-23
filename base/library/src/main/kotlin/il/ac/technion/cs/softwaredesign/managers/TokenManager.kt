@@ -4,7 +4,9 @@ import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.INVALID_USER_ID
 import java.security.SecureRandom
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TokenManager @Inject constructor(private val userStorage: IUserStorage) : ITokenManager {
 
     override fun isTokenValid(token: String): Boolean {

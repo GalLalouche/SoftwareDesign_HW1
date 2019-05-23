@@ -39,30 +39,47 @@ class LibraryModule : KotlinModule() {
     }
 
     @Provides
-    fun provideTokenStorage(factory:SecureStorageFactory): @AuthenticationStored SecureStorage{
+    fun provideTokenStorage(factory:SecureStorageFactory): @AuthenticationStorage SecureStorage{
        return SecureStorageCache(factory.open(DB_NAMES.TOKEN.toByteArray()))
     }
 
     @Provides
-    fun provideUserDetailsStorage(factory:SecureStorageFactory): @MemberDetailsStored SecureStorage{
+    fun provideUserDetailsStorage(factory:SecureStorageFactory): @MemberDetailsStorage SecureStorage{
         return SecureStorageCache(factory.open(DB_NAMES.USER_DETAILS.toByteArray()))
     }
 
     @Provides
-    fun provideUserIdStorage(factory:SecureStorageFactory): @MemberIdStored SecureStorage{
+    fun provideUserIdStorage(factory:SecureStorageFactory): @MemberIdStorage SecureStorage{
         return SecureStorageCache(factory.open(DB_NAMES.USER_DETAILS.toByteArray()))
     }
 
     @Provides
-    fun provideStatisticsStorage(factory:SecureStorageFactory): @StatisticsStored SecureStorage{
+    fun provideStatisticsStorage(factory:SecureStorageFactory): @StatisticsStorage SecureStorage{
         return SecureStorageCache(factory.open(DB_NAMES.STATISTICS.toByteArray()))
     }
+
     @Provides
-    fun provideChannelIdStorage(factory:SecureStorageFactory): @ChannelIdStored SecureStorage{
+    fun provideChannelIdStorage(factory:SecureStorageFactory): @ChannelIdStorage SecureStorage{
         return SecureStorageCache(factory.open(DB_NAMES.CHANNEL_ID.toByteArray()))
     }
+
     @Provides
-    fun provideChannelDetailsStorage(factory:SecureStorageFactory): @ChannelDetailsStored SecureStorage{
+    fun provideChannelDetailsStorageStorage(factory:SecureStorageFactory): @ChannelDetailsStorage SecureStorage{
         return SecureStorageCache(factory.open(DB_NAMES.CHANNEL_DETAILS.toByteArray()))
+    }
+
+    @Provides
+    fun provideChannelByUserCountStorage(factory:SecureStorageFactory): @ChannelByUserCountStorage SecureStorage{
+        return SecureStorageCache(factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray()))
+    }
+
+    @Provides
+    fun provideChannelByActiveUserCountStorage(factory:SecureStorageFactory): @ChannelByActiveUserCountStorage SecureStorage{
+        return SecureStorageCache(factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray()))
+    }
+
+    @Provides
+    fun provideUsersByChannelCountStorage(factory:SecureStorageFactory): @ChannelByActiveUserCountStorage SecureStorage{
+        return SecureStorageCache(factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray()))
     }
 }

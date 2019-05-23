@@ -1,7 +1,7 @@
 package il.ac.technion.cs.softwaredesign.storage.channels
 
-import il.ac.technion.cs.softwaredesign.managers.ChannelDetailsStored
-import il.ac.technion.cs.softwaredesign.managers.ChannelIdStored
+import il.ac.technion.cs.softwaredesign.managers.ChannelDetailsStorage
+import il.ac.technion.cs.softwaredesign.managers.ChannelIdStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
@@ -10,8 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class SecureChannelStorage
-@Inject constructor(@ChannelIdStored private val channelIdsStorage: SecureStorage,
-                    @ChannelDetailsStored private val channelDetailsStorage: SecureStorage) : IChannelStorage {
+@Inject constructor(@ChannelIdStorage private val channelIdsStorage: SecureStorage,
+                    @ChannelDetailsStorage private val channelDetailsStorage: SecureStorage) : IChannelStorage {
 
     override fun getChannelIdByChannelName(channelName: String): Long? {
         val channelIdByteArray = channelIdsStorage.read(channelName.toByteArray()) ?: return null

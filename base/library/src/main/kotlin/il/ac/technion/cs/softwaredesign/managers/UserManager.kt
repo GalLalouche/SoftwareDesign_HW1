@@ -1,28 +1,31 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-import il.ac.technion.cs.softwaredesign.managers.IUserManager.*
+import il.ac.technion.cs.softwaredesign.managers.IUserManager.LoginStatus
+import il.ac.technion.cs.softwaredesign.managers.IUserManager.PrivilegeLevel
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
+import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.datastructures.CountIdKey
 import il.ac.technion.cs.softwaredesign.storage.datastructures.SecureAVLTree
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
-import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.INVALID_USER_ID
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.LIST_PROPERTY
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.PASSWORD_PROPERTY
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserManager @Inject constructor(private val userStorage: IUserStorage,
-                                      factory: SecureStorageFactory,
-                                      private val statisticsManager: IStatisticsManager,
-                                      @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator) : IUserManager {
+@Singleton
+class UserManager
+@Inject constructor(private val userStorage: IUserStorage,
+                    private val statisticsManager: IStatisticsManager,
+                    @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator,
+                    @UsersByChannelCountStorage private val usersByChannelsCountStorage: SecureStorage
+) : IUserManager {
+    
     private val defaultKey: () -> CountIdKey = { CountIdKey() }
-    private val usersByChannelsCountStorage = factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
-    private val usersByChannelsCountTree = SecureAVLTree<CountIdKey>(usersByChannelsCountStorage, defaultKey)
+    private val usersByChannelsCountTree = SecureAVLTree(usersByChannelsCountStorage, defaultKey)
 
-    override fun addUser(username: String, password: String, status: LoginStatus, privilege: PrivilegeLevel):Long {
+    override fun addUser(username: String, password: String, status: LoginStatus, privilege: PrivilegeLevel): Long {
         var userId = getUserId(username)
         if (userId == INVALID_USER_ID) throw IllegalArgumentException("user id is not valid")
         if (userId != null) throw IllegalArgumentException("user already exist")
@@ -54,8 +57,8 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
     }
 
     override fun getUsernameById(userId: Long): String {
-        return userStorage.getPropertyStringByUserId(userId, MANAGERS_CONSTS.USERNAME_PROPERTY) ?:
-                throw IllegalArgumentException("user id does not exist")
+        return userStorage.getPropertyStringByUserId(userId, MANAGERS_CONSTS.USERNAME_PROPERTY)
+                ?: throw IllegalArgumentException("user id does not exist")
     }
 
     override fun getUserPrivilege(userId: Long): PrivilegeLevel {
@@ -89,7 +92,8 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
             } else {
                 statisticsManager.decreaseLoggedInUsersBy()
             }
-        } catch (e : IllegalArgumentException) { /* user id does not exist, do nothing */  }
+        } catch (e: IllegalArgumentException) { /* user id does not exist, do nothing */
+        }
     }
 
 
@@ -124,7 +128,7 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
 
         // update tree:
         val currentSize = currentList.size.toLong()
-        updateUserNode(userId, oldCount = currentSize-1L, newCount = currentSize)
+        updateUserNode(userId, oldCount = currentSize - 1L, newCount = currentSize)
     }
 
     override fun removeChannelFromUser(userId: Long, channelId: Long) {
@@ -136,7 +140,7 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
 
         // update tree:
         val currentSize = currentList.size.toLong()
-        updateUserNode(userId, oldCount = currentSize+1L, newCount = currentSize)
+        updateUserNode(userId, oldCount = currentSize + 1L, newCount = currentSize)
     }
 
 
@@ -169,10 +173,12 @@ class UserManager @Inject constructor(private val userStorage: IUserStorage,
         userStorage.setPropertyListToUserId(userId, LIST_PROPERTY, emptyList())
         userStorage.setPropertyLongToUserId(userId, MANAGERS_CONSTS.SIZE_PROPERTY, 0L)
     }
-    private fun addNewUserToUserTree(userId: Long, count: Long){
+
+    private fun addNewUserToUserTree(userId: Long, count: Long) {
         val key = CountIdKey(count = count, id = userId)
         usersByChannelsCountTree.put(key)
     }
+
     private fun updateUserNode(userId: Long, oldCount: Long, newCount: Long) {
         val oldKey = CountIdKey(count = oldCount, id = userId)
         usersByChannelsCountTree.delete(oldKey)

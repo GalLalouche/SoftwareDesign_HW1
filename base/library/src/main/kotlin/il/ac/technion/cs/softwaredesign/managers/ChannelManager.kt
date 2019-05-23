@@ -1,32 +1,31 @@
 package il.ac.technion.cs.softwaredesign.managers
 
 import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
+import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.channels.IChannelStorage
 import il.ac.technion.cs.softwaredesign.storage.datastructures.CountIdKey
 import il.ac.technion.cs.softwaredesign.storage.datastructures.SecureAVLTree
-import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.CHANNEL_INVALID_ID
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.CHANNEL_INVALID_NAME
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.CHANNEL_NAME_PROPERTY
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class ChannelManager @Inject constructor(private val channelStorage: IChannelStorage,
-                                         private val statisticsManager: IStatisticsManager,
-                                         factory: SecureStorageFactory,
-                                         @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator)
-                                        : IChannelManager {
-    private val channelsByUsersCountStorage = factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
-    private val channelsByActiveUsersCountStorage = factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
-
+@Singleton
+class ChannelManager
+@Inject constructor(private val channelStorage: IChannelStorage,
+                    private val statisticsManager: IStatisticsManager,
+                    @ChannelIdSeqGenerator private val channelIdGenerator: ISequenceGenerator,
+                    @ChannelByUserCountStorage private val channelsByUsersCountStorage: SecureStorage,
+                    @ChannelByActiveUserCountStorage private val channelsByActiveUsersCountStorage: SecureStorage
+) : IChannelManager {
     private val defaultKey: () -> CountIdKey = { CountIdKey() }
 
-    private val channelsByUsersCountTree = SecureAVLTree<CountIdKey>(channelsByUsersCountStorage, defaultKey)
-    private val channelsByActiveUsersCountTree = SecureAVLTree<CountIdKey>(channelsByActiveUsersCountStorage, defaultKey)
+    private val channelsByUsersCountTree = SecureAVLTree(channelsByUsersCountStorage, defaultKey)
+    private val channelsByActiveUsersCountTree = SecureAVLTree(channelsByActiveUsersCountStorage, defaultKey)
 
     override fun addChannel(channelName: String): Long {
         if (channelName == CHANNEL_INVALID_NAME) throw IllegalArgumentException("channel name cannot be empty")
@@ -67,15 +66,15 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     override fun getChannelIdByName(channelName: String): Long {
         if (!isChannelValid(channelName = channelName)) throw IllegalArgumentException("channel name is not valid")
         val id = channelStorage.getChannelIdByChannelName(channelName)
-                if (isChannelValid(channelId = id)) return id!! // TODO: redundant, consider removing it
-                throw IllegalArgumentException("returned channel id is not valid")
+        if (isChannelValid(channelId = id)) return id!! // TODO: redundant, consider removing it
+        throw IllegalArgumentException("returned channel id is not valid")
     }
 
     override fun getChannelNameById(channelId: Long): String {
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
         val name = channelStorage.getPropertyStringByChannelId(channelId, CHANNEL_NAME_PROPERTY)
-                if (isChannelValid(channelName = name)) return name!! // TODO: redundant, consider removing it
-                throw IllegalArgumentException("returned channel name is not valid")
+        if (isChannelValid(channelName = name)) return name!! // TODO: redundant, consider removing it
+        throw IllegalArgumentException("returned channel name is not valid")
     }
 
     override fun getNumberOfChannels(): Long {
@@ -122,7 +121,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_MEMBERS, currentList.size.toLong())
 
         val size = currentList.size.toLong()
-        updateKeyInTree(TREE_CHANNELS_BY_USERS_COUNT, channelId, size-1L, size)
+        updateKeyInTree(TREE_CHANNELS_BY_USERS_COUNT, channelId, size - 1L, size)
     }
 
     override fun removeMemberFromChannel(channelId: Long, memberId: Long) {
@@ -134,7 +133,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         channelStorage.setPropertyLongToChannelId(channelId, MANAGERS_CONSTS.CHANNEL_NR_MEMBERS, currentList.size.toLong())
 
         val size = currentList.size.toLong()
-        updateKeyInTree(TREE_CHANNELS_BY_USERS_COUNT, channelId, size+1L, size)
+        updateKeyInTree(TREE_CHANNELS_BY_USERS_COUNT, channelId, size + 1L, size)
     }
 
 
@@ -174,36 +173,42 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
     /** PRIVATES **/
     // channel name exists if and only if it is mapped to a VALID channel id, i.e. channel id != CHANNEL_INVALID_ID
     // and its id_name is not mapped to CHANNEL_INVALID_NAME
-    private fun isChannelValid(channelId: Long?) : Boolean {
+    private fun isChannelValid(channelId: Long?): Boolean {
         if (channelId != null && channelId != CHANNEL_INVALID_ID) {
             val name = channelStorage.getPropertyStringByChannelId(channelId, CHANNEL_NAME_PROPERTY)
             return name != null && name != CHANNEL_INVALID_NAME
         }
         return false
     }
-    private fun isChannelValid(channelName: String?) : Boolean {
+
+    private fun isChannelValid(channelName: String?): Boolean {
         if (channelName != null && channelName != CHANNEL_INVALID_NAME) {
             val id = channelStorage.getChannelIdByChannelName(channelName)
             return id != null && id != CHANNEL_INVALID_ID
         }
         return false
     }
+
     private fun invalidateChannel(channelId: Long) {
         try {
             val channelName = getChannelNameById(channelId)
             invalidateChannel(channelId, channelName)
-        } catch (e : IllegalArgumentException) {}
+        } catch (e: IllegalArgumentException) {
+        }
     }
+
     private fun invalidateChannel(channelId: Long, channelName: String) {
         channelStorage.setChannelIdToChannelName(channelName, CHANNEL_INVALID_ID)
         channelStorage.setPropertyStringToChannelId(channelId, CHANNEL_NAME_PROPERTY, CHANNEL_INVALID_NAME)
     }
-    private fun addNewChannelToChannelTrees(channelId: Long, count: Long){
+
+    private fun addNewChannelToChannelTrees(channelId: Long, count: Long) {
         val key = CountIdKey(count = count, id = channelId)
         channelsByUsersCountTree.put(key)
         channelsByActiveUsersCountTree.put(key)
     }
-    private fun removeChannelFromChannelTrees(channelId: Long){
+
+    private fun removeChannelFromChannelTrees(channelId: Long) {
         val membersCount = getNumberOfMembersInChannel(channelId)
         val membersKey = CountIdKey(id = channelId, count = membersCount)
         channelsByUsersCountTree.delete(membersKey)
@@ -212,6 +217,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         val activeMembersKey = CountIdKey(id = channelId, count = activeMembersCount)
         channelsByActiveUsersCountTree.delete(activeMembersKey)
     }
+
     private fun changeNumberOfActiveMembersInChannelBy(channelId: Long, count: Long) {
         // value:
         if (!isChannelValid(channelId = channelId)) throw IllegalArgumentException("channel id is not valid")
@@ -221,6 +227,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
 
         updateKeyInTree(TREE_CHANNELS_BY_ACTIVE_USERS_COUNT, channelId, currentValue, newValue)
     }
+
     private fun updateKeyInTree(treeName: String, channelId: Long, currentValue: Long, newValue: Long) {
         val tree = getTreeByName(treeName)
         val oldKey = CountIdKey(count = currentValue, id = channelId)
@@ -228,7 +235,8 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         val newKey = CountIdKey(count = newValue, id = channelId)
         tree.put(newKey)
     }
-    private fun getTop10FromTree(treeName : String) : List<String> {
+
+    private fun getTop10FromTree(treeName: String): List<String> {
         val tree = getTreeByName(treeName)
         val values = mutableListOf<String>()
         val nrChannels = getNumberOfChannels()
@@ -241,6 +249,7 @@ class ChannelManager @Inject constructor(private val channelStorage: IChannelSto
         }
         return values
     }
+
     private fun getTreeByName(treeName: String): SecureAVLTree<CountIdKey> {
         return when (treeName) {
             TREE_CHANNELS_BY_USERS_COUNT -> channelsByUsersCountTree

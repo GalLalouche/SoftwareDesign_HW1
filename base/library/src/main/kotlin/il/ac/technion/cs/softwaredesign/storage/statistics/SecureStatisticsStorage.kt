@@ -1,15 +1,13 @@
 package il.ac.technion.cs.softwaredesign.storage.statistics
 
-import il.ac.technion.cs.softwaredesign.managers.StatisticsStored
+import il.ac.technion.cs.softwaredesign.managers.StatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
-import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SecureStatisticsStorage @Inject constructor(@StatisticsStored private val statisticsStorage: SecureStorage) : IStatisticsStorage {
+class SecureStatisticsStorage @Inject constructor(@StatisticsStorage private val statisticsStorage: SecureStorage) : IStatisticsStorage {
 
     override fun getLongValue(key: String): Long? {
         val byteArrayValue = statisticsStorage.read(key.toByteArray()) ?: return null

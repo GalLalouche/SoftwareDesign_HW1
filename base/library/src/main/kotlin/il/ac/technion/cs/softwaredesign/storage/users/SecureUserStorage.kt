@@ -1,21 +1,19 @@
 package il.ac.technion.cs.softwaredesign.storage.users
 
-import il.ac.technion.cs.softwaredesign.managers.AuthenticationStored
-import il.ac.technion.cs.softwaredesign.managers.MemberDetailsStored
-import il.ac.technion.cs.softwaredesign.managers.MemberIdStored
+import il.ac.technion.cs.softwaredesign.managers.AuthenticationStorage
+import il.ac.technion.cs.softwaredesign.managers.MemberDetailsStorage
+import il.ac.technion.cs.softwaredesign.managers.MemberIdStorage
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
-import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
-import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.DELIMITER
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SecureUserStorage @Inject constructor(
-        @MemberIdStored private val userIdStorage:SecureStorage,
-        @MemberDetailsStored private val userDetailsStorage:SecureStorage,
-        @AuthenticationStored private val tokenStorage:SecureStorage) : IUserStorage {
+        @MemberIdStorage private val userIdStorage:SecureStorage,
+        @MemberDetailsStorage private val userDetailsStorage:SecureStorage,
+        @AuthenticationStorage private val tokenStorage:SecureStorage) : IUserStorage {
 
     override fun getUserIdByUsername(usernameKey: String): Long? {
         val userIdByteArray=userIdStorage.read(usernameKey.toByteArray()) ?: return null
