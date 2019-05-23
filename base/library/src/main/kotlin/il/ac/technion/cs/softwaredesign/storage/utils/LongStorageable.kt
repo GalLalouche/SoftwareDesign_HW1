@@ -1,6 +1,6 @@
 package il.ac.technion.cs.softwaredesign.storage.utils
 
-import il.ac.technion.cs.softwaredesign.storage.IStorageConvertable
+import il.ac.technion.cs.softwaredesign.storage.api.IStorageConvertable
 import java.lang.IllegalArgumentException
 
 class LongStorageable(var value:Long) : IStorageConvertable<LongStorageable> {

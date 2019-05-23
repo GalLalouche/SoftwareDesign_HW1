@@ -1,8 +1,7 @@
 package il.ac.technion.cs.softwaredesign.managers
 
+import il.ac.technion.cs.softwaredesign.storage.api.IStatisticsManager
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
-import il.ac.technion.cs.softwaredesign.storage.statistics.SecureStatisticsStorage
-import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.NUMBER_OF_CHANNELS
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.NUMBER_OF_LOGGED_IN_USERS

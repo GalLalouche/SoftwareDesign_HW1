@@ -3,7 +3,7 @@ package il.ac.technion.cs.softwaredesign.storage.datastructures
 import com.google.common.primitives.Longs
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import il.ac.technion.cs.softwaredesign.storage.ISecureStorageKey
+import il.ac.technion.cs.softwaredesign.storage.api.ISecureStorageKey
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_INIT_INDEX
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.ROOT_KEY
@@ -16,13 +16,12 @@ import io.mockk.slot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.math.min
 import kotlin.random.Random
 
 
 class SecureAVLTreeTest {
 
-    data class SimpleKey(var i:Long): ISecureStorageKey<SimpleKey>{
+    data class SimpleKey(var i:Long): ISecureStorageKey<SimpleKey> {
         override fun compareTo(other: SimpleKey): Int {
            return i.compareTo(other.i)
         }

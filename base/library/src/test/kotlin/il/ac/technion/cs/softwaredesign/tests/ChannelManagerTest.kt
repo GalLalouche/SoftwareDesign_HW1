@@ -5,7 +5,7 @@ import com.google.common.primitives.Longs
 import com.google.inject.Guice
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import il.ac.technion.cs.softwaredesign.managers.IChannelManager
+import il.ac.technion.cs.softwaredesign.storage.api.IChannelManager
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES

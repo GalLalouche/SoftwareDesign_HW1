@@ -1,4 +1,4 @@
-package il.ac.technion.cs.softwaredesign.managers
+package il.ac.technion.cs.softwaredesign.storage.api
 
 interface ITokenManager {
     /**

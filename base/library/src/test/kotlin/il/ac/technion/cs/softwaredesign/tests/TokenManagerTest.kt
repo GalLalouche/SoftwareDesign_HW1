@@ -6,7 +6,6 @@ import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.INVALID_USER_ID
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 

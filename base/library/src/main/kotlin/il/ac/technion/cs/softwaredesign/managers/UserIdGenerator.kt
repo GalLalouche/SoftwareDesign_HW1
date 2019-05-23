@@ -1,6 +1,6 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
+import il.ac.technion.cs.softwaredesign.internals.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.STATISTICS_KEYS.NUMBER_OF_USERS
 import java.lang.NullPointerException

@@ -1,9 +1,11 @@
 package il.ac.technion.cs.softwaredesign.managers
 
-import il.ac.technion.cs.softwaredesign.managers.IUserManager.LoginStatus
-import il.ac.technion.cs.softwaredesign.managers.IUserManager.PrivilegeLevel
-import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
+import il.ac.technion.cs.softwaredesign.storage.api.IUserManager.LoginStatus
+import il.ac.technion.cs.softwaredesign.storage.api.IUserManager.PrivilegeLevel
+import il.ac.technion.cs.softwaredesign.internals.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
+import il.ac.technion.cs.softwaredesign.storage.api.IStatisticsManager
+import il.ac.technion.cs.softwaredesign.storage.api.IUserManager
 import il.ac.technion.cs.softwaredesign.storage.datastructures.CountIdKey
 import il.ac.technion.cs.softwaredesign.storage.datastructures.SecureAVLTree
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
@@ -21,7 +23,7 @@ class UserManager
                     @UserIdSeqGenerator private val userIdGenerator: ISequenceGenerator,
                     @UsersByChannelCountStorage private val usersByChannelsCountStorage: SecureStorage
 ) : IUserManager {
-    
+
     private val defaultKey: () -> CountIdKey = { CountIdKey() }
     private val usersByChannelsCountTree = SecureAVLTree(usersByChannelsCountStorage, defaultKey)
 

@@ -1,5 +1,6 @@
 package il.ac.technion.cs.softwaredesign.managers
 
+import il.ac.technion.cs.softwaredesign.storage.api.ITokenManager
 import il.ac.technion.cs.softwaredesign.storage.users.IUserStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS.INVALID_USER_ID
 import java.security.SecureRandom

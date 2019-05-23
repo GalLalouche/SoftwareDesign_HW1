@@ -1,8 +1,7 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
+import il.ac.technion.cs.softwaredesign.internals.IPointer
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
-import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
-import javax.inject.Inject
 
 class Pointer : IPointer {
     override fun getAddress(): Long {

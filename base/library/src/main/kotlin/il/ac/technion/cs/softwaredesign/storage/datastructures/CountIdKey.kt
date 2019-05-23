@@ -1,6 +1,6 @@
 package il.ac.technion.cs.softwaredesign.storage.datastructures
 
-import il.ac.technion.cs.softwaredesign.storage.ISecureStorageKey
+import il.ac.technion.cs.softwaredesign.storage.api.ISecureStorageKey
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
 import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 

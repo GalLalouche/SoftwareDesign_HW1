@@ -2,9 +2,9 @@ package il.ac.technion.cs.softwaredesign
 
 import il.ac.technion.cs.softwaredesign.ALGORITHEMS.HASH_ALGORITHM
 import il.ac.technion.cs.softwaredesign.exceptions.*
-import il.ac.technion.cs.softwaredesign.managers.IChannelManager
-import il.ac.technion.cs.softwaredesign.managers.ITokenManager
-import il.ac.technion.cs.softwaredesign.managers.IUserManager
+import il.ac.technion.cs.softwaredesign.storage.api.IChannelManager
+import il.ac.technion.cs.softwaredesign.storage.api.ITokenManager
+import il.ac.technion.cs.softwaredesign.storage.api.IUserManager
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.math.BigInteger

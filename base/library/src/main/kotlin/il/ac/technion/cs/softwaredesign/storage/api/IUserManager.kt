@@ -1,6 +1,5 @@
-package il.ac.technion.cs.softwaredesign.managers
+package il.ac.technion.cs.softwaredesign.storage.api
 
-import il.ac.technion.cs.softwaredesign.storage.utils.MANAGERS_CONSTS
 import java.lang.IllegalArgumentException
 
 
@@ -22,7 +21,7 @@ interface IUserManager {
      * @throws IllegalArgumentException if username is already exist
      * @return user id that was added to the system
      */
-    fun addUser(username: String, password: String, status:LoginStatus = LoginStatus.IN, privilege:PrivilegeLevel=PrivilegeLevel.USER):Long
+    fun addUser(username: String, password: String, status: LoginStatus = LoginStatus.IN, privilege: PrivilegeLevel = PrivilegeLevel.USER):Long
 
 
     /** GETTERS & SETTERS **/
@@ -47,7 +46,7 @@ interface IUserManager {
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return the user privilege
      */
-    fun getUserPrivilege(userId:Long):PrivilegeLevel
+    fun getUserPrivilege(userId:Long): PrivilegeLevel
 
     /**
      * gets the user status
@@ -55,7 +54,7 @@ interface IUserManager {
      * @throws IllegalArgumentException throws if user id does not exist in the system
      * @return login status of user
      */
-    fun getUserStatus(userId:Long):LoginStatus
+    fun getUserStatus(userId:Long): LoginStatus
 
     /**
      * Get the password of the given user id
@@ -77,7 +76,7 @@ interface IUserManager {
      * @param userId String the user name of the user
      * @param status status of the user
      */
-    fun updateUserStatus(userId:Long, status:LoginStatus)
+    fun updateUserStatus(userId:Long, status: LoginStatus)
 
 
     /**

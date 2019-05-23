@@ -6,7 +6,7 @@ import com.google.inject.Guice
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasElement
-import il.ac.technion.cs.softwaredesign.managers.IUserManager
+import il.ac.technion.cs.softwaredesign.storage.api.IUserManager
 import il.ac.technion.cs.softwaredesign.storage.SecureStorageFactory
 import il.ac.technion.cs.softwaredesign.storage.statistics.IStatisticsStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.DB_NAMES

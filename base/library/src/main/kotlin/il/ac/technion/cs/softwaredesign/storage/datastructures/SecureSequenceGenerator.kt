@@ -3,10 +3,9 @@ package il.ac.technion.cs.softwaredesign.storage.datastructures
 import com.google.inject.BindingAnnotation
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import il.ac.technion.cs.softwaredesign.storage.utils.ConversionUtils
-import il.ac.technion.cs.softwaredesign.storage.ISequenceGenerator
+import il.ac.technion.cs.softwaredesign.internals.ISequenceGenerator
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST
 import il.ac.technion.cs.softwaredesign.storage.utils.TREE_CONST.LAST_GENERATED_ID
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Target(AnnotationTarget.CONSTRUCTOR)

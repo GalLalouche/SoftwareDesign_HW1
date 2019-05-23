@@ -1,4 +1,4 @@
-package il.ac.technion.cs.softwaredesign.storage
+package il.ac.technion.cs.softwaredesign.storage.api
 
 interface IStorageConvertable<T> {
     fun toByteArray():ByteArray

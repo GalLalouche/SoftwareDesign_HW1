@@ -1,5 +1,5 @@
-package il.ac.technion.cs.softwaredesign.storage
+package il.ac.technion.cs.softwaredesign.internals
 
-interface ISequenceGenerator {
+internal interface ISequenceGenerator {
     fun next():Long
 }

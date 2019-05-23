@@ -1,11 +1,11 @@
 package il.ac.technion.cs.softwaredesign.storage.proxies
 
-import il.ac.technion.cs.softwaredesign.LRUCache
+import il.ac.technion.cs.softwaredesign.internals.LRUCache
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 
 
 class SecureStorageCache(private val secureStorage: SecureStorage) : SecureStorage {
-    private val cache: LRUCache<ByteArrayKey, ByteArray?> = LRUCache(capacity = 500_000)
+    private val cache: LRUCache<ByteArrayKey, ByteArray?> = LRUCache(capacity = 250_000)
 
     override fun read(key: ByteArray): ByteArray? {
         val keyWrapper = ByteArrayKey(key)

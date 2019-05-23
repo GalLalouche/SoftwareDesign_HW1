@@ -1,8 +1,7 @@
 package il.ac.technion.cs.softwaredesign
 
-import il.ac.technion.cs.softwaredesign.managers.IChannelManager
-import il.ac.technion.cs.softwaredesign.managers.ITokenManager
-import il.ac.technion.cs.softwaredesign.managers.IUserManager
+import il.ac.technion.cs.softwaredesign.storage.api.IChannelManager
+import il.ac.technion.cs.softwaredesign.storage.api.IUserManager
 import javax.inject.Inject
 
 class CourseAppStatisticsImpl @Inject constructor(private val userManager: IUserManager,

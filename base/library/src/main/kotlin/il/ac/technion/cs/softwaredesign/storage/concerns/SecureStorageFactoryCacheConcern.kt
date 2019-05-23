@@ -1,7 +1,7 @@
 package il.ac.technion.cs.softwaredesign.storage.concerns
 
 
-import il.ac.technion.cs.softwaredesign.LRUCache
+import il.ac.technion.cs.softwaredesign.internals.LRUCache
 import il.ac.technion.cs.softwaredesign.storage.SecureStorage
 import org.aopalliance.intercept.MethodInterceptor
 import org.aopalliance.intercept.MethodInvocation
