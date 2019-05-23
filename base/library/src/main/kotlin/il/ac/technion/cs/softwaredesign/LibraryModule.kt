@@ -42,47 +42,56 @@ class LibraryModule : KotlinModule() {
     }
 
     @Provides @Singleton @Inject
-    fun provideTokenStorage(factory: SecureStorageFactory): @AuthenticationStorage SecureStorage {
+    @AuthenticationStorage
+    fun provideTokenStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.TOKEN.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideUserDetailsStorage(factory: SecureStorageFactory): @MemberDetailsStorage SecureStorage {
+    @MemberDetailsStorage
+    fun provideUserDetailsStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.USER_DETAILS.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideUserIdStorage(factory: SecureStorageFactory): @MemberIdStorage SecureStorage {
+    @MemberIdStorage
+    fun provideUserIdStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.USER_ID.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideStatisticsStorage(factory: SecureStorageFactory): @StatisticsStorage SecureStorage {
+    @StatisticsStorage
+    fun provideStatisticsStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.STATISTICS.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideChannelIdStorage(factory: SecureStorageFactory): @ChannelIdStorage SecureStorage {
+    @ChannelIdStorage
+    fun provideChannelIdStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.CHANNEL_ID.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideChannelDetailsStorage(factory: SecureStorageFactory): @ChannelDetailsStorage SecureStorage {
+    @ChannelDetailsStorage
+    fun provideChannelDetailsStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.CHANNEL_DETAILS.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideChannelByUserCountStorage(factory: SecureStorageFactory): @ChannelByUserCountStorage SecureStorage {
+    @ChannelByUserCountStorage
+    fun provideChannelByUserCountStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.TREE_CHANNELS_BY_USERS_COUNT.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideChannelByActiveUserCountStorage(factory: SecureStorageFactory): @ChannelByActiveUserCountStorage SecureStorage {
+    @ChannelByActiveUserCountStorage
+    fun provideChannelByActiveUserCountStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.TREE_CHANNELS_BY_ACTIVE_USERS_COUNT.toByteArray())
     }
 
     @Provides @Singleton @Inject
-    fun provideUsersByChannelCountStorage(factory: SecureStorageFactory): @ChannelByActiveUserCountStorage SecureStorage {
+    @UsersByChannelCountStorage
+    fun provideUsersByChannelCountStorage(factory: SecureStorageFactory): SecureStorage {
         return factory.open(DB_NAMES.TREE_USERS_BY_CHANNELS_COUNT.toByteArray())
     }
 }
